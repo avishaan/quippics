@@ -79,6 +79,13 @@ async.series([
       });
       it('should be able to login with the username in the wrong case', function(){
         //user should be able to login with the username in the wrong case
+        frisby.create('Login user1 with all uppercase username')
+          .post(domain + '/users', {
+            username: user1.username.toUpperCase(),
+            password: user1.password
+          })
+          .expectStatus(200)
+          .toss();
       });
       it('should not allow registration with the same username but different case', function(){
         //user should not be able to register with the same username but a different case
