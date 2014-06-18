@@ -89,6 +89,14 @@ async.series([
       });
       it('should not allow registration with the same username but different case', function(){
         //user should not be able to register with the same username but a different case
+        frisby.create('Register user1 with all uppercase username')
+          .post(domain + '/register', {
+            username: user1.username.toUpperCase(),
+            password: user1.password,
+            email: user1.email
+          })
+          .expectStatus(500)
+          .toss();
       })
     });
     cb(null);

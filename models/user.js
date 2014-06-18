@@ -30,6 +30,26 @@ var userSchema = new mongoose.Schema({
   activities: {}// activities for the user are kept here making it easier to get my activities
 });
 
+//validation
+userSchema.path('username').validate(function(value, done){
+  //if we find a user with that username already exists (case insentitive) then error
+  User.findOne({username: new RegExp('^'+value+'$', "i")})
+    .exec(function(err, user){
+      if (!err){
+        if (user){
+          //if there is a user, then it should fail validation
+          return done(false);
+        } else {
+          //no user means this username is available
+          return done(true);
+        }
+      } else {
+        //there was a db query error, throw an error
+        throw err;
+      }
+    });
+}, 'Username already exists');
+
 userSchema.pre('save', function(cb){
   //before saving a user
   //encrypt the password if it has been change
