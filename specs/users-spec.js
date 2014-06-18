@@ -1,15 +1,15 @@
 var frisby = require('frisby');
-var baseDomain = 'http://localhost:8080/api/v1';
+var domain = 'http://localhost:8080/api/v1';
 var async = require('async');
 
 
 async.series([
   function(cb){
-    describe("The database", function(){
+    describe("Clear the database", function(){
       it("should have the ability to be cleared with a remote call", function(){
         frisby
           .create('Clear the database via a REST call')
-          .delete(baseDomain + '/server')
+          .delete(domain + '/server')
           .expectStatus(200)
           .expectJSONTypes({
             users: Number
@@ -20,111 +20,46 @@ async.series([
     cb(null);
   },
   function(cb){
-    describe("Mark(id:1) on facebook", function(){
-      it("should be able to be a supporter for Shaan(id:2) on facebook, even though neither have 'profiles' yet", function(){
-        frisby
-          .create('Support a receiver without having either in the DB')
-          .post(baseDomain + '/users/facebook/1/supporters', {
-            support: 2,
-            network: 'facebook'
+    describe("Users", function(){
+      it("should have the ability to register", function(){
+        //user should be able to register without a picture and with a picture
+        var user1 = {
+          username: 'user1',
+          password: 'password1',
+          email: 'email@yahoo.com'
+        }
+        frisby.create('Register User1')
+          .post(domain + '/register', {
+            username: user1.username,
+            password: user1.password,
+            email: user1.email
           })
           .expectStatus(200)
-          .inspectJSON()
-          .toss();
-      });
-      it("should be able to see how many people support Shaan(id:2) by querying his facebook id", function(){
-        frisby
-          .create('See how many people support a user')
-          .get(baseDomain + '/users/facebook/2/supporters')
-          .expectStatus(200)
-          //.inspectJSON()
-          .expectJSON({
-            supportersCount: 1
-          })
-          .expectJSONTypes({
-            supportersCount: Number
+          .afterJSON(function(res){
+            expect(res.username).toEqual(user1.username);
+            expect(res.password).toBeUndefined();
+            expect(res.email).toBeUndefined();
           })
           .toss();
       });
-    });
-    cb(null);
-  },
-  function(cb){
-    describe("Bob(id:3) on facebook", function(){
-      it("should be able to be a supporter for Shaan(id:2) on facebook, even though Bob has no profile yet", function(){
-        frisby
-          .create('Support a receiver without having a profile yourself while the receiver does have a profile')
-          .post(baseDomain + '/users/facebook/3/supporters', {
-            support: 2,
-            network: 'facebook'
+      it("should not have the ability to register with the same username", function (){
+        //user should not be able to register with the same username as a duplicate user
+        frisby.create('Register user1 again')
+          .post(domain + '/register', {
+            username: 'user1',
+            password: 'password1',
+            email: 'email@yahoo.com'
           })
-          .expectStatus(200)
-          .inspectJSON()
+          .expectStatus(500)
           .toss();
+
       });
-      it("should be able to see how many people support Shaan(id:2) by querying his facebook id", function(){
-        frisby
-          .create('See how many people support a user')
-          .get(baseDomain + '/users/facebook/2/supporters')
-          .expectStatus(200)
-          //.inspectJSON()
-          .expectJSON({
-            supportersCount: 2
-          })
-          .expectJSONTypes({
-            supportersCount: Number
-          })
-          .toss();
+      it("should be able to login with the correct credentials", function(){
+        //user should be able to login
       });
-    });
-    cb(null);
-  },
-  function(cb){
-    describe("Mark(id:1) on facebook", function(){
-      it("should also be able to see how many people support Shaan(id:2) on facebook", function(){
-        frisby
-          .create("See how many people support a user")
-          .get(baseDomain + '/users/facebook/2/supporters')
-          .expectStatus(200)
-          .expectJSON({
-            supportersCount: 2
-          })
-          .expectJSONTypes({
-            supportersCount: Number
-          })
-          .toss();
-      });
-    });
-    cb(null);
-  },
-  function(cb){
-    describe("Mark(id:1) on facebook", function(){
-      it("should also be able to see how many people support Bob(id:3) on facebook when Bob has no supporters", function(){
-        frisby
-          .create("See how many people support a user")
-          .get(baseDomain + '/users/facebook/3/supporters')
-          .expectStatus(200)
-          .expectJSON({
-            supportersCount: 0
-          })
-          .expectJSONTypes({
-            supportersCount: Number
-          })
-          .toss();
-      });
-      it("should also be able to see how many people support a nonexistant User(id:4) on facebook when user doesn't exist in system", function(){
-        frisby
-          .create("See how many people support a user")
-          .get(baseDomain + '/users/facebook/4/supporters')
-          .expectStatus(200)
-          .expectJSON({
-            supportersCount: 0
-          })
-          .expectJSONTypes({
-            supportersCount: Number
-          })
-          .toss();
-      });
+      it('should not be able to login with the wrong credentials', function(){
+        //user should not be able to login with the wrong credentials
+      })
     });
     cb(null);
   }
