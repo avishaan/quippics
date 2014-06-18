@@ -13,7 +13,10 @@
     "superagent": "^0.18.0",
     "async": "^0.8.0",
     "jasmine-node": "^1.14.3",
-    "type-detect": "^0.1.2"
+    "type-detect": "^0.1.2",
+    "bcrypt": "^0.7.8",
+    "passport": "^0.2.0",
+    "underscore": "^1.6.0"
   },
   "engine": {
     "node": "0.10.26"

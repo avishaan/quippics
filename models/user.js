@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 var async = require('async');
-
+var bcrypt = require('bcrypt');
+var SALT_WORK_FACTOR = 10;
+var fs = require('fs');
 /*
 |-------------------------------------------------------------
 | User Schema
@@ -8,12 +10,30 @@ var async = require('async');
 */
 
 var userSchema = new mongoose.Schema({
-  facebook: {type: String}, //facebook userid here
-  twitter: {type: String},  //twitter userid here
+  password: {type: String},
+  username: {type: String, unique: true},
+  firstName: {type: String},
+  lastName: {type: String},
+  friends: [
+    {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+  ],
+  friendsRequested: [ //every single friend request user has made, we want to keep track of duplicate requests
+    {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+  ],
+  requests: [ //users requesting friendship are stored here
+    {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+  ],
+  image: {data: Buffer, contentType: String},
+  thumbnail: {data: Buffer, contentType: String},
+  joinDate: {type: Date, default: Date.now},
+  rank: {type: String, default: 'Newbie'},
+  activities: {}// activities for the user are kept here making it easier to get my activities
+});
 
-  supporters: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'User'
-  }]
+userSchema.pre('save', function(callback){
+  //before saving a user
+  //encrypt the password if it has been change
+  //generate a new thumbnail if the image has been changed
 });
 
 /**
