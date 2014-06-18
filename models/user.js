@@ -37,6 +37,27 @@ userSchema.pre('save', function(cb){
   cb();
 });
 
+userSchema.methods.authenticate = function(cb){
+  var authUser = this;
+  //first find the user
+  User.findOne({username: authUser.username}) //use regex for case insensitive
+    .exec(function(err, user){
+      if(!err){
+        if (user){
+          //since we found a user, let's go ahead and check their password
+          if (authUser.password === user.password){
+            return cb(null, user);
+          }
+
+        } else {
+          return cb(null, null);
+        }
+
+      } else {
+        return cb(err, null);
+      }
+    });
+};
 /**
  * Add a DewDrop supporter to a user. Keep in mind often times you will support a user that doesn't
  * exist yet in which case you will need to create him right then
