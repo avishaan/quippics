@@ -22,14 +22,14 @@ exports.authenticate = function(req, res){
           '_id': authUser._id
         });
       } else {
-        return res.send(409, {
+        return res.send(401, {
           'clientMsg': 'Wrong username or password'
         });
       }
     } else {
-      return res.send(500, {
+      return res.send(401, {
         'err': err,
-        'clientMsg': 'Could not find user'
+        'clientMsg': 'Wrong username or password'
       });
     }
   });

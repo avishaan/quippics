@@ -47,12 +47,12 @@ userSchema.methods.authenticate = function(cb){
           //since we found a user, let's go ahead and check their password
           if (authUser.password === user.password){
             return cb(null, user);
+          } else {
+            return cb(null, null);
           }
-
         } else {
           return cb(null, null);
         }
-
       } else {
         return cb(err, null);
       }

@@ -69,6 +69,19 @@ async.series([
       });
       it('should not be able to login with the wrong credentials', function(){
         //user should not be able to login with the wrong credentials
+        frisby.create('Login user1 with wrong password')
+          .post(domain + '/users', {
+            username: user1.username,
+            password: 'badpassword'
+          })
+          .expectStatus(401)
+          .toss();
+      });
+      it('should be able to login with the username in the wrong case', function(){
+        //user should be able to login with the username in the wrong case
+      });
+      it('should not allow registration with the same username but different case', function(){
+        //user should not be able to register with the same username but a different case
       })
     });
     cb(null);
