@@ -1,0 +1,8 @@
+{
+    "libs": [
+        "underscore"
+            ],
+        "plugins": {
+          "node": {}
+        }
+}
