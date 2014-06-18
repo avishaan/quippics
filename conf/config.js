@@ -12,7 +12,7 @@ module.exports = function(){
     case "development":
       return {
         dbURI : "mongodb://localhost/" + npmInfo.name,
-        expressPort: 8080,
+        expressPort: 8081,
         env: 'dev' //should be env/prod
       };
     case "prod":

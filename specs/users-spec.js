@@ -1,5 +1,5 @@
 var frisby = require('frisby');
-var domain = 'http://localhost:8080/api/v1';
+var domain = 'http://localhost:8081/api/v1';
 var async = require('async');
 
 

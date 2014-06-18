@@ -5,7 +5,7 @@
 
 var express = require('express');
 var routes = require('./routes');
-var user = require('./routes/user');
+var users = require('./routes/users');
 var http = require('http');
 var path = require('path');
 var config = require('./conf/config.js');
@@ -16,30 +16,36 @@ var server = require('./routes/server');
 var app = express();
 
 // all environments
+if (config.env === 'dev'){
+app.use(express.logger('dev'));
+}
 app.set('port', config.expressPort);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.use(express.favicon());
-app.use(express.logger(config.env));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
-// development only
-if (config.env === 'dev') {
-  app.use(express.errorHandler());
-}
 
+
+// development only
+//console.log(config.env);
+//if (config.env !== 'prod') {
+//  app.use(express.errorHandler());
+//}
+//
 app.get('/', routes.index);
 app.post('/api/v1/mirror', util.mirror); //route will mirror back to you whatever it sees, useful for debugging
-app.get('/users', user.list);
+app.get('/users', users.list);
 
+//user routes
+app.post('/api/v1/register', users.register);
+app.post('/api/v1/users', users.authenticate);
 //misc routes
 app.delete('/api/v1/server', server.delete);
 
-app.post('/api/v1/users/:network/:uid/supporters', user.addSupporters); //add someone that this user trusts
-app.get('/api/v1/users/:network/:uid/supporters', user.checkSupporters); //see list of who a user trusts
 app.use(function(req, res){
   console.log("MISROUTE");
   res.send(404);

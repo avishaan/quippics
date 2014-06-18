@@ -30,10 +30,11 @@ var userSchema = new mongoose.Schema({
   activities: {}// activities for the user are kept here making it easier to get my activities
 });
 
-userSchema.pre('save', function(callback){
+userSchema.pre('save', function(cb){
   //before saving a user
   //encrypt the password if it has been change
   //generate a new thumbnail if the image has been changed
+  cb();
 });
 
 /**
