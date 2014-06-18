@@ -40,7 +40,7 @@ userSchema.pre('save', function(cb){
 userSchema.methods.authenticate = function(cb){
   var authUser = this;
   //first find the user
-  User.findOne({username: authUser.username}) //use regex for case insensitive
+  User.findOne({username: new RegExp('^'+authUser.username+'$', "i")}) //use regex for case insensitive
     .exec(function(err, user){
       if(!err){
         if (user){
