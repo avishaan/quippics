@@ -46,7 +46,8 @@ exports.register = function(req, res){
       user.save(function(err, newUser){
         if (!err){
           return res.send(200, {
-            'username': newUser.username
+            'username': newUser.username,
+            '_id': newUser._id
           });
         } else {
           return res.send(500, {

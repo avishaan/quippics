@@ -56,7 +56,7 @@ async.series([
           var user = res.body;
           //make sure something was returned in the response body
           expect(user).toBeDefined();
-          //expect(user._id).toBeDefined();
+          expect(user._id).toBeDefined();
           //expect the username to be returned
           expect(user.username).toBeDefined();
           //an image should have been returned
