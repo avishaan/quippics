@@ -1,6 +1,7 @@
 var frisby = require('frisby');
 var domain = 'http://localhost:8081/api/v1';
 var async = require('async');
+var superagent = require('superagent');
 
 var user1 = {
   username: 'user1',
@@ -42,6 +43,30 @@ async.series([
           })
           .toss();
       });
+      it("should allow a user to register with an image", function(){
+        //users should be able to register with a picture
+      superagent  //Register Jill, a new User
+        .post(domain + "/register")
+        .type('form')
+        .attach("image", "./specs/images/onepixel.png") //this is based on where you are running jasmine-node from
+        .field("username", 'user2')
+        .field("password", 'password2')
+        .field("email", 'email@gmail.com')
+        .end(function(err, res){
+          var user = res.body;
+          //make sure something was returned in the response body
+          expect(user).toBeDefined();
+          //expect(user._id).toBeDefined();
+          //expect the username to be returned
+          expect(user.username).toBeDefined();
+          //an image should have been returned
+          //expect(user.image).toBeDefined();
+          //expect 200 response
+          expect(res.status).toEqual(200);
+          //save the user's userid for future reference
+          //user2._id = user._id;
+        });
+      })
       it("should not have the ability to register with the same username", function (){
         //user should not be able to register with the same username as a duplicate user
         frisby.create('Register user1 again')
