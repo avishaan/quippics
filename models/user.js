@@ -73,12 +73,23 @@ userSchema.methods.authenticate = function(cb){
     .exec(function(err, user){
       if(!err){
         if (user){
-          //since we found a user, let's go ahead and check their password
-          if (authUser.password === user.password){
-            return cb(null, user);
-          } else {
-            return cb(null, null);
-          }
+         // //since we found a user, let's go ahead and check their password
+         user.checkPassword(authUser.password, function(err, user){
+           if(!err){
+             if(user){
+               return cb(null, user);
+             } else {
+               return cb(null, null);
+             }
+           } else {
+             return cb(err, null);
+           }
+         });
+         // if (authUser.password === user.password){
+         //   return cb(null, user);
+         // } else {
+         //   return cb(null, null);
+         // }
         } else {
           return cb(null, null);
         }
