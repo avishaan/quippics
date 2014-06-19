@@ -73,7 +73,6 @@ userSchema.methods.addImage = function(req, next){
   if (typeof req.files != 'undefined'){ //see if there are files first
   //if (req.files[Object.keys(req.files)[0]]){
     var uploadedImage = req.files[Object.keys(req.files)[0]]; //get the first file in the list of files
-    debugger;
     this.image.contentType = uploadedImage.type;
     this.image.data = fs.readFileSync(uploadedImage.path); //TODO, this should be async, this is blocking and slow
     //TODO cleanup this file also

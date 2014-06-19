@@ -48,7 +48,7 @@ async.series([
       superagent  //Register Jill, a new User
         .post(domain + "/register")
         .type('form')
-        .attach("image", "./specs/images/onepixel.png") //this is based on where you are running jasmine-node from
+        .attach("image", "./specs/images/defaultProfile.png") //this is based on where you are running jasmine-node from
         .field("username", 'user2')
         .field("password", 'password2')
         .field("email", 'email@gmail.com')
