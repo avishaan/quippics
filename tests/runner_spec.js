@@ -1,27 +1,28 @@
 //set this to your testing domain
-var domain = 'http://admin:admin@localhost:3001';
+var domain = 'http://localhost:8081/api/v1';
 
-var inviteSpec = require('./specs/inviteSpecs.js');
-var epicSpec = require('./specs/epicSpecs.js');
-var expirationSpec = require('./specs/expirationSpecs.js');
+//var inviteSpec = require('./specs/inviteSpecs.js');
+//var epicSpec = require('./specs/epicSpecs.js');
+//var expirationSpec = require('./specs/expirationSpecs.js');
+var userSpec = require('./specs/userSpecs.js');
 //var superSpec = require('./specs/superTest.js');
 var async = require('async');
 
 
 async.series([
   function(cb){
-    inviteSpec.spec(domain, function(){
+    userSpec.spec(domain, function(){
       cb(null);
     });
   },
   function(cb){
-    expirationSpec.spec(domain, function(){
+    //expirationSpec.spec(domain, function(){
       cb(null);
-    });
+    //});
   }
 ],
   function(err, results){
-    epicSpec.spec(domain); //we run this one last because this set of tests is meant to run last and has no way for a callback
+    //epicSpec.spec(domain); //we run this one last because this set of tests is meant to run last and has no way for a callback
   }
 );
 //require('./specs/basic_spec.js'); //basic spec
