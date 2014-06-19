@@ -17,7 +17,8 @@ var app = express();
 
 // all environments
 if (config.env === 'dev'){
-app.use(express.logger('dev'));
+  app.use(express.logger('dev'));
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 }
 app.set('port', config.expressPort);
 app.set('views', __dirname + '/views');

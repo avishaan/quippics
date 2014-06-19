@@ -8,6 +8,11 @@ var user1 = {
   password: 'password1',
   email: 'email@yahoo.com'
 };
+var user2 = {
+  username: 'user2',
+  password: 'password2',
+  email: 'email2@gmail.com'
+}
 exports.spec = function(domain, callback){
 
   async.series([
@@ -52,14 +57,15 @@ exports.spec = function(domain, callback){
             .post(domain + "/register")
             .type('form')
             .attach("image", "./tests/specs/images/defaultProfile.png") //this is based on where you are running jasmine-node from
-            .field("username", 'user2')
-            .field("password", 'password2')
-            .field("email", 'email@gmail.com')
+            .field("username", user2.username)
+            .field("password", user2.password)
+            .field("email", user2.email)
             .end(function(err, res){
               var user = res.body;
               //make sure something was returned in the response body
               expect(user).toBeDefined();
               expect(user._id).toBeDefined();
+              user2._id = user._id;
               //expect the username to be returned
               expect(user.username).toBeDefined();
               //an image should have been returned
@@ -68,6 +74,28 @@ exports.spec = function(domain, callback){
               expect(res.status).toEqual(200);
               //save the user's userid for future reference
               //user2._id = user._id;
+              //user should be able to change profile picture after registering
+              superagent
+              .put(domain + '/users/' + user2._id)
+              .type('form')
+              .attach("image", "./tests/specs/images/defaultSubmission.jpg") //this is based on where you are running jasmine-node from
+              .field("username", user2.username)
+              .field("password", user2.password)
+              .field("email", user2.email)
+              .end(function(err, res){
+                var user = res.body;
+                //make sure something was returned in the response body
+                expect(user).toBeDefined();
+                expect(user._id).toBeDefined();
+                //expect the username to be returned
+                expect(user.username).toBeDefined();
+                //an image should have been returned
+                //expect(user.image).toBeDefined();
+                //expect 200 response
+                expect(res.status).toEqual(200);
+                //save the user's userid for future reference
+                //user2._id = user._id;
+              });
           });
         });
         it("should not have the ability to register with the same username", function (){
@@ -130,18 +158,20 @@ exports.spec = function(domain, callback){
             .toss();
         });
       });
+
     },
     function(cb){
+      console.log('output user: ', user1._id);
       describe("An existing user", function(){
-        xit("should allow a user to change their profile picture", function(){
-          //users should be able to register with a picture
-          superagent  //Register Jill, a new User
-            .put(domain + "/register")
+        xit("should allow a user to change a profile picture", function(){
+          //user should be able to change profile picture after registering
+          superagent
+            .put(domain + '/users/' + user2._id)
             .type('form')
-            .attach("image", "./tests/specs/images/defaultProfile.png") //this is based on where you are running jasmine-node from
-            .field("username", 'user2')
-            .field("password", 'password2')
-            .field("email", 'email@gmail.com')
+            .attach("image", "./tests/specs/images/defaultSubmission.jpg") //this is based on where you are running jasmine-node from
+            .field("username", user2.username)
+            .field("password", user2.password)
+            .field("email", user2.email)
             .end(function(err, res){
               var user = res.body;
               //make sure something was returned in the response body
@@ -161,14 +191,25 @@ exports.spec = function(domain, callback){
           //user should be able to change their password
           user1.password = 'newpassword';
           user1.email = 'newemail@gmail.com';
+          
           frisby.create('Have user1 change their password')
             .put(domain + '/users/' + user1._id, {
               newPassword: user1.password,
               email: user1.email
             })
             .expectStatus(200)
-            .afterJSON(function(user){
-
+            .afterJSON(function(user3){
+              //check that we can still log in with the updated user
+              frisby.create('User should be able to login with new password')
+              .post( domain + '/users', {
+                username: user1.username,
+                password: user1.password
+              })
+              .expectStatus(200)
+              .afterJSON(function(res){
+                expect(res._id).toBeDefined();
+              })
+              .toss();
             })
             .toss();
         });

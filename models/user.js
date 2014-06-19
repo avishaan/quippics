@@ -16,6 +16,7 @@ var userSchema = new mongoose.Schema({
   username: {type: String, unique: true},
   firstName: {type: String},
   lastName: {type: String},
+  email: {type: String},
   friends: [
     {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
   ],
@@ -69,6 +70,8 @@ userSchema.pre('save', function(next){
         return next(err);
       }
     });
+  } else {
+    return next();
   }
   //generate a new thumbnail if the image has been changed
 });

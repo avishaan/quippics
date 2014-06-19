@@ -36,27 +36,26 @@ exports.authenticate = function(req, res){
 };
 //Update a user here
 exports.update = function(req, res){
-
   User.findOne({_id: req.params.uid}, function(err, user){
     if (!err){
       if (user){
         //get the information passed in from the body and set it to the properties of the model
-        user.username  = req.body.username ? req.body.username : user.username;
+        //user.username  = req.body.username ? req.body.username : user.username;
         user.email = req.body.email ? req.body.email : user.email;
-
         user.password = req.body.newPassword ? req.body.newPassword : user.password;
         user.addImage(req, function(){
           //save the user the user to the database.
           user.save(function(err, updatedUser){
             if (!err){
-              res.send(200, updatedUser);
+              res.send(200, {
+                username: updatedUser.username,
+                _id : updatedUser._id
+              });
             } else { //there was some sort of db error saving
               res.send(500, err);
             }
           });
         });
-
-
       } else { //no user found, no error
         res.send(404);
       }
