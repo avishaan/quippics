@@ -43,6 +43,7 @@ app.get('/users', users.list);
 //user routes
 app.post('/api/v1/register', users.register);
 app.post('/api/v1/users', users.authenticate);
+app.put('/api/v1/users/:uid', users.update);
 //misc routes
 app.delete('/api/v1/server', server.delete);
 

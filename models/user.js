@@ -35,12 +35,17 @@ var userSchema = new mongoose.Schema({
 //validation
 userSchema.path('username').validate(function(value, done){
   //if we find a user with that username already exists (case insentitive) then error
+  var userInQuestion = this;
   User.findOne({username: new RegExp('^'+value+'$', "i")})
     .exec(function(err, user){
       if (!err){
         if (user){
-          //if there is a user, then it should fail validation
-          return done(false);
+          //if there is a user, then it should fail validation only if it is not the same as the user in question
+          if (user.id === userInQuestion.id){
+            return done(true);
+          } else {
+            return done(false);
+          }
         } else {
           //no user means this username is available
           return done(true);
