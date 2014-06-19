@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 var bcrypt = require('bcrypt');
-var SALT_WORK_FACTOR = 10;
+var SALT_WORK_FACTOR = 6;
 var fs = require('fs');
 /*
 |-------------------------------------------------------------
@@ -50,11 +50,20 @@ userSchema.path('username').validate(function(value, done){
     });
 }, 'Username already exists');
 
-userSchema.pre('save', function(cb){
+userSchema.pre('save', function(next){
+  var user = this;
   //before saving a user
   //encrypt the password if it has been change
+  if (user.isModified('password')){
+    user.hashPassword(function(err, user){
+      if (!err){
+        return next();
+      } else {
+        return next(err);
+      }
+    });
+  }
   //generate a new thumbnail if the image has been changed
-  cb();
 });
 
 userSchema.methods.authenticate = function(cb){
@@ -77,6 +86,35 @@ userSchema.methods.authenticate = function(cb){
         return cb(err, null);
       }
     });
+};
+
+//password hashing, bcrypt node generates it's own salt and attaches it to the hash so no need to create yourslef 
+userSchema.methods.hashPassword = function(cb){
+  var user = this;
+  return bcrypt.hash(user.password, SALT_WORK_FACTOR, function(err, hash){
+    if(!err){
+      //salt is always included in the hash and so doesn't need to be stored
+      user.password = hash;
+      return cb(null, user);
+    } else {
+      return cb(err, null);
+    }
+  });
+};
+//check user password
+userSchema.methods.checkPassword = function(testPassword, cb){
+  var user = this;
+  return bcrypt.compare(testPassword, user.password, function(err, isMatch){
+    if (!err){
+      if (isMatch){
+        return cb(null, user);
+      } else {
+        return cb(null, null);
+      }
+    } else {
+      return cb(err, null);
+    }
+  });
 };
 /**
  * Add a DewDrop supporter to a user. Keep in mind often times you will support a user that doesn't

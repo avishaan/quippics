@@ -97,7 +97,7 @@ async.series([
           })
           .expectStatus(500)
           .toss();
-      })
+      });
     });
     cb(null);
   }
