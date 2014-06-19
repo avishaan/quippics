@@ -16,7 +16,8 @@
     "type-detect": "^0.1.2",
     "bcrypt": "^0.7.8",
     "passport": "^0.2.0",
-    "underscore": "^1.6.0"
+    "underscore": "^1.6.0",
+    "gm": "^1.16.0"
   },
   "engine": {
     "node": "0.10.26"

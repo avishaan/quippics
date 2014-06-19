@@ -41,17 +41,22 @@ exports.register = function(req, res){
     password: req.body.password,
     email: req.body.email
   });
-  user.save(function(err, newUser){
+  user.addImage(req, function(err){
     if (!err){
-      res.send(200, {
-        'username': newUser.username
+      user.save(function(err, newUser){
+        if (!err){
+          return res.send(200, {
+            'username': newUser.username
+          });
+        } else {
+          return res.send(500, {
+            'err': err,
+            'clientMsg': 'Could not register user'
+          });
+        }
       });
     } else {
-      res.send(500, {
-        'err': err,
-        'clientMsg': 'Could not register user'
-      });
+      return res.send(500, err);
     }
   });
 };
-

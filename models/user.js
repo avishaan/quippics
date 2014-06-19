@@ -3,6 +3,8 @@ var async = require('async');
 var bcrypt = require('bcrypt');
 var SALT_WORK_FACTOR = 6;
 var fs = require('fs');
+var gm = require('gm');
+var im = gm.subClass({ imageMagick: true});
 /*
 |-------------------------------------------------------------
 | User Schema
@@ -65,7 +67,34 @@ userSchema.pre('save', function(next){
   }
   //generate a new thumbnail if the image has been changed
 });
+//add Image to the user model
+userSchema.methods.addImage = function(req, next){
+  //TODO this needs to pass back errors to the next callback so we know if it's success or not
+  if (typeof req.files != 'undefined'){ //see if there are files first
+  //if (req.files[Object.keys(req.files)[0]]){
+    var uploadedImage = req.files[Object.keys(req.files)[0]]; //get the first file in the list of files
+    this.image.contentType = uploadedImage.type;
+    this.image.data = fs.readFileSync(uploadedImage.path); //TODO, this should be async, this is blocking and slow
+    //TODO cleanup this file also
+    //make the thumbnail too
+    var thumbPath = uploadedImage.path + "thumb"; //set thumb path for future use
+    var that = this;
+    im(uploadedImage.path).thumb(90, 90, thumbPath, 90, //should go in own addThumbnail function
+      function(err, stdout, stderr, command){
+        that.thumbnail.contentType = uploadedImage.type;
+        that.thumbnail.data = fs.readFileSync(thumbPath);
+        if (!err){
+          next(null);
+        } else {
+          next(err);
+        }
+      });
 
+  } else {
+    next(null);
+  }
+};
+//handle user authentication and password checking
 userSchema.methods.authenticate = function(cb){
   var authUser = this;
   //first find the user
