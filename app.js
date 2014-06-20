@@ -6,6 +6,7 @@
 var express = require('express');
 var routes = require('./routes');
 var users = require('./routes/users');
+var challenges = require('./routes/challenges');
 var http = require('http');
 var path = require('path');
 var config = require('./conf/config.js');
@@ -54,6 +55,8 @@ app.get('/api/v1/users/search/:search', users.search); //search for a specific u
 app.post('/api/v1/register', users.register); //register new user
 app.post('/api/v1/users', users.authenticate); //check password of user and return id
 app.put('/api/v1/users/:uid', users.update); //update an existing user
+//challenges routes
+app.post('/api/v1/challenges', challenges.create); //create a new challenge
 //misc routes
 app.delete('/api/v1/server', server.delete);
 
