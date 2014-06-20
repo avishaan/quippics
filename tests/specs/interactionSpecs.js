@@ -257,6 +257,50 @@ exports.spec = function(domain, callback){
         cb(null);
       })
       .toss();
+    },
+    function(cb){
+      frisby
+      .create('Nerdy will go ahead and accept populars friend request')
+      .post(domain + '/users/' + user2.id + '/friends', {
+        user: user1.id
+      })
+      .expectStatus(200)
+      .after(function(res){
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create('Lets see whos nerdys friends are')
+      .get(domain + '/users/' + user2.id + '/friends/page/1')
+      .expectStatus(200)
+      .afterJSON(function(user){
+        //popular should now show up in his friends list
+        expect(user).toBeDefined();
+        expect(user.friends).toBeDefined();
+        expect(user.friends.length).toEqual(1);
+        expect(user.friends[0].username).toEqual(user1.username);
+        expect(user.friends[0].thumbnail).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create('Lets see whos friends with popular')
+      .get(domain + '/users/' + user1.id + '/friends/page/1')
+      .expectStatus(200)
+      .afterJSON(function(user){
+        //nerdy should now show up in his friends list
+        expect(user).toBeDefined();
+        expect(user.friends).toBeDefined();
+        expect(user.friends.length).toEqual(1);
+        expect(user.friends[0].username).toEqual(user2.username);
+        expect(user.friends[0].thumbnail).toBeDefined();
+        cb(null);
+      })
+      .toss();
     }
   ],
   function(err, results){

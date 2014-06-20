@@ -45,6 +45,7 @@ app.get('/users', users.list);
 app.post('/api/v1/users/:uid/declinedRequests', users.declinedRequests);
 app.get('/api/v1/users/:uid/friendRequests/page/:page', users.friendRequests);
 app.post('/api/v1/users/:uid/friendRequests', users.requestFriend); //make a friend request from :uid to user in body
+app.post('/api/v1/users/:uid/friends', users.acceptRequests); //add a friend
 app.get('/api/v1/users/:uid/friends/page/:page', users.listFriends); //get list of all friends
 app.get('/api/v1/users/:uid/users/page/:page', users.listUsers); //get list of all users
 app.get('/api/v1/users/:uid', users.profile); //profile of specific user

@@ -81,6 +81,73 @@ exports.friendRequests = function(req, res){
       }
     });
 };
+//accept an incoming friendRequest
+exports.acceptRequests = function(req, res){
+  var requestorId = req.body.user;
+  var acceptorId = req.params.uid;
+  //TODO make this parallel, they can go at the same time
+  async.series([
+    function(cb){
+    var acceptor = null;
+    //find the user accepting the request, acceptor
+    User
+    .findOne({_id: acceptorId})
+    .select('friendRequests friends')
+    .exec(function(err, acceptor){
+      //load the information from the acceptor
+      if (!err && acceptor){
+        //TODO whatif !err !acceptor
+        //remove the requestor from the acceptors friendRequests array
+        acceptor.friendRequests.pull(requestorId);
+        //add the requestor to the friends array of the acceptor
+        acceptor.friends.addToSet(requestorId);
+        acceptor.save(function(err, savedAcceptor){
+          if (!err && savedAcceptor){
+            //TODO whatif !err !savedAcceptor
+            cb(null, savedAcceptor);
+          } else {
+            cb(err);
+          }
+        });
+      } else {
+        cb(err);
+      }
+    });
+    },
+    function(cb){
+      var requestor = null;
+      //find the user requesting the friend ship, requestor
+      User
+      .findOne({_id: requestorId})
+      .select('friends')
+      .exec(function(err, requestor){
+        //load the information from the requestor
+        if(!err && requestor) {
+          //TODO whatif !err and !requestor
+          //add the acceptor to the friends array of the requestor
+          requestor.friends.addToSet(acceptorId);
+          requestor.save(function(err, savedRequestor){
+            if (!err && savedRequestor){
+              //TODO whatif !err and !savedRequestor
+              cb(null, savedRequestor);
+            } else {
+              cb(err);
+            }
+          });
+        } else {
+          cb(err);
+        }
+      });
+    }
+  ],
+  function(err, results){
+    if(err){
+      return res.send(500, err);
+    } else {
+      return res.send(200);
+    }
+  });
+};
 //decline an incoming friendRequest
 exports.declinedRequests = function(req, res){
   //find the decliner of the request (resource who is doing the declining)
