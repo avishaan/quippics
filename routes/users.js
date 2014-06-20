@@ -93,7 +93,8 @@ exports.requestFriend = function(req, res){
       .exec(function(err, initiator){
         if (!err && initiator) {
           //make sure this user hasn't tried this before, if so stop him
-          if (_.indexOf(initiator.requestedFriends, req.params.uid) !== -1){
+          //TODO below is super inefficient, consider using lean query
+          if (_.indexOf(_.map(initiator.requestedFriends, function(element){return element.toString();}), req.params.uid) !== -1){
             //initiator has made this request before send error
             return cb({clientMsg: "Can't make duplicate friend request"});
           } else {

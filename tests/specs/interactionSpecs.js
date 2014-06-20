@@ -169,6 +169,20 @@ exports.spec = function(domain, callback){
       cb(null);
     })
     .toss();
+  },
+  function(cb){
+    //we will now have nerdy make a second request
+    frisby
+    .create('Nerdy is impatient and going to make a second friend request')
+    .post(domain + '/users/' + user1.id + '/friendRequests', {
+      friend: user2.id
+    })
+    .expectStatus(500)
+    .afterJSON(function(res){
+      expect(res.clientMsg).toEqual("Can't make duplicate friend request");
+      cb(null);
+    })
+    .toss();
   }
   ],
   function(err, results){
