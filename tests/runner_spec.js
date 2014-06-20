@@ -5,6 +5,7 @@ var domain = 'http://localhost:8081/api/v1';
 //var epicSpec = require('./specs/epicSpecs.js');
 //var expirationSpec = require('./specs/expirationSpecs.js');
 var userSpec = require('./specs/userSpecs.js');
+var interactionSpec = require('./specs/interactionSpecs.js');
 //var superSpec = require('./specs/superTest.js');
 var async = require('async');
 
@@ -16,9 +17,9 @@ async.series([
     });
   },
   function(cb){
-    //expirationSpec.spec(domain, function(){
+    interactionSpec.spec(domain, function(){
       cb(null);
-    //});
+    });
   }
 ],
   function(err, results){

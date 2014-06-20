@@ -208,13 +208,13 @@ exports.spec = function(domain, callback){
               .expectStatus(200)
               .afterJSON(function(res){
                 expect(res._id).toBeDefined();
+                cb(null);
               })
               .toss();
             })
             .toss();
         });
       });
-      cb(null);
     }
   ],
   function(err, results){

@@ -34,6 +34,23 @@ exports.authenticate = function(req, res){
     }
   });
 };
+//get profile of a user
+exports.profile = function(req, res){
+  User.findOne({_id: req.params.uid})
+    .select('username email thumbnail rank')
+    .exec(function(err, user){
+      if (!err){ //no error
+        if (user){
+          res.send(200, user);
+        } else { //we didn't find a user but no error
+          res.send(404);
+        }
+      } else { //error occured
+        res.send(500, err);
+      }
+    });
+
+};
 //Update a user here
 exports.update = function(req, res){
   User.findOne({_id: req.params.uid}, function(err, user){
