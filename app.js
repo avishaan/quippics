@@ -42,6 +42,7 @@ app.post('/api/v1/mirror', util.mirror); //route will mirror back to you whateve
 app.get('/users', users.list);
 
 //user routes
+app.post('/api/v1/users/:uid/declinedRequests', users.declinedRequests);
 app.get('/api/v1/users/:uid/friendRequests/page/:page', users.friendRequests);
 app.post('/api/v1/users/:uid/friendRequests', users.requestFriend); //make a friend request from :uid to user in body
 app.get('/api/v1/users/:uid/friends/page/:page', users.listFriends); //get list of all friends

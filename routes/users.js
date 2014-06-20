@@ -81,7 +81,33 @@ exports.friendRequests = function(req, res){
       }
     });
 };
-
+//decline an incoming friendRequest
+exports.declinedRequests = function(req, res){
+  //find the decliner of the request (resource who is doing the declining)
+  //User
+  //.update({_id: req.params.uid},
+  //        { $pull: {friendRequests: {_id: req.body.user}}}, function(err, num, raw){
+  //          res.send(200);
+  //        });
+  User
+  .findOne({_id: req.params.uid})
+  .select('_id friendRequests')
+  .exec(function(err, decliner){
+    if (!err && decliner){
+      //remove the initiator from the friendRequests of the decliner
+      decliner.friendRequests.pull(req.body.user);
+      decliner.save(function(err, user){
+        if (!err && user){
+          return res.send(200);
+        } else {
+          return res.send(500, err);
+        }
+      });
+    } else {
+      return res.send(500, err);
+    }
+  });
+};
 //make a friend request from user in body to user in the :uid
 exports.requestFriend = function(req, res){
   async.series([
