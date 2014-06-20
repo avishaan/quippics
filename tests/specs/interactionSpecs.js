@@ -140,6 +140,33 @@ exports.spec = function(domain, callback){
       //nerdy has no friends yet as he has not friended anyone
       expect(user.friends.length).toEqual(0);
       expect(user.friends).toBeDefined();
+      cb(null);
+    })
+    .toss();
+  },
+  function(cb){
+    frisby
+    .create('Nerdy wants to be friends with popular, so make a friend request')
+    .post(domain + '/users/' + user1.id + '/friendRequests', {
+      friend: user2.id
+    })
+    .expectStatus(200)
+    .after(function(res){
+      cb(null);
+    })
+    .toss();
+  },
+  function(cb){
+    frisby
+    .create('Popular now can check his friend requests')
+    .get(domain + '/users/' + user1.id + '/friendRequests/page/1')
+    .expectStatus(200)
+    .afterJSON(function(user){
+      expect(user.friendRequests.length).toEqual(1);
+      expect(user.friendRequests[0]._id).toEqual(user2.id);
+      expect(user.friendRequests[0].username).toEqual(user2.username);
+      expect(user.friendRequests[0].thumbnail).toBeDefined();
+      cb(null);
     })
     .toss();
   }

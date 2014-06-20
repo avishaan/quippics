@@ -20,10 +20,10 @@ var userSchema = new mongoose.Schema({
   friends: [
     {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
   ],
-  friendsRequested: [ //every single friend request user has made, we want to keep track of duplicate requests
+  requestedFriends: [ //every single friend request user has made, we want to keep track of duplicate requests
     {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
   ],
-  requests: [ //users requesting friendship are stored here
+  friendRequests: [ //all users want to request the friendship of this user (fb style)
     {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
   ],
   image: {data: Buffer, contentType: String},

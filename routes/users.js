@@ -6,6 +6,8 @@
 
 var User = require("../models/user.js");
 var perPage = 24;
+var async = require('async');
+var _ = require('underscore');
 
 exports.list = function(req, res){
   res.send("respond with a resource");
@@ -52,6 +54,92 @@ exports.search = function(req, res){
       }
     });
 };
+//see all the friend Requests for a user
+exports.friendRequests = function(req, res){
+  //if the page number was not passed, go ahead and default to page one for backward compatibility
+  req.params.page = req.params.page || 1;
+  var skip = perPage * (req.params.page - 1);
+  User.findOne({_id: req.params.uid})
+    .select('friendRequests')
+    .populate({
+      path: 'friendRequests', //connect the id in the friend array to the full user information
+      select: 'username thumbnail _id lastLogin', //but only return the username from the full user information
+      options: {
+        limit: perPage,
+        skip: skip
+      }
+    })
+    .exec(function(err, user){
+      if (!err){
+        if (user) {
+          res.send(200, user); //return the list of friends and their usernames
+        } else {
+          res.send(404, {clientMsg: "Couldn't find user"});
+        }
+      } else {
+        res.send(500, err);
+      }
+    });
+};
+
+//make a friend request from user in body to user in the :uid
+exports.requestFriend = function(req, res){
+  async.series([
+    function(cb){
+      //find the user initiating the request
+      User
+      .findOne({_id: req.body.friend})
+      .select('_id requestedFriends')
+      .exec(function(err, initiator){
+        if (!err && initiator) {
+          //make sure this user hasn't tried this before, if so stop him
+          if (_.indexOf(initiator.requestedFriends, req.params.uid) !== -1){
+            //initiator has made this request before send error
+            return cb({clientMsg: "Can't make duplicate friend request"});
+          } else {
+            //initiator has not made this request before, go ahead and allow it
+            initiator.requestedFriends.addToSet(req.params.uid);
+            //save the update initator
+            initiator.save(function(err, user){
+              //TODO this is not important but maybe do some error checking eventually
+              return cb(null);//go to next step in the series 
+            });
+          }
+        } else {
+          return cb(err);
+        }
+      });
+      //if the user has made this request before, don't let him make it again, else add to the initators requestedFriends (prevent multiple requests)
+    },
+    function(cb){
+      //find the user accepting the request
+      User
+      .findOne({_id: req.params.uid})
+      .select('_id friendRequests')
+      .exec(function(err, acceptor){
+        if (!err && acceptor){
+          //add the initiator to the acceptor's friendRequests
+          acceptor.friendRequests.addToSet(req.body.friend);
+          acceptor.save(function(err, user){
+            //TODO this is not important but eventually should do error checking
+            return cb(null);
+          })
+        } else {
+          return cb(err);
+        }
+      });
+    }
+  ],
+  function(err, results){
+    if (err){
+      return res.send(500, err);
+    } else {
+      //no error, send ok status to front end
+      return res.send(200);
+    }
+  });
+};
+
 //get list of friends of the user
 exports.listFriends = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
