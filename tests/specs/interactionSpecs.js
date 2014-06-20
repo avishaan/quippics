@@ -207,6 +207,56 @@ exports.spec = function(domain, callback){
         cb(null);
       })
       .toss();
+    },
+    function(cb){
+      frisby
+      .create("Nerdy will try to befriend Popular again")
+      .post(domain + '/users/' + user1.id + '/friendRequests', {
+        friend: user2.id
+      })
+      .expectStatus(500)
+      .afterJSON(function(res){
+        expect(res.clientMsg).toEqual("Can't make duplicate friend request");
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create('Popular can check his request after nerdy requested popular again, still expect 0')
+      .get(domain + '/users/' + user1.id + '/friendRequests/page/1')
+      .expectStatus(200)
+      .afterJSON(function(user){
+        expect(user.friendRequests.length).toEqual(0);
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create('Popular can send a friend request to nerdy')
+      .post(domain + '/users/' + user2.id + '/friendRequests', {
+        friend: user1.id
+      })
+      .expectStatus(200)
+      .after(function(res){
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create('Nerdy can check to see he has a friend request')
+      .get(domain + '/users/' + user2.id + '/friendRequests/page/1')
+      .expectStatus(200)
+      .afterJSON(function(user){
+        expect(user.friendRequests.length).toEqual(1);
+        expect(user.friendRequests[0]._id).toEqual(user1.id);
+        expect(user.friendRequests[0].username).toEqual(user1.username);
+        expect(user.friendRequests[0].thumbnail).toBeDefined();
+        cb(null);
+      })
+      .toss();
     }
   ],
   function(err, results){
