@@ -5,6 +5,7 @@
 */
 
 var User = require("../models/user.js");
+var perPage = 24;
 
 exports.list = function(req, res){
   res.send("respond with a resource");
@@ -34,6 +35,23 @@ exports.authenticate = function(req, res){
     }
   });
 };
+//get list of users
+exports.listUsers = function(req, res){
+  //TODO, show users with pending friend requests
+  //if the page number was not passed, go ahead and default to page one for backward compatibility
+  req.params.page = req.params.page || 1;
+  User.find({}, 'username _id thumbnail')
+    .skip(perPage * (req.params.page - 1))
+    .limit(perPage)
+    .exec(function(err, users){
+      if(!err){
+        res.send(200, users);
+      } else {
+        res.send(500, err);
+      }
+
+    });
+};
 //get profile of a user
 exports.profile = function(req, res){
   User.findOne({_id: req.params.uid})
@@ -49,7 +67,6 @@ exports.profile = function(req, res){
         res.send(500, err);
       }
     });
-
 };
 //Update a user here
 exports.update = function(req, res){

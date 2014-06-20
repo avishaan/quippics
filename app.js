@@ -42,10 +42,11 @@ app.post('/api/v1/mirror', util.mirror); //route will mirror back to you whateve
 app.get('/users', users.list);
 
 //user routes
-app.get('/api/v1/users/:uid', users.profile);
-app.post('/api/v1/register', users.register);
-app.post('/api/v1/users', users.authenticate);
-app.put('/api/v1/users/:uid', users.update);
+app.get('/api/v1/users/:uid/users/page/:page', users.listUsers); //get list of all users
+app.get('/api/v1/users/:uid', users.profile); //profile of specific user
+app.post('/api/v1/register', users.register); //register new user
+app.post('/api/v1/users', users.authenticate); //check password of user and return id
+app.put('/api/v1/users/:uid', users.update); //update an existing user
 //misc routes
 app.delete('/api/v1/server', server.delete);
 

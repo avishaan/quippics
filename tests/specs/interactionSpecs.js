@@ -97,7 +97,7 @@ exports.spec = function(domain, callback){
   function(cb){
     frisby
     .create('Get list of users from nerdy perspective')
-    .get(domain + '/users/' + user2.id + '/users')
+    .get(domain + '/users/' + user2.id + '/users/page/1')
     .expectStatus(200)
     .afterJSON(function(users){
       expect(users.length).toEqual(2)
