@@ -1,0 +1,86 @@
+var frisby = require('frisby');
+var async = require('async');
+
+var user1 = {
+  username: 'popular123',
+  password: '123',
+  email: 'popular123@gmail.com'
+};
+
+var user2 = {
+  username: 'nerd314',
+  password: '314',
+  email: 'nerd314@gmail.com'
+};
+var challenge1 = {};
+exports.spec = function(domain, callback){
+  jasmine.getEnv().defaultTimeoutInterval = 1000;
+  async.series([
+    function(cb){
+      console.log("Starting the tests");
+      cb(null);
+    },
+    function(cb){
+      frisby
+      .create("Delete the database")
+      .delete(domain + "/server")
+      .expectStatus(200)
+      .afterJSON(function(){
+        console.log("Done deleting db");
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //create a test user
+      frisby
+      .create("Create A user who is very popular")
+      .post(domain + '/register', {
+        username: user1.username,
+        password: user1.password
+      })
+      .expectStatus(200)
+      .afterJSON(function(user){
+        user1._id = user._id;
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //setup our challenge
+      var challenge1 = {
+        title: 'Challenge1 Title',
+        description: 'Challenge1 Description',
+        tags: ['tag1', 'tag2', 'tag3'],
+        owner: user1._id,
+        privacy: 'public',
+        expiration: new Date(2015, 3, 14)
+      };
+      frisby
+      .create("Have that user create a challenge")
+      .post(domain + '/challenges', challenge1)
+      .expectStatus(200)
+      .afterJSON(function(challenge){
+        expect(challenge._id).toBeDefined();
+        challenge1._id = challenge._id;
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //get a specific challenge by id
+      //frisby
+      //.create("Get a specific challenge when we know the id")
+      //.get(domain + '/challenge/' + challenge1._id)
+      //.expectStatus(200)
+      //.afterJSON(function(challenge){
+      //  expect(challenge).toBeDefined();
+      //  cb(null);
+      //})
+      //.toss();
+    }
+  ],
+  function(err, results){
+
+  });
+};

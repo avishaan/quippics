@@ -6,6 +6,7 @@ var domain = 'http://localhost:8081/api/v1';
 //var expirationSpec = require('./specs/expirationSpecs.js');
 var userSpec = require('./specs/userSpecs.js');
 var interactionSpec = require('./specs/interactionSpecs.js');
+var challengeSpec = require('./specs/challengeSpecs.js');
 //var superSpec = require('./specs/superTest.js');
 var async = require('async');
 
@@ -18,6 +19,11 @@ async.series([
   },
   function(cb){
     interactionSpec.spec(domain, function(){
+      cb(null);
+    });
+  },
+  function(cb){
+    challengeSpec.spec(domain, function(){
       cb(null);
     });
   }
