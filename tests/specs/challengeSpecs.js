@@ -47,6 +47,20 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
+      frisby
+      .create("Create A user who is very nerdy")
+      .post(domain + '/register', {
+        username: user2.username,
+        password: user2.password
+      })
+      .expectStatus(200)
+      .afterJSON(function(user){
+        user2._id = user._id;
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
       //setup our challenge
       var challenge1 = {
         title: 'Challenge1 Title',
@@ -54,7 +68,8 @@ exports.spec = function(domain, callback){
         tags: ['tag1', 'tag2', 'tag3'],
         owner: user1._id,
         privacy: 'public',
-        expiration: new Date(2015, 3, 14)
+        expiration: new Date(2015, 3, 14),
+        invites: [user2._id]
       };
       frisby
       .create("Have that user create a challenge")
@@ -68,16 +83,7 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      //get a specific challenge by id
-      //frisby
-      //.create("Get a specific challenge when we know the id")
-      //.get(domain + '/challenge/' + challenge1._id)
-      //.expectStatus(200)
-      //.afterJSON(function(challenge){
-      //  expect(challenge).toBeDefined();
-      //  cb(null);
-      //})
-      //.toss();
+      cb(null);
     }
   ],
   function(err, results){
