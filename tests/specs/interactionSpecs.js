@@ -52,13 +52,8 @@ exports.spec = function(domain, callback){
           user2.id = user._id;
           //expect the username to be returned
           expect(user.username).toBeDefined();
-          //an image should have been returned
-          //expect(user.image).toBeDefined();
           //expect 200 response
           expect(res.status).toEqual(200);
-          //save the user's userid for future reference
-          //user2._id = user._id;
-          //user should be able to change profile picture after registering
           console.log('Done Registering Nerdy');
           done();
           cb(null);
@@ -67,17 +62,31 @@ exports.spec = function(domain, callback){
     });
   },
   function(cb){
-    frisby
-    .create("Register Popular123")
-    .post(domain + "/register", user1)
-    .expectStatus(200)
-    //.inspectJSON()
-    .afterJSON(function(user){
-      console.log("Done registering Popular");
-      user1.id = user._id;
-      cb(null);
-    })
-    .toss();
+    describe("Users!", function(){
+      it("Popular should be able to register with a picture", function(done){
+        superagent
+        .post(domain + "/register")
+        .type('form')
+        .attach("image", "./tests/specs/images/defaultProfile.png") //this is based on where you are running jasmine-node from
+        .field("username", user1.username)
+        .field("password", user1.password)
+        .field("email", user1.email)
+        .end(function(err, res){
+          var user = res.body;
+          //make sure something was returned in the response body
+          expect(user).toBeDefined();
+          expect(user._id).toBeDefined();
+          user1.id = user._id;
+          //expect the username to be returned
+          expect(user.username).toBeDefined();
+          //expect 200 response
+          expect(res.status).toEqual(200);
+          console.log('Done Registering Popular');
+          done();
+          cb(null);
+        });
+      });
+    });
   },
   function(cb){
     frisby
@@ -126,4 +135,4 @@ exports.spec = function(domain, callback){
   function(err, results){
     callback(null);//call the next function in the test specs 
   });
-};  
+};

@@ -35,6 +35,23 @@ exports.authenticate = function(req, res){
     }
   });
 };
+//search for a user and return list of results
+exports.search = function(req, res){
+  var search = new RegExp('^([a-z0-9_\\.-]*)'+req.params.search+'([a-z0-9_\\.-]*)$', "i");
+  User.find({username: search})
+    .select('username thumbnail')
+    .exec(function(err, users){
+      if (!err){
+        if (users){
+          res.send(users);
+        } else {
+          res.send(404, {clientMsg: "No users found, try another search term"});
+        }
+      } else {
+        res.send(500, err);
+      }
+    });
+};
 //get list of users
 exports.listUsers = function(req, res){
   //TODO, show users with pending friend requests

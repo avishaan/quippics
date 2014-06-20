@@ -44,6 +44,7 @@ app.get('/users', users.list);
 //user routes
 app.get('/api/v1/users/:uid/users/page/:page', users.listUsers); //get list of all users
 app.get('/api/v1/users/:uid', users.profile); //profile of specific user
+app.get('/api/v1/users/search/:search', users.search); //search for a specific user
 app.post('/api/v1/register', users.register); //register new user
 app.post('/api/v1/users', users.authenticate); //check password of user and return id
 app.put('/api/v1/users/:uid', users.update); //update an existing user
