@@ -130,6 +130,18 @@ exports.spec = function(domain, callback){
       cb(null);
     })
     .toss();
+  },
+  function(cb){
+    frisby
+    .create('Get list of nerdys friends')
+    .get(domain + '/users/' + user2.id + '/friends/page/1')
+    .expectStatus(200)
+    .afterJSON(function(user){
+      //nerdy has no friends yet as he has not friended anyone
+      expect(user.friends.length).toEqual(0);
+      expect(user.friends).toBeDefined();
+    })
+    .toss();
   }
   ],
   function(err, results){

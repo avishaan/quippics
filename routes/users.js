@@ -52,6 +52,34 @@ exports.search = function(req, res){
       }
     });
 };
+//get list of friends of the user
+exports.listFriends = function(req, res){
+  //if the page number was not passed, go ahead and default to page one for backward compatibility
+  req.params.page = req.params.page || 1;
+  var skip = perPage * (req.params.page - 1);
+  User.findOne({_id: req.params.uid})
+    .select('friends')
+    .populate({
+      path: 'friends', //connect the id in the friend array to the full user information
+      select: 'username thumbnail _id lastLogin', //but only return the username from the full user information
+      options: {
+        limit: perPage,
+        skip: skip
+      }
+    })
+    .exec(function(err, user){
+      if (!err){
+        if (user) {
+          res.send(200, user); //return the list of friends and their usernames
+        } else {
+          res.send(404, {clientMsg: "Couldn't find user"});
+        }
+      } else {
+        res.send(500, err);
+      }
+    });
+};
+
 //get list of users
 exports.listUsers = function(req, res){
   //TODO, show users with pending friend requests
@@ -66,7 +94,6 @@ exports.listUsers = function(req, res){
       } else {
         res.send(500, err);
       }
-
     });
 };
 //get profile of a user
