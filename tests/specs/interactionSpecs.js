@@ -1,6 +1,7 @@
 var frisby = require("frisby");
 var _ = require("underscore");
 var async = require("async");
+var superagent = require('superagent');
 
 var user1 = {
   username: 'popular123',
@@ -34,16 +35,36 @@ exports.spec = function(domain, callback){
     .toss();
   },
   function(cb){
-    frisby
-    .create("Register Nerd314")
-    .post(domain + "/register", user2)
-    .expectStatus(200)
-    .afterJSON(function(user){
-      console.log("Done registering Nerd");
-      user2.id = user._id;
-      cb(null);
-    })
-    .toss();
+    describe("Users!", function(){
+      it("Nerdy should be able to register with a picture", function(done){
+        superagent  //Register nerdy, a new user!
+        .post(domain + "/register")
+        .type('form')
+        .attach("image", "./tests/specs/images/defaultProfile.png") //this is based on where you are running jasmine-node from
+        .field("username", user2.username)
+        .field("password", user2.password)
+        .field("email", user2.email)
+        .end(function(err, res){
+          var user = res.body;
+          //make sure something was returned in the response body
+          expect(user).toBeDefined();
+          expect(user._id).toBeDefined();
+          user2.id = user._id;
+          //expect the username to be returned
+          expect(user.username).toBeDefined();
+          //an image should have been returned
+          //expect(user.image).toBeDefined();
+          //expect 200 response
+          expect(res.status).toEqual(200);
+          //save the user's userid for future reference
+          //user2._id = user._id;
+          //user should be able to change profile picture after registering
+          console.log('Done Registering Nerdy');
+          done();
+          cb(null);
+        });
+      });
+    });
   },
   function(cb){
     frisby
