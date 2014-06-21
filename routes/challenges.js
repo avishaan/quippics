@@ -127,6 +127,8 @@ exports.myChallenges = function(req, res){
             } else {
               challenges[index].inviteStatus = 'owner';
             }
+            //TODO calculate unscored submissions
+            challenges[index].unscored = 99;
           });
           res.send(200, challenges);
         } else {
