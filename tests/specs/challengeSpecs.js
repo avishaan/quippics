@@ -213,6 +213,72 @@ exports.spec = function(domain, callback){
         cb(null);
       })
       .toss();
+    },
+    function(cb){
+      //setup our challenge
+      challenge3 = {
+        title: 'Expired Challenge',
+        description: 'Challenge3 Description',
+        tags: ['tag1', 'tag2', 'tag3'],
+        owner: user2._id,
+        privacy: 'private',
+        expiration: new Date(2012, 3, 14),
+        invites: [user1._id, user3._id]
+      };
+      frisby
+      .create("Have nerdy create an expired challenge")
+      .post(domain + '/challenges', challenge3)
+      .expectStatus(200)
+      .afterJSON(function(challenge){
+        expect(challenge._id).toBeDefined();
+        challenge3._id = challenge._id;
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //expired challenge shouldn't show up at all in popular's myChallenges
+      frisby
+      .create("Get all the challenges for the popular user")
+      .get(domain + '/users/' + user1._id + '/challenges/page/1')
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(challenges){
+        expect(challenges).toBeDefined();
+        expect(challenges.length).toEqual(1);
+        expect(challenges[0].participants).toBeUndefined();
+        expect(challenges[0].inviteStatus).toEqual('owner'); //owner shows up as someone who is owner
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //but the expired challenge should show up in the archive of challenge
+      frisby
+      .create("Get all archived challenges for a user in this case popular")
+      .get(domain + '/users/' + user1._id + '/challenges/archive/page/1')
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(challenges){
+        expect(challenges).toBeDefined();
+        expect(challenges.length).toEqual(1);
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //the user with no expired challenges should have nothing in their archive
+      frisby
+      .create("Get all archived challenges for a user in this case nerdy")
+      .get(domain + '/users/' + user2._id + '/challenges/archive/page/1')
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(challenges){
+        expect(challenges).toBeDefined();
+        expect(challenges.length).toEqual(1);
+        cb(null);
+      })
+      .toss();
     }
 
   ],

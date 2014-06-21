@@ -51,6 +51,49 @@ exports.acceptChallenge = function(req, res){
       }
     });
 };
+//all archived challenges applicable to me
+exports.archivedChallenges = function(req, res){
+  //if the page number was not passed, go ahead and default to page one for backward compatibility
+  req.params.page = req.params.page || 1;
+  Challenge
+    .find({'participants.inviteStatus': {$ne: 'declined'}}, {participants: {$elemMatch: {user: req.params.uid}}})
+    .or([{owner: req.params.uid}, {'participants.user': req.params.uid}, {privacy: 'public'}])
+    //.where().ne({'participants.inviteStatus': 'declined'})
+    .select('_id owner title createdOn expiration invites')
+    //.slice('submissions', 1) //only get one submission for each challenge
+    //.populate({
+    //  path: 'submissions',
+    //  select: 'thumbnail'
+    //})
+    .skip(perPage * (req.params.page - 1))
+    .limit(perPage)
+    //TODO fix this date offset, this was a temp patch
+    .where('expiration').lt((new Date(Date.now())).setHours((new Date(Date.now())).getHours()-7))
+    //only return participant status of user performing this query
+    //.elemMatch('participants', { user: req.params.uid })
+    .sort({expiration: 'ascending'})
+    .lean()
+    .exec(function(err, challenges){
+      if (!err){
+        if (challenges && challenges.length){
+          //temp field for number of users invited
+          challenges.forEach(function(values, index){
+            challenges[index].numParticipants = challenges[index].invites.length;
+            //if (challenges[index].participants){
+            //  challenges[index].inviteStatus = challenges[index].participants[0].inviteStatus;
+            //} else {
+            //  challenges[index].inviteStatus = 'owner';
+            //}
+          });
+          res.send(200, challenges);
+        } else {
+          res.send(404, {clientMsg: "Couldn't find any challenges for this user"});
+        }
+      } else {
+        res.send(500, err);
+      }
+    });
+};
 //all current challenges applicable to me
 exports.myChallenges = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
