@@ -1,13 +1,64 @@
 var Challenge = require("../models/challenge.js");
 var perPage = 24; //challenges per page
 
+//decline an invite to a challenge
+exports.declineChallenge = function(req, res){
+  //find the challenge
+  Challenge
+  //only return the user in the participants
+    .findOne({_id: req.params.cid}, {participants: {$elemMatch: {user: req.body.user}}})
+    //.or([{owner: req.params.uid}, {privacy: 'public'}])
+    .select('_id owner title createdOn expiration participants invites')
+    .exec(function(err, challenge){
+      if (!err && challenge) {
+        //set the inviteStatus to declined 
+        //TODO need to use upsert here
+        challenge.participants[0].inviteStatus = 'declined';
+        challenge.save(function(err, updatedChallenge){
+          if (!err && updatedChallenge){
+            res.send(200);
+          } else {
+            res.send(500, err);
+          }
+        });
+      } else {
+        res.send(500, err);
+      }
+    });
+};
+//accept an invite to a challenge
+exports.acceptChallenge = function(req, res){
+  //find the challenge
+  Challenge
+  //only return the user in the participants
+    .findOne({_id: req.params.cid}, {participants: {$elemMatch: {user: req.body.user}}})
+    //.or([{owner: req.params.uid}, {privacy: 'public'}])
+    .select('_id owner title createdOn expiration participants invites')
+    .exec(function(err, challenge){
+      if (!err && challenge) {
+        //set the inviteStatus to accepted
+        //TODO need to use upsert here
+        challenge.participants[0].inviteStatus = 'accepted';
+        challenge.save(function(err, updatedChallenge){
+          if (!err && updatedChallenge){
+            res.send(200);
+          } else {
+            res.send(500, err);
+          }
+        });
+      } else {
+        res.send(500, err);
+      }
+    });
+};
 //all current challenges applicable to me
 exports.myChallenges = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   Challenge
-    .find({}, {participants: {$elemMatch: {user: req.params.uid}}})
-    //.or([{owner: req.params.uid}, {privacy: 'public'}])
+    .find({'participants.inviteStatus': {$ne: 'declined'}}, {participants: {$elemMatch: {user: req.params.uid}}})
+    .or([{owner: req.params.uid}, {'participants.user': req.params.uid}, {privacy: 'public'}])
+    //.where().ne({'participants.inviteStatus': 'declined'})
     .select('_id owner title createdOn expiration invites')
     //.slice('submissions', 1) //only get one submission for each challenge
     //.populate({
@@ -28,6 +79,11 @@ exports.myChallenges = function(req, res){
           //temp field for number of users invited
           challenges.forEach(function(values, index){
             challenges[index].numParticipants = challenges[index].invites.length;
+            if (challenges[index].participants){
+              challenges[index].inviteStatus = challenges[index].participants[0].inviteStatus;
+            } else {
+              challenges[index].inviteStatus = 'owner';
+            }
           });
           res.send(200, challenges);
         } else {
