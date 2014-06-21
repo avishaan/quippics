@@ -57,6 +57,7 @@ app.post('/api/v1/users', users.authenticate); //check password of user and retu
 app.put('/api/v1/users/:uid', users.update); //update an existing user
 //challenges routes
 app.post('/api/v1/challenges', challenges.create); //create a new challenge
+app.get('/api/v1/users/:uid/challenges/page/:page', challenges.myChallenges); //retrieve all current challenges applicable to me
 //misc routes
 app.delete('/api/v1/server', server.delete);
 

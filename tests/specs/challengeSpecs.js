@@ -12,6 +12,11 @@ var user2 = {
   password: '314',
   email: 'nerd314@gmail.com'
 };
+var user3 = {
+  username: 'user3',
+  password: 'password',
+  email: 'user3@gmail.com'
+};
 var challenge1 = {};
 exports.spec = function(domain, callback){
   jasmine.getEnv().defaultTimeoutInterval = 1000;
@@ -27,6 +32,21 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       .afterJSON(function(){
         console.log("Done deleting db");
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //create a test user
+      frisby
+      .create("Create A user who is very generic")
+      .post(domain + '/register', {
+        username: user3.username,
+        password: user3.password
+      })
+      .expectStatus(200)
+      .afterJSON(function(user){
+        user3._id = user._id;
         cb(null);
       })
       .toss();
@@ -67,9 +87,9 @@ exports.spec = function(domain, callback){
         description: 'Challenge1 Description',
         tags: ['tag1', 'tag2', 'tag3'],
         owner: user1._id,
-        privacy: 'public',
+        privacy: 'private',
         expiration: new Date(2015, 3, 14),
-        invites: [user2._id]
+        invites: [user2._id, user3._id]
       };
       frisby
       .create("Have that user create a challenge")
@@ -83,7 +103,25 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      cb(null);
+      frisby
+      .create("Get all the challenges for the nerdy user")
+      .get(domain + '/users/' + user2._id + '/challenges/page/1')
+      .expectStatus(200)
+      .inspectJSON()
+      .afterJSON(function(challenges){
+        expect(challenges).toBeDefined();
+        expect(challenges.length).toEqual(1);
+        expect(challenges[0].participants.length).toEqual(1);
+        expect(challenges[0].participants[0].inviteStatus).toEqual('invited'); //right now everyone is only invited
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //have nerdy accept the invitation
+    },
+    function(cb){
+      //now see how nerdy's list of challenges look
     }
   ],
   function(err, results){
