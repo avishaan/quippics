@@ -1,4 +1,5 @@
 var Challenge = require('../models/challenge.js');
+var Submission = require('../models/submission.js');
 var perPage = 24; //submission per page
 
 //Submit submission for specific challenge

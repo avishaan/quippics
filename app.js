@@ -7,6 +7,7 @@ var express = require('express');
 var routes = require('./routes');
 var users = require('./routes/users');
 var challenges = require('./routes/challenges');
+var submissions = require('./routes/submissions');
 var http = require('http');
 var path = require('path');
 var config = require('./conf/config.js');

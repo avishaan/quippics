@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 
-
 var challengeSchema = new mongoose.Schema({
   title: { type: String },
   description: { type: String },
@@ -17,7 +16,7 @@ var challengeSchema = new mongoose.Schema({
     }
   ],
   submissions: [
-    { type: mongooseSchema.Types.ObjectId, ref: 'Submission'}
+    { type: mongoose.Schema.Types.ObjectId, ref: 'Submission'}
   ],
   privacy: { type: String }
 });
