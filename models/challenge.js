@@ -16,6 +16,9 @@ var challengeSchema = new mongoose.Schema({
       inviteStatus: { type: String } //lets us know if the user has 'invited', 'accepted', 'declined' the challenge
     }
   ],
+  submissions: [
+    { type: mongooseSchema.Types.ObjectId, ref: 'Submission'}
+  ],
   privacy: { type: String }
 });
 

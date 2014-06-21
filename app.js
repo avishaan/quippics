@@ -61,6 +61,8 @@ app.get('/api/v1/users/:uid/challenges/archive/page/:page', challenges.archivedC
 app.get('/api/v1/users/:uid/challenges/page/:page', challenges.myChallenges); //retrieve all current challenges applicable to me
 app.post('/api/v1/challenges/:cid/accepts', challenges.acceptChallenge); //accept a challenge
 app.post('/api/v1/challenges/:cid/declines', challenges.declineChallenge); //decline a challenge
+//submission routes
+app.post('/api/v1/challenges/:cid/submissions', submissions.create); //create a new submission
 //misc routes
 app.delete('/api/v1/server', server.delete);
 
