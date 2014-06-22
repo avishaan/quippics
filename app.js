@@ -15,6 +15,9 @@ var config = require('./conf/config.js');
 var db = require('./dbs/db');
 var util = require('./routes/util');
 var server = require('./routes/server');
+var User = require('./models/user.js');
+var passport = require('passport'),
+  BasicStrategy = require('passport-http').BasicStrategy;
 
 var app = express();
 
@@ -29,10 +32,27 @@ app.set('view engine', 'ejs');
 app.use(express.favicon());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
+app.use(passport.initialize());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+//authentication strategy
+passport.use(new BasicStrategy(function(username, password, done){
+  //our authenticate method is for an instance, let's reuse our model authenticate here 
+  //create a user instance
+  var user = new User({
+    username: username,
+    password: password
+  });
+  //run it's authenticate method and check the response
+  user.authenticate(function(err, user){
+    if (!err && user){
+      return done(null, user);
+    } else {
+      return (null, false);
+    }
+  });
+}));
 
 // development only
 //console.log(config.env);
@@ -43,6 +63,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', routes.index);
 app.post('/api/v1/mirror', util.mirror); //route will mirror back to you whatever it sees, useful for debugging
 app.get('/users', users.list);
+app.get('/api/v1/server', passport.authenticate('basic', {session: false}), function(req, res){
+  res.send(200, {clientMsg: "We are up and running"});
+});
 
 //friends routes
 app.post('/api/v1/users/:uid/declinedRequests', users.declinedRequests);
@@ -72,7 +95,7 @@ app.get('/api/v1/challenges/:cid/submissions/:sid', submissions.readOne); //read
 //ballot routes
 app.post('/api/v1/challenges/:cid/submissions/:sid/ballots', ballots.create) //submit a ballot effectively casting your vote on a submission
 //misc routes
-app.delete('/api/v1/server', server.delete);
+app.delete('/api/v1/server', passport.authenticate('basic', {session: false}), server.delete);
 
 app.use(function(req, res){
   console.log("MISROUTE");
