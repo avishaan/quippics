@@ -36,6 +36,10 @@ app.use(passport.initialize());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
+//I am a terrible person for what I am about to do, but I need a quickfix
+//TODO, TODO TODO!!!!j fix this thing immediately before the universe explodes
+Buffer.prototype.toJSON = function(){ return this.toString("base64");};
+
 //authentication strategy
 passport.use(new BasicStrategy(function(username, password, done){
   //our authenticate method is for an instance, let's reuse our model authenticate here 
