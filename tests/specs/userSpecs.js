@@ -1,5 +1,4 @@
 var frisby = require('frisby');
-var domain = 'http://localhost:8081/api/v1';
 var async = require('async');
 var superagent = require('superagent');
 

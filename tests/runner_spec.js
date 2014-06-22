@@ -1,5 +1,5 @@
 //set this to your testing domain
-var domain = 'http://localhost:8081/api/v1';
+var domain = 'http://admin:admin@localhost:8081/api/v1';
 
 //var inviteSpec = require('./specs/inviteSpecs.js');
 //var epicSpec = require('./specs/epicSpecs.js');
