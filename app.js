@@ -49,10 +49,14 @@ passport.use(new BasicStrategy(function(username, password, done){
     if (!err && user){
       return done(null, user);
     } else {
-      return (null, false);
+      return done(null, false);
     }
   });
 }));
+//auth middleware function
+function apiAuth(){
+  return passport.authenticate('basic', {session: false});
+};
 
 // development only
 //console.log(config.env);
@@ -63,37 +67,37 @@ passport.use(new BasicStrategy(function(username, password, done){
 app.get('/', routes.index);
 app.post('/api/v1/mirror', util.mirror); //route will mirror back to you whatever it sees, useful for debugging
 app.get('/users', users.list);
-app.get('/api/v1/server', passport.authenticate('basic', {session: false}), function(req, res){
+app.get('/api/v1/server', apiAuth(), function(req, res){
   res.send(200, {clientMsg: "We are up and running"});
 });
 
 //friends routes
-app.post('/api/v1/users/:uid/declinedRequests', users.declinedRequests);
-app.get('/api/v1/users/:uid/friendRequests/page/:page', users.friendRequests);
-app.post('/api/v1/users/:uid/friendRequests', users.requestFriend); //make a friend request from :uid to user in body
-app.post('/api/v1/users/:uid/friends', users.acceptRequests); //add a friend
-app.get('/api/v1/users/:uid/friends/page/:page', users.listFriends); //get list of all friends
+app.post('/api/v1/users/:uid/declinedRequests',apiAuth(), users.declinedRequests);
+app.get('/api/v1/users/:uid/friendRequests/page/:page',apiAuth(), users.friendRequests);
+app.post('/api/v1/users/:uid/friendRequests',apiAuth(), users.requestFriend); //make a friend request from :uid to user in body
+app.post('/api/v1/users/:uid/friends',apiAuth(), users.acceptRequests); //add a friend
+app.get('/api/v1/users/:uid/friends/page/:page',apiAuth(), users.listFriends); //get list of all friends
 //user routes
-app.get('/api/v1/users/:uid/users/page/:page', users.listUsers); //get list of all users
-app.get('/api/v1/users/:uid', users.profile); //profile of specific user
-app.get('/api/v1/users/search/:search', users.search); //search for a specific user
-app.post('/api/v1/register', users.register); //register new user
-app.post('/api/v1/users', users.authenticate); //check password of user and return id
-app.put('/api/v1/users/:uid', users.update); //update an existing user
+app.get('/api/v1/users/:uid/users/page/:page',apiAuth(), users.listUsers); //get list of all users
+app.get('/api/v1/users/:uid',apiAuth(), users.profile); //profile of specific user
+app.get('/api/v1/users/search/:search',apiAuth(), users.search); //search for a specific user
+app.post('/api/v1/register',apiAuth(), users.register); //register new user
+app.post('/api/v1/users',apiAuth(), users.authenticate); //check password of user and return id
+app.put('/api/v1/users/:uid',apiAuth(), users.update); //update an existing user
 //challenges routes
-app.post('/api/v1/challenges', challenges.create); //create a new challenge
-app.get('/api/v1/users/:uid/challenges/archive/page/:page', challenges.archivedChallenges); //retrieve all challenges that are archived (typically just expired)
-app.get('/api/v1/users/:uid/challenges/page/:page', challenges.myChallenges); //retrieve all current challenges applicable to me
-app.post('/api/v1/challenges/:cid/accepts', challenges.acceptChallenge); //accept a challenge
-app.post('/api/v1/challenges/:cid/declines', challenges.declineChallenge); //decline a challenge
+app.post('/api/v1/challenges',apiAuth(), challenges.create); //create a new challenge
+app.get('/api/v1/users/:uid/challenges/archive/page/:page',apiAuth(), challenges.archivedChallenges); //retrieve all challenges that are archived (typically just expired)
+app.get('/api/v1/users/:uid/challenges/page/:page',apiAuth(), challenges.myChallenges); //retrieve all current challenges applicable to me
+app.post('/api/v1/challenges/:cid/accepts',apiAuth(), challenges.acceptChallenge); //accept a challenge
+app.post('/api/v1/challenges/:cid/declines',apiAuth(), challenges.declineChallenge); //decline a challenge
 //submission routes
-app.post('/api/v1/challenges/:cid/submissions', submissions.create); //create a new submission
-app.get('/api/v1/challenges/:cid/submissions/page/:page', submissions.readAll); //read all the submissions in a specific challenge
-app.get('/api/v1/challenges/:cid/submissions/user/:uid', submissions.userSubmission); //read the submission for a specific user
-app.get('/api/v1/challenges/:cid/submissions/top', submissions.readTop); //read the top submission in the challenge
-app.get('/api/v1/challenges/:cid/submissions/:sid', submissions.readOne); //read the submission specified
+app.post('/api/v1/challenges/:cid/submissions',apiAuth(), submissions.create); //create a new submission
+app.get('/api/v1/challenges/:cid/submissions/page/:page',apiAuth(), submissions.readAll); //read all the submissions in a specific challenge
+app.get('/api/v1/challenges/:cid/submissions/user/:uid',apiAuth(), submissions.userSubmission); //read the submission for a specific user
+app.get('/api/v1/challenges/:cid/submissions/top',apiAuth(), submissions.readTop); //read the top submission in the challenge
+app.get('/api/v1/challenges/:cid/submissions/:sid',apiAuth(), submissions.readOne); //read the submission specified
 //ballot routes
-app.post('/api/v1/challenges/:cid/submissions/:sid/ballots', ballots.create) //submit a ballot effectively casting your vote on a submission
+app.post('/api/v1/challenges/:cid/submissions/:sid/ballots',apiAuth(), ballots.create) //submit a ballot effectively casting your vote on a submission
 //misc routes
 app.delete('/api/v1/server', passport.authenticate('basic', {session: false}), server.delete);
 
