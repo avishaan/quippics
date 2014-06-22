@@ -2,6 +2,7 @@ var mongoose = require("mongoose");
 var fs = require('fs');
 var _ = require('underscore');
 var Challenge = require('../models/challenge.js');
+var Ballot = require('../models/ballot.js');
 
 var submissionSchema = new mongoose.Schema({
   createdOn: { type: Date, default: Date.now },
@@ -11,11 +12,29 @@ var submissionSchema = new mongoose.Schema({
   { data: Buffer, contentType: String },
   thumbnail:
   { data: Buffer, contentType: String },
-  //ballots: [Ballot.schema],
+  ballots: [Ballot.schema],
   //comments: [Comment.schema],
   score: { type: Number, default: 0}, //we calculate this in the pre save
   rank: { type: Number, default: 0}, //this should be calculated before every ballot added
   challenge: { type: mongoose.Schema.Types.ObjectId, ref: "Challenge"} //we save the challenge id of each submission for easy querying
+});
+
+//do the following before each save
+submissionSchema.pre('save', function(next){ //right before saving a new submission, make a new entry in the activity collection
+  this.wasNew = this.isNew; //we use this in the post 'save' hook since it has no way to let us know if a doc is/was new
+
+  if (typeof this.ballots !== "undefined" && this.isModified()){ //if there are ballots in the submission
+    //calculate the average score
+    var tot = 0;
+    this.ballots.forEach(function(element){
+      tot += element.score;
+    });
+    //calculate and store the score in the document //TODO, this should be done only when a ballot is added, not just a submission
+    this.score = tot/this.ballots.length;
+    next();
+  } else {
+    next();
+  }
 });
 
 //find challenge of a submission //TODO, we already store this, why the hell are we looking for it!?

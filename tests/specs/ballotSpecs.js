@@ -158,25 +158,27 @@ exports.spec = function(domain, callback){
         });
       });
     },
+    //DO VOTING HERE
     function(cb){
-      //get list of the submissions for a challenge
+      //vote on popular submission in the challenge
       frisby
-      .create("Get list of submissions for a challenge")
-      .get(domain + '/challenges/' + challenge1._id + '/submissions/page/1')
+      .create("Have nerdy vote on popular submission")
+      .post(domain + '/challenges/' + challenge1._id + '/submissions/' + submission2._id + '/ballots/', {
+        score: 10,
+        voter: user2._id
+      })
       .expectStatus(200)
-      .afterJSON(function(submissions){
-        expect(submissions.length).toEqual(2);
-        expect(submissions[0].thumbnail).toBeDefined();
-        expect(submissions[0]._id).toBeDefined();
+      .afterJSON(function(res){
+        expect(res).toBeDefined();
         cb(null);
       })
       .toss();
     },
     function(cb){
-      //get my submission in the challenge, aka nerdy's submission
+      //get my submission in the challenge, aka popular's submission
       frisby
-      .create("Get mine aka nerdy's submission in a challenge")
-      .get(domain + '/challenges/' + challenge1._id + '/submissions/user/' + user2._id)
+      .create("Get mine aka popular's submission in a challenge")
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/user/' + user1._id)
       .expectStatus(200)
       //.inspectJSON()
       .afterJSON(function(submission){
@@ -184,6 +186,9 @@ exports.spec = function(domain, callback){
         expect(submission.owner).toBeDefined();
         expect(submission.score).toBeDefined();
         expect(submission.rank).toBeDefined();
+        //we expect to be in first since nerdy is the only vote and he voted us a 10
+        expect(submission.rank).toEqual(1);
+        expect(submission.score).toEqual(10);
         cb(null);
       })
       .toss();
@@ -197,9 +202,12 @@ exports.spec = function(domain, callback){
       .afterJSON(function(submission){
         expect(submission.image).toBeDefined();
         expect(submission.owner).toBeDefined();
-        expect(submission.owner).toBeDefined();
+        //we know that popular user is in first so we expect his to be returned
+        expect(submission.owner).toEqual(user1.username);
         expect(submission.score).toBeDefined();
+        expect(submission.score).toEqual(10);
         expect(submission.rank).toBeDefined();
+        expect(submission.rank).toEqual(1);
         cb(null);
       })
       .toss();
