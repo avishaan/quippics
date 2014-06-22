@@ -109,10 +109,10 @@ exports.spec = function(domain, callback){
       .get(domain + '/users/' + user2.id + '/users/page/1')
       .expectStatus(200)
       .afterJSON(function(users){
-        expect(users.length).toEqual(2)
-        expect(users[0]._id).toBeDefined();
-        expect(users[0].username).toBeDefined();
-        expect(users[0].thumbnail).toBeDefined();
+        expect(users.length).toEqual(3); //remember there is an admin always watching
+        expect(users[1]._id).toBeDefined();
+        expect(users[1].username).toBeDefined();
+        expect(users[1].thumbnail).toBeDefined();
         cb(null);
       })
       .toss();
