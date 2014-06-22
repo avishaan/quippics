@@ -15,10 +15,17 @@ module.exports = function(){
         expressPort: 8081,
         env: 'dev' //should be env/prod
       };
+    case "test":
+    case "testing":
+      return {
+        dbURI : process.env.MONGODB_URI,
+        expressPort: process.env.PORT,
+        env: 'dev' //should be env/prod, can be changed to prod when we are comfy with prod environ
+      };
     case "prod":
     case "production":
       return {
-        dbURI : "mongodb://admin:admin@kahana.mongohq.com:10057/quippics-dev",
+        dbURI : process.env.MONGODB_URI,
         expressPort: process.env.PORT,
         env: 'dev' //should be env/prod, can be changed to prod when we are comfy with prod environ
       };
