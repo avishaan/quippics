@@ -5,6 +5,7 @@
 */
 var User = require("../models/user.js");
 var Challenge = require("../models/challenge.js");
+var Submission = require("../models/submission.js");
 var async = require('async');
 exports.delete = function (req, res){
   async.parallel([
@@ -27,6 +28,16 @@ exports.delete = function (req, res){
           cb(err);
         }
       });
+    },
+    function(cb){
+      //clear the submissions
+      Submission.remove({}, function(err, submissions){
+        if (!err){
+          cb(null, submissions);
+        } else {
+          cb(err);
+        }
+      });
     }
   ],
   function(err, results){
@@ -36,7 +47,8 @@ exports.delete = function (req, res){
       //send to the front end how many items were removed
       return res.send(200, {
         "users": results[0],
-        "challenges": results[1]
+        "challenges": results[1],
+        "submissions": results[2]
       });
     }
   });
