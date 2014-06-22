@@ -68,7 +68,7 @@ exports.archivedChallenges = function(req, res){
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
     //TODO fix this date offset, this was a temp patch
-    .where('expiration').lt((new Date(Date.now())).setHours((new Date(Date.now())).getHours()-7))
+    .where('expiration').lt(Date.now())
     //only return participant status of user performing this query
     //.elemMatch('participants', { user: req.params.uid })
     .sort({expiration: 'ascending'})
@@ -111,7 +111,7 @@ exports.myChallenges = function(req, res){
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
     //TODO fix this date offset, this was a temp patch
-    .where('expiration').gt((new Date(Date.now())).setHours((new Date(Date.now())).getHours()-7))
+    .where('expiration').gt(Date.now())
     //only return participant status of user performing this query
     //.elemMatch('participants', { user: req.params.uid })
     .sort({expiration: 'ascending'})
