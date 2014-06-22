@@ -186,6 +186,39 @@ exports.spec = function(domain, callback){
         cb(null);
       })
       .toss();
+    },
+    function(cb){
+      //get the top submission from a challenge
+      frisby
+      .create("Get a top submission from a set of challenges")
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/top')
+      .expectStatus(200)
+      .afterJSON(function(submission){
+        expect(submission.image).toBeDefined();
+        expect(submission.owner).toBeDefined();
+        expect(submission.owner).toBeDefined();
+        expect(submission.score).toBeDefined();
+        expect(submission.rank).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //read an existing submission
+      frisby
+      .create("Get an existing submission, let's get Nerdy's submission")
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id)
+      .expectStatus(200)
+      .afterJSON(function(submission){
+        expect(submission).toBeDefined();
+        expect(submission.challenge).toBeDefined();
+        expect(submission.rank).toBeDefined();
+        expect(submission.score).toBeDefined();
+        expect(submission.owner).toBeDefined();
+        expect(submission.image).toBeDefined();
+        cb(null);
+      })
+      .toss();
     }
   ],
   function(err, results){

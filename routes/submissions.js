@@ -1,7 +1,62 @@
 var Challenge = require('../models/challenge.js');
 var Submission = require('../models/submission.js');
+var _ = require('underscore');
 var perPage = 24; //submission per page
 
+//read a specific submission
+exports.readOne = function(req, res){
+  //find the submission
+  Submission.findOne({_id: req.params.sid}, function(err, submission){
+    if (!err){ //no error
+      if (submission){ //we found a submission by that id
+        res.send(200, submission);
+      } else { //found nothing by that id
+        res.send(404);
+      }
+    } else { //some sort of error encountered
+      res.send(500, err);
+    }
+  });
+};
+exports.readTop = function(req, res){
+  Challenge
+    .findOne({_id: req.params.cid})
+    .populate({
+      path: 'submissions',
+      select: '-ballots' //don't return the ballots, we don't need it
+    })
+    .exec(function(err, challenge){
+      if (!err){
+        //TODO could use aggregation framework for this instead
+        challenge.topSubmission(challenge, function(err, submission){ //return the top submission from the challenge
+          if (!err){
+            //find the submission again and populate the username this time
+            Submission
+              .findOne({_id: submission._id.toJSON()})
+              .select('-ballots')
+              .populate({
+                path: 'owner',
+                select: 'username'
+              })
+              .exec(function(err, submission){
+                submission = submission.toJSON();
+                //make the username the owner value instead of the complex object
+                submission.owner = submission.owner.username;
+                res.send(200, submission);
+              });
+          } else if (!submission){
+            res.send(404, err);
+          }
+          else {
+            res.send(500, err);
+          }
+        });
+      } else {
+        console.log(err);
+        res.send(500, err);
+      }
+    });
+}
 //read challenge of a specific user
 exports.userSubmission = function(req, res){
   //make sure we are looking at the right challenge, we only want to know for a specific challenge
