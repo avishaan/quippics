@@ -177,8 +177,12 @@ exports.spec = function(domain, callback){
       .create("Get mine aka nerdy's submission in a challenge")
       .get(domain + '/challenges/' + challenge1._id + '/submissions/user/' + user2._id)
       .expectStatus(200)
+      //.inspectJSON()
       .afterJSON(function(submission){
         expect(submission.thumbnail).toBeDefined();
+        expect(submission.owner).toBeDefined();
+        expect(submission.score).toBeDefined();
+        expect(submission.rank).toBeDefined();
         cb(null);
       })
       .toss();
