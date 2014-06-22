@@ -1,5 +1,6 @@
 var frisby = require('frisby');
 var async = require('async');
+var superagent = require('superagent');
 
 var user1 = {
   username: 'popular123',
@@ -19,6 +20,7 @@ var user3 = {
 };
 var challenge1 = {};
 var challenge2 = {};
+var submission1 = {}; //great submission
 exports.spec = function(domain, callback){
   jasmine.getEnv().defaultTimeoutInterval = 1000;
   async.series([
@@ -102,6 +104,56 @@ exports.spec = function(domain, callback){
         cb(null);
       })
       .toss();
+    },
+    function(cb){
+      //have nerdy submit into the challenge
+      describe("A Submission", function(){
+        it("can be submitted by a User (Nerdy) into challenge 1", function(){
+          superagent
+          .post(domain + "/challenges/" + challenge1._id + "/submissions")
+          .type('form')
+          .attach("image", "./tests/specs/images/onepixel.png")
+          .field("owner", user2._id)
+          .end(function(err, res){
+            var submission = res.body;
+            //make sure something was returned in the response body
+            expect(submission).toBeDefined();
+            //make sure the id in the response body was returned
+            expect(submission._id).toBeDefined();
+            //expect 200 response
+            expect(res.status).toEqual(200);
+            submission1._id = submission._id;
+            //console.log("here is the returned superagent submission");
+            //console.log(submission);
+            cb(null);
+          });
+        });
+      });
+    },
+    function(cb){
+      //have popular submit into a challenge
+      describe("A Submission", function(){
+        it("can be submitted by a User (Popular) into challenge 1", function(){
+          superagent
+          .post(domain + "/challenges/" + challenge1._id + "/submissions")
+          .type('form')
+          .attach("image", "./tests/specs/images/onepixel.png")
+          .field("owner", user1._id)
+          .end(function(err, res){
+            var submission = res.body;
+            //make sure something was returned in the response body
+            expect(submission).toBeDefined();
+            //make sure the id in the response body was returned
+            expect(submission._id).toBeDefined();
+            //expect 200 response
+            expect(res.status).toEqual(200);
+            submission2._id = submission._id;
+            //console.log("here is the returned superagent submission");
+            //console.log(submission);
+            cb(null);
+          });
+        });
+      });
     }
   ],
   function(err, results){

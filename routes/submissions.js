@@ -6,7 +6,7 @@ var perPage = 24; //submission per page
 exports.create = function(req, res){
   //see if the owner already has submitted a challenge here
   Challenge
-    .findOne({_id: req.params.id})
+    .findOne({_id: req.params.cid})
     .populate({
       path: 'submissions',
       select: 'owner',
@@ -19,7 +19,7 @@ exports.create = function(req, res){
       } else { //user hasn't submitted, go ahead and let him make his submission
         //find the challenge
         Challenge
-          .findOne({_id: req.params.id})
+          .findOne({_id: req.params.cid})
           .exec(function(err, challenge){
             if (!err){
               if (challenge){
