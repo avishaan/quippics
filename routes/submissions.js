@@ -2,6 +2,32 @@ var Challenge = require('../models/challenge.js');
 var Submission = require('../models/submission.js');
 var perPage = 24; //submission per page
 
+//Read all the challenge in a submission
+exports.readAll = function(req, res){
+  //if the page number was not passed, go ahead and default to page one for backward compatibility
+  req.params.page = req.params.page || 1;
+  //find all the submissions for a specific challenge
+  Challenge
+    .findById(req.params.cid)
+    .sort('createdOn')
+    .skip(perPage * (req.params.page - 1))
+    .limit(perPage)
+    .populate({
+      path: 'submissions',
+      select: '-image'
+    })
+    .exec(function(err, challenge){
+      if (!err){
+        if (challenge){
+          res.send(200, challenge.submissions);
+        } else {
+          res.send(404);
+        }
+      } else {
+        res.send(500, err);
+      }
+    });
+};
 //Submit submission for specific challenge
 exports.create = function(req, res){
   //see if the owner already has submitted a challenge here

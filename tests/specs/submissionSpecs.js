@@ -20,7 +20,8 @@ var user3 = {
 };
 var challenge1 = {};
 var challenge2 = {};
-var submission1 = {}; //great submission
+var submission1 = {}; //not widely accepted submission
+var submission2 = {}; //great submission
 exports.spec = function(domain, callback){
   jasmine.getEnv().defaultTimeoutInterval = 1000;
   async.series([
@@ -108,7 +109,7 @@ exports.spec = function(domain, callback){
     function(cb){
       //have nerdy submit into the challenge
       describe("A Submission", function(){
-        it("can be submitted by a User (Nerdy) into challenge 1", function(){
+        it("can be submitted by a User (Nerdy) into challenge 1", function(done){
           superagent
           .post(domain + "/challenges/" + challenge1._id + "/submissions")
           .type('form')
@@ -126,6 +127,7 @@ exports.spec = function(domain, callback){
             //console.log("here is the returned superagent submission");
             //console.log(submission);
             cb(null);
+            done();
           });
         });
       });
@@ -133,7 +135,7 @@ exports.spec = function(domain, callback){
     function(cb){
       //have popular submit into a challenge
       describe("A Submission", function(){
-        it("can be submitted by a User (Popular) into challenge 1", function(){
+        it("can be submitted by a User (Popular) into challenge 1", function(done){
           superagent
           .post(domain + "/challenges/" + challenge1._id + "/submissions")
           .type('form')
@@ -151,9 +153,23 @@ exports.spec = function(domain, callback){
             //console.log("here is the returned superagent submission");
             //console.log(submission);
             cb(null);
+            done();
           });
         });
       });
+    },
+    function(cb){
+      //get list of the submissions for a challenge
+      frisby
+      .create("Get list of submissions for a challenge")
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/page/1')
+      .expectStatus(200)
+      .afterJSON(function(submissions){
+        expect(submissions.length).toEqual(2);
+        expect(submissions[0].thumbnail).toBeDefined();
+        cb(null);
+      })
+      .toss();
     }
   ],
   function(err, results){

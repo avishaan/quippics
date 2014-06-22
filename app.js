@@ -64,6 +64,7 @@ app.post('/api/v1/challenges/:cid/accepts', challenges.acceptChallenge); //accep
 app.post('/api/v1/challenges/:cid/declines', challenges.declineChallenge); //decline a challenge
 //submission routes
 app.post('/api/v1/challenges/:cid/submissions', submissions.create); //create a new submission
+app.get('/api/v1/challenges/:cid/submissions/page/:page', submissions.readAll); //read all the submissions in a specific challenge
 //misc routes
 app.delete('/api/v1/server', server.delete);
 
