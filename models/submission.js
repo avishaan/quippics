@@ -1,5 +1,7 @@
 var mongoose = require("mongoose");
 var fs = require('fs');
+var _ = require('underscore');
+var Challenge = require('../models/challenge.js');
 
 var submissionSchema = new mongoose.Schema({
   createdOn: { type: Date, default: Date.now },
@@ -15,6 +17,47 @@ var submissionSchema = new mongoose.Schema({
   rank: { type: Number, default: 0}, //this should be calculated before every ballot added
   challenge: { type: mongoose.Schema.Types.ObjectId, ref: "Challenge"} //we save the challenge id of each submission for easy querying
 });
+
+//find challenge of a submission //TODO, we already store this, why the hell are we looking for it!?
+submissionSchema.methods.findChallenge = function(next){
+  //find the challenge this submissions exists in and pass that to the callback
+  Challenge
+    .findOne({submissions: this._id})
+    .populate({
+      path: 'submissions', //populate submissions in the challenge
+      select: 'score' //but only select submissions.score as that is all we will need
+    })
+    .select('submissions')//also only pass back challenge.submissions, we don't need the other challenge props
+    .exec(function(err, challenge){
+      if (!err && challenge){
+        next(null, challenge);
+      } else {
+        next(err, null);
+      }
+    });
+};
+
+//calculate the rank of an image
+submissionSchema.methods.getRank = function(next){
+  //we have a virtual that we use to get the rank of the submission
+  var submission = this; //keep this for when context changes
+  //find the challenge this submission belongs to so we can get all the submissions in the group
+  this.findChallenge(function(err, challenge){
+    if (!err && challenge){
+      //sort the submissions in this challenge ordering by 'score'
+      var sortedSubmissions = _.sortBy(challenge.toJSON().submissions, 'score'); //sort in ascending order by score
+      sortedSubmissions = _.chain(sortedSubmissions).reverse().value(); //reverse the order so it is in descending order
+      //now find where our submissions is in this sorted list
+      var index = _.chain(sortedSubmissions).map(function(obj){
+        return obj._id.toJSON(); //need to get the string version of the id
+      }).indexOf(submission.id).value(); //find the index of the submission in the ordered array that matches the submission we are looking for
+      //return that place in the ranking
+      next(index + 1); //add one to the index to get the rank
+    } else {
+      next(-1); //some sort of error to investigate
+    }
+  });
+};
 
 //help addImage to a submission
 submissionSchema.methods.addImage = function(req, next){

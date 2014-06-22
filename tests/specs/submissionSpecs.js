@@ -170,6 +170,18 @@ exports.spec = function(domain, callback){
         cb(null);
       })
       .toss();
+    },
+    function(cb){
+      //get my submission in the challenge, aka nerdy's submission
+      frisby
+      .create("Get mine aka nerdy's submission in a challenge")
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/user/' + user2._id)
+      .expectStatus(200)
+      .afterJSON(function(submission){
+        expect(submission.thumbnail).toBeDefined();
+        cb(null);
+      })
+      .toss();
     }
   ],
   function(err, results){

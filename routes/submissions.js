@@ -2,6 +2,32 @@ var Challenge = require('../models/challenge.js');
 var Submission = require('../models/submission.js');
 var perPage = 24; //submission per page
 
+//read challenge of a specific user
+exports.userSubmission = function(req, res){
+  //make sure we are looking at the right challenge, we only want to know for a specific challenge
+  Challenge
+    .findOne({_id: req.params.cid})
+    .populate('submissions')
+    .exec(function(err, challenge){
+      challenge.submissions.some(function(submission, index, submissions){
+        //go through all the submission owners until you find my submission
+        //return that and stop the some (vs forEach) by returning something true
+        if (submission.owner.toString() === req.params.uid){
+          submission.getRank(function(rank){
+            //need to make json object since we can't add rank directly to model
+            //TODO need to fix this
+            var submissionObj = submission.toJSON();
+            submissionObj.rank = rank;
+            return res.send(200, submissionObj);
+          });
+          return true; //this will stop 'some' from running otherwise eventually the elseif will still hit
+        } else if ((index + 1) === submissions.length){
+          //if we get to the end of the array and didn't find a match, send a not found back
+          res.send(404, {clientMsg: "This user doesn't have a submission here"});
+        }
+      });
+    });
+};
 //Read all the challenge in a submission
 exports.readAll = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
