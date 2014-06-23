@@ -1,10 +1,7 @@
 List of routes, what they do, and example responses.
 ====================================================
 
+But I have to admit, tasks lists are my favorite:
 
-Challenges
-
-[x]
-[x]List of challenges where the user is the owner, or invited to, or public GET /api/v1/users/:uid/challenges/page/:page#
-[x]developed
-[ ]tested
+- [x] This is a complete item
+- [ ] This is an incomplete item
