@@ -156,36 +156,73 @@ response:
   thumbnail: 'iVBORw0KGgoAAAANSUh', 
  }
 ```
-####GET /api/v1/challenges/:cid/submissions/:sid
+####GET /v1/challenges/:cid/submissions/:sid
 Read a specific submission
 
 Example Response
 ```
-
-
 {
-    "__v": 4,
-    "_id": "535071535897f4b97500000f",
-    "challenge": "535071535897f4b97500000b",
-    "rank": 1,
-    "owner": {username: 'userid'},
-    "score": 9,
-    "comments": [
-        {
-            "_id": "535071565897f4b97500001f",
-            "comment": "Another Comment",
-            "commenter": "535071535897f4b975000006",
-            "date": "2014-04-18T00:27:02.136Z"
-        }
-    ],
+  "__v": 4,
+  "_id": "535071535897f4b97500000f",
+  "challenge": "535071535897f4b97500000b",
+  "rank": 1,
+  "owner": {username: 'userid'},
+  "score": 9,
+  "comments": [
+    {
+      "_id": "535071565897f4b97500001f",
+      "comment": "Another Comment",
+      "commenter": "535071535897f4b975000006",
+      "date": "2014-04-18T00:27:02.136Z"
+    }
+  ],
+  "thumbnail": {
+      "data": "iVBORw0KGg",
+      "contentType": "image/png"
+  },
+  "image": {
+      "data": "iVBORw0KGgoAAAANSUhEUgAAA",
+      "contentType": "image/png"
+  },
+  "createdOn": "2014-04-18T00:26:59.816Z"
+}
+```
+####GET /v1/challenges/:cid/submission/page/:page
+Read all the submissions for a specific challenge
+
+Example Response
+```
+
+response: [ {
+
+
+    __v: 3,
+    _id: '52fc0d5713dd08084e0002ab',
+    owner: '52fc0d5613dd08084e0002a6',
     "thumbnail": {
-        "data": "iVBORw0KGg",
-        "contentType": "image/png"
-    },
-    "image": {
-        "data": "iVBORw0KGgoAAAANSUhEUgAAA",
-        "contentType": "image/png"
-    },
-    "createdOn": "2014-04-18T00:26:59.816Z"
+      "data": "iVBORw0KGgoAAAANSUhEUgAAACMAAAAjAQAAAAA2oCYII",
+      "contentType": "image/png"
+    }, {}, {}, {}]
+```
+
+Ballot
+----------------------
+Routes here are related to voting/scoring a submission
+
+#####POST /v1/challenges/:cid/submissions/:sid/ballots
+Create a new ballot; have a user vote on a submission
+
+Example Request
+```
+request.body: 
+{
+   score: 8,
+   voter: '52f548514f8c88b137000113',
+}
+response.body:
+{
+  owner: '52f548514f8c88b137000115',
+  _id: '52f548514f8c88b13700011c',
+  __v: 1 
 }
 ```
