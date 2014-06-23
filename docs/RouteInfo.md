@@ -83,3 +83,62 @@ response:
 Submission
 ----------------------
 Routes here are related to creating, reading submissions
+
+####POST '/api/v1/challenges/:cid/submissions'
+Create a new submission (multipart-form)
+
+Example Request
+```
+request.body:
+{ 
+  owner: '52f548514f8c88b137000113',                
+}
+request.files:
+{
+  images: 
+    { contentType: 'png',
+      data: '010100001111000100100…'
+      filename: 'name.png'
+    }
+}
+```
+Example Response
+```
+response:
+{
+ __v: 0,
+  owner: '52f548514f8c88b137000113',
+  _id: '52f548514f8c88b137000118',
+  ballots: [],
+  createdOn: '2014-02-07T20:55:45.282Z',
+  image: 
+  {
+     buffer: '0101011111…'
+  } 
+}
+```
+
+####GET '/v1/challenges/:cid/submissions/top'
+Read the top rated submission in a challenge; the one with the highest score
+
+Example Response
+```
+response.body: 
+{ 
+  __v: 3,
+  _id: '52fec7b4cb9c788b1b00001c',
+  owner: 'Jack1234',
+  score: 9,
+  createdOn: '2014-02-15T01:49:40.564Z',
+  image: '01021000sf0fs0er0ew0rqgfsgaffdasfeq'
+}
+```
+####GET '/v1/challenges/:cid/submissions/users/:uid/voted'
+Read all the submissions for a challenge where the user has voted
+
+Example Response
+```
+response: 
+[ '52fc2fd313dd08084e000396',
+  '52fc2fd313dd08084e00039a' ]
+```
