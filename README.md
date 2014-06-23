@@ -4,7 +4,7 @@ quippics
 ExpressJS, Mongoose, Node, Passport, Image voting ranking rating backend API.
 
 The following is a general backend method to upload, rank, score, and comment
-on submissions to a challenge. 
+on submissions to a challenge.
 
 ###Technology/Players
 - Express as the web application framework.
@@ -15,5 +15,5 @@ on submissions to a challenge.
 - MongoDB as the x-platform document based noSQL database.
 
 ###Documentation
-
+[Information on the routes](./docs/RouteInfo.md)
 ###Test Cases
