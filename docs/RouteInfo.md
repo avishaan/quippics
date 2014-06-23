@@ -142,3 +142,50 @@ response:
 [ '52fc2fd313dd08084e000396',
   '52fc2fd313dd08084e00039a' ]
 ```
+####GET '/v1/challenges/:cid/submissions/users/:uid'
+Read the specific user's submission in a challenge
+
+Example Response
+```
+response: 
+{ __v: 3,
+  _id: '52fc36b8014f010102000036',
+  owner: '52fc36b8014f010102000031',
+  rank: 1,
+  score: 9,
+  thumbnail: 'iVBORw0KGgoAAAANSUh', 
+ }
+```
+####GET /api/v1/challenges/:cid/submissions/:sid
+Read a specific submission
+
+Example Response
+```
+
+
+{
+    "__v": 4,
+    "_id": "535071535897f4b97500000f",
+    "challenge": "535071535897f4b97500000b",
+    "rank": 1,
+    "owner": {username: 'userid'},
+    "score": 9,
+    "comments": [
+        {
+            "_id": "535071565897f4b97500001f",
+            "comment": "Another Comment",
+            "commenter": "535071535897f4b975000006",
+            "date": "2014-04-18T00:27:02.136Z"
+        }
+    ],
+    "thumbnail": {
+        "data": "iVBORw0KGg",
+        "contentType": "image/png"
+    },
+    "image": {
+        "data": "iVBORw0KGgoAAAANSUhEUgAAA",
+        "contentType": "image/png"
+    },
+    "createdOn": "2014-04-18T00:26:59.816Z"
+}
+```
