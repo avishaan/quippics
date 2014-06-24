@@ -25,3 +25,4 @@ The domain is something like quippics-dev.herokuapp.com
 [Information on the routes](./docs/RouteInfo.md)
 Test Cases
 ----------------------
+Test cases are bundled into logical groups
