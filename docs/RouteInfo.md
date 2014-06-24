@@ -192,17 +192,14 @@ Read all the submissions for a specific challenge
 
 Example Response
 ```
-
 response: [ {
-
-
-    __v: 3,
-    _id: '52fc0d5713dd08084e0002ab',
-    owner: '52fc0d5613dd08084e0002a6',
-    "thumbnail": {
-      "data": "iVBORw0KGgoAAAANSUhEUgAAACMAAAAjAQAAAAA2oCYII",
-      "contentType": "image/png"
-    }, {}, {}, {}]
+  __v: 3,
+  _id: '52fc0d5713dd08084e0002ab',
+  owner: '52fc0d5613dd08084e0002a6',
+  "thumbnail": {
+    "data": "iVBORw0KGgoAAAANSUhEUgAAACMAAAAjAQAAAAA2oCYII",
+    "contentType": "image/png"
+  }, {}, {}, {}]
 ```
 
 Ballot
@@ -216,8 +213,8 @@ Example Request
 ```
 request.body: 
 {
-   score: 8,
-   voter: '52f548514f8c88b137000113',
+  score: 8,
+  voter: '52f548514f8c88b137000113',
 }
 response.body:
 {
@@ -226,3 +223,138 @@ response.body:
   __v: 1 
 }
 ```
+
+User
+----------------------
+Routes here are related to user registrations, login, etc
+
+####POST /v1/register
+Register a new user
+
+Example Request (multipart with images)
+```
+request.body:
+{
+  username: 'jack1985',
+  password: 'password',
+  email: 'jack1985@gmail.com'
+};
+```
+Example Response
+```
+request.files:
+{
+  images: 
+  {
+contentType: 'png',
+   data: '010100001111000100100…'
+   filename: 'name.png'
+  }
+}
+response:
+{ 
+  __v: 0,
+  username: 'jack1985',
+  _id: '52f548514f8c88b137000113'
+}
+```
+
+####PUT /v1/users/:uid
+Update an existing user
+
+Example Request (multipart with images)
+```
+{
+  username: 'jack1985',
+  password: 'password',
+  newPassword(opt): 'passwordupdate',
+  email(opt): 'jack1985@gmail.com'
+};
+```
+
+Example Response
+```
+request.files:
+{
+  images: 
+  {
+  contentType: 'png',
+     data: '010100001111000100100…'
+     filename: 'name.png'
+  }
+}
+response:
+{ 
+  __v: 0,
+  username: 'jack1985',
+  _id: '52f548514f8c88b137000113',
+}
+```
+
+####POST /v1/users
+Authenticate user and return userid
+
+Example Request
+```
+request: {
+  username: 'jill1987'
+  password: 'password'
+}
+```
+
+Example Response
+```
+response: {
+  _id: '52f548514f8c88b137000113'
+}
+```
+
+####GET /v1/users/:uid/users/page/:page
+Return the list of users
+
+Example Response
+```
+response: [{
+  username: 'jill1987',
+  friend: true,
+  _id: 52e73b76ca1c1f8202000008,
+  thumbnail: {data: 0ad0fdsaf0dadfdffea0} 
+},
+{
+  username: 'jack1985',
+  friend: false,
+  _id:52f548514f8c88b137000113,
+  thumbnail: {data: 0ad0fdsaf0dadfdffea0}
+}]
+```
+
+####GET /v1/users/search/:search
+Perform a text search of the usernames
+
+Example Response
+```
+response: [{
+username: 'jill1987'
+_id: 52e73b76ca1c1f8202000008,
+thumbnail: {data: 0ad0fdsaf0dadfdffea0} 
+},
+{
+username: 'jack1985',
+_id:52f548514f8c88b137000113,
+thumbnail: {data: 0ad0fdsaf0dadfdffea0}
+}]
+```
+
+####GET /v1/users/:uid
+Read profile information of a specific user
+
+Example Response
+```
+  username: 'jill1987',
+  _id: 52f548514f8c88b137000113,
+  email: 'jill1987@gmail.com',
+  thumbnail: {data: 0ad0fdsaf0dadfdffea0},
+  rank: 'Novice'
+}
+```
+
