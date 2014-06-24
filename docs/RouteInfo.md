@@ -471,6 +471,78 @@ Example Response for Ballots
       }
   },
   "date": "2014-05-10T22:43:06.033Z"
-    }
+}
 ```
 Example Response for Comments
+```
+
+{
+  "sentence": "jill19873069496 commented on, jack19853069496update's photo",
+  "modelType": "Comment",
+  "object": {
+      "_id": "536eab78486cbdb681000005",
+      "username": "jack19853069496update",
+      "thumbnail": {
+          "contentType": "image/png",
+          "data": "iVBORw0KGgoAAAANSUhEUgAAAFo      }
+  },
+  "subject": {
+      "_id": "536eab77486cbdb681000003",
+      "username": "jill19873069496",
+      "thumbnail": {
+          "data": "iVBORw0KGgoAAAANSUhEUgAAAFo
+          "contentType": "image/png"
+      }
+  },
+  "_id": "536eab7b486cbdb681000022",
+  "owner": null,
+  "references": {
+      "submission": {
+          "_id": "536eab79486cbdb681000010",
+          "owner": "536eab78486cbdb681000005"
+      },
+      "comment": "536eab7b486cbdb681000021",
+      "challenge": null
+  },
+  "date": "2014-05-10T22:43:07.237Z"
+}
+```
+Example Response for Submissions
+```
+
+{
+  "sentence": "jill19873069496 submitted into challenge, Frisby Challenge 1",
+  "subject": {
+      "_id": "536eab77486cbdb681000003",
+      "username": "jill19873069496",
+      "thumbnail": {
+          "data": "iVBORw0KGgoAAAANSUhEUgAAAFo,
+          "contentType": "image/png"
+      }
+  },
+  "owner": {
+      "_id": "536eab77486cbdb681000003",
+      "username": "jill19873069496",
+      "thumbnail": {
+          "data": "iVBORw0KGgoAAAANSUhEUgAAAF,
+          "contentType": "image/png"
+      }
+  },
+  "modelType": "Submission",
+  "_id": "536eab79486cbdb681000014",
+  "object": null,
+  "references": {
+      "challenge": {
+          "_id": "536eab78486cbdb68100000b",
+          "expiration": "2013-11-15T08:00:00.000Z",
+          "owner": "536eab78486cbdb681000005",
+          "title": "Frisby Challenge 1"
+      },
+      "submission": {
+          "_id": "536eab79486cbdb681000011",
+          "owner": "536eab77486cbdb681000003"
+      }
+  },
+  "date": "2014-05-10T22:43:05.245Z"
+}
+```
