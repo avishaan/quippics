@@ -6,8 +6,8 @@ Challenge
 Routes here are related to creating, reading challenges.
 
 ####Lists the challenges where the user is the owner, invited to, or public
+#####_Status: Developed, Partially Tested  
 GET '/v1/users/:uid/challenges/page/:page'
-_Status_:Developed, Partially Tested
 
 Example Response
 ```
@@ -25,8 +25,8 @@ response: [ { __v: 1,
 }, {}, {}, ]
 ```
 ####Create a new challenge
+#####_Status: Developed, Partially Tested 
 POST '/v1/challenges'
-_Status_:Developed, Partially Tested
 
 Example Request
 ```
@@ -58,12 +58,15 @@ Example Response
 ```
 
 ####Accept a challenge invite
+#####_Status: Developed, Tested
 POST '/v1/challenges/:cid/accepts'
 
 ####Decline a challenge invite
+#####_Status: Developed, Tested
 POST '/v1/challenges/:cid/declines'
 
 ####Get list of expired/archived challenges for a specific user
+#####_Status: Developed, Partially Tested
 GET '/v1/users/:uid/challenges/archive/page/:page'
 
 Example Response
@@ -87,6 +90,7 @@ Submission
 Routes here are related to creating, reading submissions
 
 ####Create a new submission (multipart-form)
+#####_Status: Developed, Tested
 POST '/v1/challenges/:cid/submissions'
 
 Example Request
@@ -121,6 +125,7 @@ response:
 ```
 
 ####Read the top rated submission in a challenge; the one with the highest score
+#####_Status: Developed, Tested
 GET '/v1/challenges/:cid/submissions/top'
 
 Example Response
@@ -136,6 +141,7 @@ response.body:
 }
 ```
 ####Read all the submissions for a challenge where the user has voted
+#####_Status: Not Developed, Not Tested
 GET '/v1/challenges/:cid/submissions/users/:uid/voted'
 
 Example Response
@@ -145,6 +151,7 @@ response:
   '52fc2fd313dd08084e00039a' ]
 ```
 ####Read the specific user's submission in a challenge
+#####_Status: Developed, Tested
 GET '/v1/challenges/:cid/submissions/users/:uid'
 
 Example Response
@@ -159,6 +166,7 @@ response:
  }
 ```
 ####Read a specific submission
+#####_Status: Developed, Tested
 GET /v1/challenges/:cid/submissions/:sid
 
 Example Response
@@ -190,6 +198,7 @@ Example Response
 }
 ```
 ####Read all the submissions for a specific challenge
+#####_Status: Developed, Tested
 GET /v1/challenges/:cid/submission/page/:page
 
 Example Response
@@ -209,6 +218,7 @@ Ballot
 Routes here are related to voting/scoring a submission
 
 ####Create a new ballot; have a user vote on a submission
+#####_Status: Developed, Tested
 POST /v1/challenges/:cid/submissions/:sid/ballots
 
 Example Request
@@ -231,6 +241,7 @@ User
 Routes here are related to user registrations, login, etc
 
 ####Register a new user
+#####_Status: Developed, Tested
 POST /v1/register
 
 Example Request (multipart with images)
@@ -262,6 +273,7 @@ response:
 ```
 
 ####Update an existing user
+#####_Status: Developed, Tested
 PUT /v1/users/:uid
 
 Example Request (multipart with images)
@@ -294,6 +306,7 @@ response:
 ```
 
 ####Authenticate user and return userid
+#####_Status: Developed, Tested
 POST /v1/users
 
 Example Request
@@ -312,6 +325,7 @@ response: {
 ```
 
 ####Return the list of users
+#####_Status: Developed, Tested
 GET /v1/users/:uid/users/page/:page
 
 Example Response
@@ -331,6 +345,7 @@ response: [{
 ```
 
 ####Perform a text search of the usernames
+#####_Status: Developed, Tested
 GET /v1/users/search/:search
 
 Example Response
@@ -348,6 +363,7 @@ thumbnail: {data: 0ad0fdsaf0dadfdffea0}
 ```
 
 ####Read profile information of a specific user
+#####_Status: Developed, Tested
 GET /v1/users/:uid
 
 Example Response
@@ -365,6 +381,7 @@ Friendship
 Routes that deal with requesting, adding, declining friends
 
 ####Get list of friends for a specific user id (:uid) at a specific page#(:page)
+#####_Status: Developed, Tested
 GET '/v1/users/:uid/friends/page/:page'
 
 Example Response
@@ -385,6 +402,7 @@ response:{
 ```
 
 ####Accept a pending friend request
+#####_Status: Developed, Tested
 POST /v1/users/:uid/friends
 
 Example Request
@@ -395,6 +413,7 @@ request.body: {
 ```
 
 ####Decline a pending friend request
+#####_Status: Developed, Tested
 POST /v1/users/:uid/declinedRequests
 
 Example Request
@@ -405,6 +424,7 @@ request.body: {
 ```
 
 ####Send a new friend request to a user who is not your friend
+#####_Status: Developed, Tested
 POST /v1/users/:uid/friendRequests
 
 Example Request
@@ -415,6 +435,7 @@ request.body: {
 ```
 
 ####Read list of friend requests
+#####_Status: Developed, Tested
 GET /v1/users/:uid/friendRequests/page/:page
 
 Example Response
@@ -437,6 +458,7 @@ Activity
 Routes here are related to viewing activities
 
 ####List activities for all of the user's friends
+#####_Status: Not Developed, Not Tested
 GET v1/activities/users/:uid/friends/page/:page 
 GET v1/users/:uid/friends/activities/page/:page
 
@@ -579,6 +601,7 @@ Example Response for Challenge
 ```
 
 ####List activities specific to the user
+#####_Status: Not Developed, Not Tested
 GET v1/activities/users/:uid/page/:page
 GET v1/users/:uid/activities/page/:page
 
@@ -591,6 +614,7 @@ Comment
 Routes related to reading and creating comments
 
 ####Create a comment on a specified submission
+#####_Status: Not Developed, Not Tested
 POST /v1/challenges/:cid/submissions/:sid/comments
 
 Example Request
@@ -617,6 +641,7 @@ response.body: { __v: 1,
 ```
 
 ####Read all the comments for a specific submission
+#####_Status: Not Developed, Not Tested
 GET /v1/challenges/:cid/submissions/:sid/comments/page/:page
 
 Example Response
@@ -644,5 +669,5 @@ response.body: [ {
 ```
 
 ####Read one of the comments for a specific submission
-#####_Status: Not Implemented
+#####_Status: Not Developed, Not Tested
 GET /v1/challenges/:cid/submissions/:sid/comments/:comid
