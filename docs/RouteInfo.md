@@ -575,3 +575,11 @@ Example Response for Challenge
   "date": "2014-05-10T22:43:04.923Z"
 },
 ```
+
+####List activities specific to the user
+GET v1/activities/users/:uid/page/:page
+GET v1/users/:uid/activities/page/:page
+
+Example Response
+(same as above for activities of all the user's friends)
+[Linky](list-activities-for-all-of-the-user's-friends)
