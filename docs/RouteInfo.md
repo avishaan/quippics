@@ -207,7 +207,7 @@ Ballot
 Routes here are related to voting/scoring a submission
 
 ####Create a new ballot; have a user vote on a submission
-#POST /v1/challenges/:cid/submissions/:sid/ballots
+POST /v1/challenges/:cid/submissions/:sid/ballots
 
 Example Request
 ```
