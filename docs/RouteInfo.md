@@ -7,6 +7,7 @@ Routes here are related to creating, reading challenges.
 
 ####Lists the challenges where the user is the owner, invited to, or public
 GET '/v1/users/:uid/challenges/page/:page'
+_Status_:Developed, Partially Tested
 
 Example Response
 ```
@@ -25,6 +26,7 @@ response: [ { __v: 1,
 ```
 ####Create a new challenge
 POST '/v1/challenges'
+_Status_:Developed, Partially Tested
 
 Example Request
 ```
@@ -583,3 +585,33 @@ GET v1/users/:uid/activities/page/:page
 Example Response
 (same as above for activities of all the user's friends)
 [Linky](list-activities-for-all-of-the-user's-friends)
+
+Comment
+----------------------
+Routes related to reading and creating comments
+
+####Create a comment on a specified submission
+POST v1/challenges/:cid/submissions/:sid/comments
+
+Example Request
+```
+request.body: {
+  commenter: '5306920683c324ce4b000004',
+  comment: 'This is a comment'
+}
+```
+
+Example Response
+```
+response.body: { __v: 1,
+  _id: '5306920683c324ce4b00000b',
+  owner: '5306920683c324ce4b000003',
+  comments: 
+  [{ 
+    _id: '5306920683c324ce4b000019',
+    comment: 'This is a comment',
+    commenter: '5306920683c324ce4b000004',
+    date: '2014-02-20T23:38:46.824Z' } 
+  ]}
+}
+```
