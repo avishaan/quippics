@@ -22,6 +22,15 @@ var challengeSchema = new mongoose.Schema({
   privacy: { type: String }
 });
 
+//pre hook before saving a challenge
+challengeSchema.pre('save', function(next){
+  if (this.isNew && this.isModified()){
+    var Activity = require("../models/activity.js");
+    Activity.createChallenge(this);
+  }
+  next();
+});
+
 //find the top submission in a challenge
 challengeSchema.methods.topSubmission = function(challenge, cb){
   //find the top submission in the array of submission from the challenge
