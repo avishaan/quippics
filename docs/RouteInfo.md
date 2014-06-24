@@ -85,7 +85,7 @@ Submission
 Routes here are related to creating, reading submissions
 
 ####Create a new submission (multipart-form)
-POST '/api/v1/challenges/:cid/submissions'
+POST '/v1/challenges/:cid/submissions'
 
 Example Request
 ```
