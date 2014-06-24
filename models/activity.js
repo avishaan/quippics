@@ -24,24 +24,31 @@ var activitySchema = new mongoose.Schema({
   }
 });
 
-activitySchema.statics.populateSentences = function(activities, cb){
-  activities.forEach(function(element, index, array){
-    switch (element.modelType) {
+//create a sentence based on the activity on save
+activitySchema.pre('save', function(next){
+  if (this.isNew){
+    //create a sentence for the FE to use before saving
+
+  }
+  next(); //regardless proceed next
+});
+
+activitySchema.methods.populateSentence = function(next){
+    switch (this.modelType) {
       case ("Submission"):
-        activities[index].sentence = element.subject.username + " submitted into challenge, " + element.references.challenge.title;
+        this.sentence = this.subject.username + " submitted into challenge, " + this.references.challenge.title;
         break;
       case ("Challenge"):
-        activities[index].sentence = element.subject.username + " created a challenge, " + element.references.challenge.title;
+        this.sentence = this.subject.username + " created a challenge, " + this.references.challenge.title;
         break;
       case ("Comment"):
-        activities[index].sentence = element.subject.username + " commented on, " + element.object.username + "'s photo";
+        this.sentence = this.subject.username + " commented on, " + this.object.username + "'s photo";
         break;
       case ("Ballot"):
-        activities[index].sentence = element.subject.username + " voted on, " + element.object.username + "'s photo in, " + element.references.challenge.title + " a " + element.score + "/10";
+        this.sentence = this.subject.username + " voted on, " + this.object.username + "'s photo in, " + this.references.challenge.title + " a " + this.score + "/10";
         break;
     }
-  });
-  cb(null, activities);
+  next(null); //we always go the next step since there is no point not to
 };
 
 activitySchema.statics.createSubmission = function (submission){
