@@ -473,9 +473,9 @@ Example Response for Ballots
   "date": "2014-05-10T22:43:06.033Z"
 }
 ```
+
 Example Response for Comments
 ```
-
 {
   "sentence": "jill19873069496 commented on, jack19853069496update's photo",
   "modelType": "Comment",
@@ -507,9 +507,9 @@ Example Response for Comments
   "date": "2014-05-10T22:43:07.237Z"
 }
 ```
+
 Example Response for Submissions
 ```
-
 {
   "sentence": "jill19873069496 submitted into challenge, Frisby Challenge 1",
   "subject": {
@@ -545,4 +545,33 @@ Example Response for Submissions
   },
   "date": "2014-05-10T22:43:05.245Z"
 }
+```
+
+Example Response for Challenge
+```
+{
+  "sentence": "jack19853069496update created a challenge, Frisby Challenge 1",
+  "subject": {
+      "_id": "536eab78486cbdb681000005",
+      "username": "jack19853069496update",
+      "thumbnail": {
+          "contentType": "image/png",
+          "data": "iVBORw0KGgoAAAANSUhEUgAAAFoAAABaAQAAAAAQ03yvAAAABGdBTUEAAYagMeiWXwAAAAJiS0dEAAHdihOkAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAEklEQVQ4y2NgGAWjYBSMgsECAASSAAEg+JsVAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE0LTA1LTEwVDE1OjQzOjA0LTA3OjAw+/vvZQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxNC0wNS0xMFQxNTo0MzowNC0wNzowMIqmV9kAAAAASUVORK5CYII="
+      }
+  },
+  "modelType": "Challenge",
+  "_id": "536eab78486cbdb68100000c",
+  "object": null,
+  "owner": null,
+  "references": {
+      "challenge": {
+          "_id": "536eab78486cbdb68100000b",
+          "expiration": "2013-11-15T08:00:00.000Z",
+          "owner": "536eab78486cbdb681000005",
+          "title": "Frisby Challenge 1"
+      },
+      "submission": null
+  },
+  "date": "2014-05-10T22:43:04.923Z"
+},
 ```
