@@ -358,3 +358,75 @@ Example Response
 }
 ```
 
+Friendship
+----------------------
+Routes that deal with requesting, adding, declining friends
+
+####GET '/v1/users/:uid/friends/page/:page'
+Get list of friends for a specific user id (:uid) at a specific page#(:page)
+
+Example Response
+```
+response:{
+   __v: 1,
+   _id: '5351fc21740f0fc97f000003',
+   friends:
+    [ { _id: '5351fc22740f0fc97f000005',
+      username: 'jack1985739000update',
+      thumbnail:
+       { contentType: 'image/png',
+         data: 'iVBORw0KGgoAAAANSUhEUgAAAFoAAABaAQAAAAAQ03yvAAI=' 
+       } 
+      }, {}, {} 
+    ],
+  }
+```
+
+####POST /v1/users/:uid/friends
+Accept a pending friend request
+
+Example Request
+```
+request.body: {
+  user: 52e73b76ca1c1f8202000008
+}
+```
+
+####POST /v1/users/:uid/declinedRequests
+Decline a pending friend request
+
+Example Request
+```
+request.body: {
+  user: 52e73b76ca1c1f8202000008
+}
+```
+
+####POST /v1/users/:uid/friendRequests
+Send a new friend request to a user who is not your friend
+
+Example Request
+```
+request.body: {
+  user: 52e73b76ca1c1f8202000008
+}
+```
+
+####GET /v1/users/:uid/friendRequests/page/:page
+Read list of friend requests
+
+Example Response
+```
+response:{
+ __v: 1,
+  _id: '5351fc21740f0fc97f000003',
+  requests:
+   [ { _id: '5351fc22740f0fc97f000005',
+       username: 'jack1985739000update',
+       thumbnail:
+       {  contentType: 'image/png',
+          data: 'iVBORw0KGgoAAAANSUhEUgAAAFoAAABaAQAAAAAI=' 
+       } 
+    }],
+}
+
