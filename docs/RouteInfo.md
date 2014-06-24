@@ -5,8 +5,8 @@ Challenge
 ----------------------
 Routes here are related to creating, reading challenges.
 
-####GET '/v1/users/:uid/challenges/page/:page'
-Lists the challenges where the user is the owner, invited to, or public
+####Lists the challenges where the user is the owner, invited to, or public
+GET '/v1/users/:uid/challenges/page/:page'
 
 Example Response
 ```
@@ -23,8 +23,8 @@ response: [ { __v: 1,
     inviteStatus: 'invited'
 }, {}, {}, ]
 ```
-####POST '/v1/challenges'
-Create a new challenge
+####Create a new challenge
+POST '/v1/challenges'
 
 Example Request
 ```
@@ -55,14 +55,14 @@ Example Response
 }
 ```
 
-####POST '/v1/challenges/:cid/accepts'
-Accept a challenge invite
+####Accept a challenge invite
+POST '/v1/challenges/:cid/accepts'
 
-####POST '/v1/challenges/:cid/declines'
-Decline a challenge invite
+####Decline a challenge invite
+POST '/v1/challenges/:cid/declines'
 
-####GET '/v1/users/:uid/challenges/archive/page/:page'
-Get list of expired/archived challenges for a specific user
+####Get list of expired/archived challenges for a specific user
+GET '/v1/users/:uid/challenges/archive/page/:page'
 
 Example Response
 ```
@@ -84,8 +84,8 @@ Submission
 ----------------------
 Routes here are related to creating, reading submissions
 
-####POST '/api/v1/challenges/:cid/submissions'
-Create a new submission (multipart-form)
+####Create a new submission (multipart-form)
+POST '/api/v1/challenges/:cid/submissions'
 
 Example Request
 ```
@@ -118,8 +118,8 @@ response:
 }
 ```
 
-####GET '/v1/challenges/:cid/submissions/top'
-Read the top rated submission in a challenge; the one with the highest score
+####Read the top rated submission in a challenge; the one with the highest score
+GET '/v1/challenges/:cid/submissions/top'
 
 Example Response
 ```
@@ -133,8 +133,8 @@ response.body:
   image: '01021000sf0fs0er0ew0rqgfsgaffdasfeq'
 }
 ```
-####GET '/v1/challenges/:cid/submissions/users/:uid/voted'
-Read all the submissions for a challenge where the user has voted
+####Read all the submissions for a challenge where the user has voted
+GET '/v1/challenges/:cid/submissions/users/:uid/voted'
 
 Example Response
 ```
@@ -142,8 +142,8 @@ response:
 [ '52fc2fd313dd08084e000396',
   '52fc2fd313dd08084e00039a' ]
 ```
-####GET '/v1/challenges/:cid/submissions/users/:uid'
-Read the specific user's submission in a challenge
+####Read the specific user's submission in a challenge
+GET '/v1/challenges/:cid/submissions/users/:uid'
 
 Example Response
 ```
@@ -156,8 +156,8 @@ response:
   thumbnail: 'iVBORw0KGgoAAAANSUh', 
  }
 ```
-####GET /v1/challenges/:cid/submissions/:sid
-Read a specific submission
+####Read a specific submission
+GET /v1/challenges/:cid/submissions/:sid
 
 Example Response
 ```
@@ -187,8 +187,8 @@ Example Response
   "createdOn": "2014-04-18T00:26:59.816Z"
 }
 ```
-####GET /v1/challenges/:cid/submission/page/:page
-Read all the submissions for a specific challenge
+####Read all the submissions for a specific challenge
+GET /v1/challenges/:cid/submission/page/:page
 
 Example Response
 ```
@@ -206,8 +206,8 @@ Ballot
 ----------------------
 Routes here are related to voting/scoring a submission
 
-#####POST /v1/challenges/:cid/submissions/:sid/ballots
-Create a new ballot; have a user vote on a submission
+####Create a new ballot; have a user vote on a submission
+#POST /v1/challenges/:cid/submissions/:sid/ballots
 
 Example Request
 ```
@@ -228,8 +228,8 @@ User
 ----------------------
 Routes here are related to user registrations, login, etc
 
-####POST /v1/register
-Register a new user
+####Register a new user
+POST /v1/register
 
 Example Request (multipart with images)
 ```
@@ -259,8 +259,8 @@ response:
 }
 ```
 
-####PUT /v1/users/:uid
-Update an existing user
+####Update an existing user
+PUT /v1/users/:uid
 
 Example Request (multipart with images)
 ```
@@ -291,8 +291,8 @@ response:
 }
 ```
 
-####POST /v1/users
-Authenticate user and return userid
+####Authenticate user and return userid
+POST /v1/users
 
 Example Request
 ```
@@ -309,8 +309,8 @@ response: {
 }
 ```
 
-####GET /v1/users/:uid/users/page/:page
-Return the list of users
+####Return the list of users
+GET /v1/users/:uid/users/page/:page
 
 Example Response
 ```
@@ -328,8 +328,8 @@ response: [{
 }]
 ```
 
-####GET /v1/users/search/:search
-Perform a text search of the usernames
+####Perform a text search of the usernames
+GET /v1/users/search/:search
 
 Example Response
 ```
@@ -345,8 +345,8 @@ thumbnail: {data: 0ad0fdsaf0dadfdffea0}
 }]
 ```
 
-####GET /v1/users/:uid
-Read profile information of a specific user
+####Read profile information of a specific user
+GET /v1/users/:uid
 
 Example Response
 ```
@@ -362,8 +362,8 @@ Friendship
 ----------------------
 Routes that deal with requesting, adding, declining friends
 
-####GET '/v1/users/:uid/friends/page/:page'
-Get list of friends for a specific user id (:uid) at a specific page#(:page)
+####Get list of friends for a specific user id (:uid) at a specific page#(:page)
+GET '/v1/users/:uid/friends/page/:page'
 
 Example Response
 ```
@@ -382,8 +382,8 @@ response:{
   }
 ```
 
-####POST /v1/users/:uid/friends
-Accept a pending friend request
+####Accept a pending friend request
+POST /v1/users/:uid/friends
 
 Example Request
 ```
@@ -392,8 +392,8 @@ request.body: {
 }
 ```
 
-####POST /v1/users/:uid/declinedRequests
-Decline a pending friend request
+####Decline a pending friend request
+POST /v1/users/:uid/declinedRequests
 
 Example Request
 ```
@@ -402,8 +402,8 @@ request.body: {
 }
 ```
 
-####POST /v1/users/:uid/friendRequests
-Send a new friend request to a user who is not your friend
+####Send a new friend request to a user who is not your friend
+POST /v1/users/:uid/friendRequests
 
 Example Request
 ```
@@ -412,8 +412,8 @@ request.body: {
 }
 ```
 
-####GET /v1/users/:uid/friendRequests/page/:page
-Read list of friend requests
+####Read list of friend requests
+GET /v1/users/:uid/friendRequests/page/:page
 
 Example Response
 ```
