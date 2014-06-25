@@ -228,6 +228,18 @@ exports.spec = function(domain, callback){
         cb(null);
       })
       .toss();
+    },
+    function(cb){
+      //get the activities for a specific user, popular user since it's his challenge
+      frisby
+      .create("Get all the users activities")
+      .get(domain + '/users/' + user1._id + '/activities/page/1')
+      .expectStatus(200)
+      .inspectJSON()
+      .afterJSON(function(submission){
+        cb(null);
+      })
+      .toss();
     }
   ],
   function(err, results){
