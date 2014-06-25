@@ -41,18 +41,17 @@ activitySchema.virtual('sentence').get(function(){
     switch (this.modelType) {
       case ("Submission"):
         return(this.subject.username + " submitted into challenge, " + this.references.challenge.title);
-        break;
+        //break;
       case ("Challenge"):
         return(this.subject.username + " created a challenge, " + this.references.challenge.title);
-        break;
+        //break;
       case ("Comment"):
         return(this.subject.username + " commented on, " + this.object.username + "'s photo");
-        break;
+        //break;
       case ("Ballot"):
         return(this.subject.username + " voted on, " + this.object.username + "'s photo in, " + this.references.challenge.title + " a " + this.score + "/10");
-        break;
+        //break;
     }
-   //we always go the next step since there is no point not to
 });
 
 activitySchema.statics.createSubmission = function (submission){
