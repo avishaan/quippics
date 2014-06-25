@@ -11,7 +11,7 @@ var activitySchema = new mongoose.Schema({
   subject: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},//subject in the sentence
   object: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},//object in sentence
   title: String,
-  sentence: String, //sentence to help the frontend
+  //sentence: String, //sentence to help the frontend
   score: Number,
   modelType: String,
   reference: {type: mongoose.Schema.Types.ObjectId}, //we purposely didn't give it a reference, we will do that at query time
@@ -33,7 +33,7 @@ var activitySchema = new mongoose.Schema({
 //  next(); //regardless proceed next
 //});
 
-activitySchema.virtual('sentence').get(function(next){
+activitySchema.virtual('sentence').get(function(){
     switch (this.modelType) {
       case ("Submission"):
         this.sentence = this.subject.username + " submitted into challenge, " + this.references.challenge.title;

@@ -43,6 +43,12 @@ async.series([
     ballotSpec.spec(domain, function(){
       cb(null);
     });
+  },
+  function(cb){
+    console.log("Calling Activity Specs");
+    activitySpec.spec(domain, function(){
+      cb(null);
+    });
   }
 ],
   function(err, results){

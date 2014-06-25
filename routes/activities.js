@@ -2,7 +2,7 @@ var perPage = 24; //submissions per page
 var Activity = require('../models/activity.js');
 
 //read activities from a user
-export.myActivities = function(req, res){
+exports.myActivities = function(req, res){
   //find the activities related to a user (where the subject or object match the user)
   Activity
   .find()
