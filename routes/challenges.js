@@ -160,7 +160,7 @@ exports.create = function(req, res){
   newChallenge.save(function(err, challenge){
     if (!err){
       //assuming a good save, add a proper activity
-      require("../models/activity.js").createChallenge(challenge);
+      require("../models/activity.js").create(challenge);
       res.send(200, challenge);
     } else {
       res.send(500, err);

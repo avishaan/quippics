@@ -54,6 +54,23 @@ activitySchema.virtual('sentence').get(function(){
     }
 });
 
+//general function for creating an activity, it uses the functions below to create
+//the specific type of activity
+activitySchema.statics.create = function(model){
+  var modelName = model.constructor.modelName;
+  //make a map between the modelName and the function that should be called
+  var fncMap = {
+    Challenge: 'createChallenge',
+    Submission: 'createSubmission',
+    Comment: 'createComment',
+    Ballot: 'createBallot'
+  };
+  //only call the function if the mapping exists, otherwise run along
+  if (fncMap[modelName]){
+    this["create"+modelName](model);
+  }
+};
+
 activitySchema.statics.createSubmission = function (submission){
   var activity = new this();
   activity.modelType = 'Submission';
