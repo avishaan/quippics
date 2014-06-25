@@ -9,6 +9,7 @@ var interactionSpec = require('./specs/interactionSpecs.js');
 var challengeSpec = require('./specs/challengeSpecs.js');
 var submissionSpec = require('./specs/submissionSpecs.js');
 var ballotSpec = require('./specs/ballotSpecs.js');
+var activitySpec = require('./specs/activitySpecs.js');
 //var superSpec = require('./specs/superTest.js');
 var async = require('async');
 
