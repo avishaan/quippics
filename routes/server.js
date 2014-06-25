@@ -6,6 +6,7 @@
 var User = require("../models/user.js");
 var Challenge = require("../models/challenge.js");
 var Submission = require("../models/submission.js");
+var Activity = require("../models/activity.js");
 var async = require('async');
 exports.delete = function (req, res){
   async.parallel([
@@ -38,6 +39,16 @@ exports.delete = function (req, res){
           cb(err);
         }
       });
+    },
+    function(cb){
+      //clear the activities
+      Activity.remove({}, function(err, activities){
+        if (!err){
+          cb(null, activities);
+        } else {
+          cb(err);
+        }
+      });
     }
   ],
   function(err, results){
@@ -52,7 +63,8 @@ exports.delete = function (req, res){
       return res.send(200, {
         "users": results[0],
         "challenges": results[1],
-        "submissions": results[2]
+        "submissions": results[2],
+        "activities": results[3]
       });
     }
   });
