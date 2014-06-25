@@ -22,6 +22,10 @@ var activitySchema = new mongoose.Schema({
     submission: {type: mongoose.Schema.Types.ObjectId, ref: 'Submission'},
     ballot: {type: mongoose.Schema.Types.ObjectId, ref: 'Ballot'}
   }
+},
+{
+  toObject: {virtuals: true},
+  toJSON: {virtuals: true}
 });
 
 ////create a sentence based on the activity on save
@@ -36,16 +40,16 @@ var activitySchema = new mongoose.Schema({
 activitySchema.virtual('sentence').get(function(){
     switch (this.modelType) {
       case ("Submission"):
-        this.sentence = this.subject.username + " submitted into challenge, " + this.references.challenge.title;
+        return(this.subject.username + " submitted into challenge, " + this.references.challenge.title);
         break;
       case ("Challenge"):
-        this.sentence = this.subject.username + " created a challenge, " + this.references.challenge.title;
+        return(this.subject.username + " created a challenge, " + this.references.challenge.title);
         break;
       case ("Comment"):
-        this.sentence = this.subject.username + " commented on, " + this.object.username + "'s photo";
+        return(this.subject.username + " commented on, " + this.object.username + "'s photo");
         break;
       case ("Ballot"):
-        this.sentence = this.subject.username + " voted on, " + this.object.username + "'s photo in, " + this.references.challenge.title + " a " + this.score + "/10";
+        return(this.subject.username + " voted on, " + this.object.username + "'s photo in, " + this.references.challenge.title + " a " + this.score + "/10");
         break;
     }
    //we always go the next step since there is no point not to
