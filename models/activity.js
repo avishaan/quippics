@@ -24,16 +24,16 @@ var activitySchema = new mongoose.Schema({
   }
 });
 
-//create a sentence based on the activity on save
-activitySchema.pre('save', function(next){
-  if (this.isNew){
-    //create a sentence for the FE to use before saving
+////create a sentence based on the activity on save
+//activitySchema.pre('save', function(next){
+//  if (this.isNew){
+//    //create a sentence for the FE to use before saving
+//
+//  }
+//  next(); //regardless proceed next
+//});
 
-  }
-  next(); //regardless proceed next
-});
-
-activitySchema.methods.populateSentence = function(next){
+activitySchema.virtual('sentence').get(function(next){
     switch (this.modelType) {
       case ("Submission"):
         this.sentence = this.subject.username + " submitted into challenge, " + this.references.challenge.title;
@@ -48,8 +48,8 @@ activitySchema.methods.populateSentence = function(next){
         this.sentence = this.subject.username + " voted on, " + this.object.username + "'s photo in, " + this.references.challenge.title + " a " + this.score + "/10";
         break;
     }
-  next(null); //we always go the next step since there is no point not to
-};
+   //we always go the next step since there is no point not to
+});
 
 activitySchema.statics.createSubmission = function (submission){
   var activity = new this();
