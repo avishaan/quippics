@@ -38,19 +38,19 @@ var activitySchema = new mongoose.Schema({
 //});
 
 activitySchema.virtual('sentence').get(function(){
-    switch (this.modelType) {
-      case ("Submission"):
-        return(this.subject.username + " submitted into challenge, " + this.references.challenge.title);
-        //break;
-      case ("Challenge"):
-        return(this.subject.username + " created a challenge, " + this.references.challenge.title);
-        //break;
-      case ("Comment"):
-        return(this.subject.username + " commented on, " + this.object.username + "'s photo");
-        //break;
-      case ("Ballot"):
-        return(this.subject.username + " voted on, " + this.object.username + "'s photo in, " + this.references.challenge.title + " a " + this.score + "/10");
-        //break;
+  switch (this.modelType) {
+    case ("Submission"):
+      return(this.subject.username + " submitted into challenge, " + this.references.challenge.title);
+      //break;
+    case ("Challenge"):
+      return(this.subject.username + " created a challenge, " + this.references.challenge.title);
+      //break;
+    case ("Comment"):
+      return(this.subject.username + " commented on, " + this.object.username + "'s photo");
+      //break;
+    case ("Ballot"):
+      return(this.subject.username + " voted on, " + this.object.username + "'s photo in, " + this.references.challenge.title + " a " + this.score + "/10");
+      //break;
     }
 });
 

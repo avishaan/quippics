@@ -22,6 +22,14 @@ exports.myActivities = function(req, res){
     path: 'subject',
     select: 'username thumbnail'
   })
+  .populate({
+    path: 'references.submission',
+    select: 'owner'
+  })
+  .populate({
+    path: 'references.challenge',
+    select: 'title owner expiration'
+  })
   .exec(function(err, activities){
     if (!err && activities.length){
       res.send(200, activities);
