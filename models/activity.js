@@ -57,7 +57,8 @@ activitySchema.virtual('sentence').get(function(){
 //general function for creating an activity, it uses the functions below to create
 //the specific type of activity
 activitySchema.statics.create = function(model){
-  var modelName = model.constructor.modelName;
+  //if it has it's own modelType, use that first, if not, try to use the constructor modelName
+  var modelName = model.modelType || model.constructor.modelName;
   //make a map between the modelName and the function that should be called
   var fncMap = {
     Challenge: 'createChallenge',

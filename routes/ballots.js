@@ -25,6 +25,7 @@ exports.create = function(req, res){
         //newBallot.save();
         submission.save(function(err, submission){
           if (!err){
+            require("../models/activity.js").create(submission.ballots.id(newBallot.id));
             res.send(200, submission);
           } else {
             res.send(500, err);

@@ -3,7 +3,8 @@ var mongoose = require('mongoose');
 var ballotSchema = new mongoose.Schema({
   createdOn: { type: Date, default: Date.now },
   voter: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-  score: Number
+  score: Number,
+  modelType: {type: String, default: 'Ballot'} //we do this manually because embedded docs don't seem to have modelName in their constructor
 });
 
 ballotSchema.pre('save', function(next){ //right before saving a new ballot, make a new entry in the activity collection
