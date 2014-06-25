@@ -149,21 +149,23 @@ exports.create = function(req, res){
                       //now we have to save the challenge
                       challenge.save(function(err, challenge){
                         if (!err){
-                          res.send(200, submission);
+                          //add a related submission activity
+                          require('../models/activity.js').create(submission);
+                          return res.send(200, submission);
                         } else {
-                          res.send(500, err);
+                          return res.send(500, err);
                         }
                       });
                     } else {
-                      res.send(500, err);
+                      return res.send(500, err);
                     }
                   });
                 });
               } else { //no challenge was returned
-                res.send(404);
+                return res.send(404);
               }
             } else {
-              res.send(500, err);
+              return res.send(500, err);
             }
           });
       }
