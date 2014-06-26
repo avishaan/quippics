@@ -235,7 +235,7 @@ exports.spec = function(domain, callback){
       .create("Get all the users activities")
       .get(domain + '/users/' + user1._id + '/activities/page/1')
       .expectStatus(200)
-      .inspectJSON()
+      //.inspectJSON()
       .afterJSON(function(activities){
         expect(activities.length).toEqual(3);
         cb(null);
