@@ -6,7 +6,14 @@ var perPage = 24; //submission per page
 //read a specific submission
 exports.readOne = function(req, res){
   //find the submission
-  Submission.findOne({_id: req.params.sid}, function(err, submission){
+  Submission
+  .findOne({_id: req.params.sid})
+  .select('-comments')
+  .populate({
+    path: 'owner',
+    select: 'username'
+  })
+  .exec(function(err, submission){
     if (!err){ //no error
       if (submission){ //we found a submission by that id
         res.send(200, submission);
