@@ -9,6 +9,7 @@ var users = require('./routes/users');
 var challenges = require('./routes/challenges');
 var submissions = require('./routes/submissions');
 var ballots = require('./routes/ballots');
+var comments = require('./routes/comments');
 var activities = require('./routes/activities');
 var http = require('http');
 var path = require('path');
@@ -103,6 +104,8 @@ app.get('/api/v1/challenges/:cid/submissions/top', apiAuth(), submissions.readTo
 app.get('/api/v1/challenges/:cid/submissions/:sid', apiAuth(), submissions.readOne); //read the submission specified
 //ballot routes
 app.post('/api/v1/challenges/:cid/submissions/:sid/ballots', apiAuth(), ballots.create); //submit a ballot effectively casting your vote on a submission
+//comment routes
+app.post('/api/v1/challenges/:cid/submissions/:sid/comments', apiAuth(), comments.create): //post a comment to a submission
 //activity routes
 app.get('/api/v1/users/:uid/activities/page/:page', apiAuth(), activities.myActivities); //read all the activities of the user
 //misc routes
