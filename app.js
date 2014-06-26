@@ -105,7 +105,7 @@ app.get('/api/v1/challenges/:cid/submissions/:sid', apiAuth(), submissions.readO
 //ballot routes
 app.post('/api/v1/challenges/:cid/submissions/:sid/ballots', apiAuth(), ballots.create); //submit a ballot effectively casting your vote on a submission
 //comment routes
-app.post('/api/v1/challenges/:cid/submissions/:sid/comments', apiAuth(), comments.create): //post a comment to a submission
+app.post('/api/v1/challenges/:cid/submissions/:sid/comments', apiAuth(), comments.create); //post a comment to a submission
 //activity routes
 app.get('/api/v1/users/:uid/activities/page/:page', apiAuth(), activities.myActivities); //read all the activities of the user
 //misc routes
