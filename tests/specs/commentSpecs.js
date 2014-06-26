@@ -183,10 +183,10 @@ exports.spec = function(domain, callback){
         comment: 'This is a comment by nerdy'
       })
       .expectStatus(200)
-      .afterJSON(function(res){
-        expect(res.comments.length).toEqual(1);
-        expect(res.comments[0].commenter).toBeDefined();
-        expect(res.comments[0].date).toBeDefined();
+      .inspectJSON()
+      .afterJSON(function(comment){
+        expect(comment.commenter).toBeDefined();
+        expect(comment.date).toBeDefined();
         cb(null);
       })
       .toss();
@@ -195,11 +195,11 @@ exports.spec = function(domain, callback){
       //get all the comments for a specific submission
       frisby
       .create("Get a list comments from a submission")
-      .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/comments')
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/comments/page/1')
       .expectStatus(200)
       .afterJSON(function(comments){
         expect(comments.length).toEqual(1);
-        expect(comments[0].commenter.username).toEqual('nerdy314');
+        expect(comments[0].commenter.username).toEqual('nerd314');
         expect(comments[0].commenter.thumbnail).toBeDefined();
         expect(comments[0].date).toBeDefined();
 
@@ -216,10 +216,10 @@ exports.spec = function(domain, callback){
         comment: 'This is a comment by popular'
       })
       .expectStatus(200)
-      .afterJSON(function(res){
-        expect(res.comments.length).toEqual(2);
-        expect(res.comments[0].commenter).toBeDefined();
-        expect(res.comments[0].date).toBeDefined();
+      //.inspectJSON()
+      .afterJSON(function(comment){
+        expect(comment.commenter).toBeDefined();
+        expect(comment.date).toBeDefined();
         cb(null);
       })
       .toss();
@@ -228,7 +228,7 @@ exports.spec = function(domain, callback){
       //get all the comments for a specific submission
       frisby
       .create("Get a list comments from a submission")
-      .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/comments')
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/comments/page/1')
       .expectStatus(200)
       .afterJSON(function(comments){
         expect(comments.length).toEqual(2);
