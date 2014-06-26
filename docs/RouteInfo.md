@@ -627,17 +627,16 @@ request.body: {
 
 Example Response
 ```
-response.body: { __v: 1,
-  _id: '5306920683c324ce4b00000b',
-  owner: '5306920683c324ce4b000003',
-  comments: 
-  [{ 
-    _id: '5306920683c324ce4b000019',
-    comment: 'This is a comment',
-    commenter: '5306920683c324ce4b000004',
-    date: '2014-02-20T23:38:46.824Z' } 
-  , {}, {}]
-}
+response.body: {
+  comment: 'This is a comment by nerdy',
+  _id: '53aba7341a1afb0000b31e8d',
+  date: 1403758388611,
+  commenter: { 
+    username: 'nerd314',
+    thumbnail: 'iVBORw0KGgoAAAANSUh' } 
+  } 
+  , {}, {}
+
 ```
 
 ####Read all the comments for a specific submission
