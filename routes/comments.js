@@ -34,31 +34,15 @@ exports.create = function(req, res){
     .exec(function(err, submission){
       if (!err){
         if (submission){
-          var comment = new Comment();
-          comment.comment = req.body.comment;
-          comment.commenter = req.body.commenter;
+          //we use create of instance subdoc instead of the normal new so that an id is assigned right away as well as validation
+          var comment = submission.comments.create({
+            comment: req.body.comment,
+            commenter: req.body.commenter
+          });
           submission.comments.push(comment); //add comment to end of array of comments
           submission.save(function(err, newSubmission){
-            if (!err){
-             User
-                .findOne({_id: req.body.commenter})
-                .select('username thumbnail')
-                .exec(function(err, user){
-                  if (!err){
-                    res.send(200, 
-                      {comment: req.body.comment,
-                        _id: newSubmission.comments[newSubmission.comments.length-1].toJSON()._id.toJSON(),
-                        date: Date.now(),
-                        commenter: {
-                          username: user.toJSON().username,
-                          thumbnail: user.toJSON().thumbnail
-                        }
-                    });
-                  } else {
-                    res.send(404);
-                  }
-                });
-
+            if(!err){
+              res.send(200, comment);
             } else {
               res.send(500, err);
             }

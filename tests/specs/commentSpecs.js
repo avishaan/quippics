@@ -158,23 +158,6 @@ exports.spec = function(domain, callback){
       });
     },
     function(cb){
-      //read an existing submission
-      frisby
-      .create("Get an existing submission, let's get Nerdy's submission")
-      .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id)
-      .expectStatus(200)
-      .afterJSON(function(submission){
-        expect(submission).toBeDefined();
-        expect(submission.challenge).toBeDefined();
-        expect(submission.rank).toBeDefined();
-        expect(submission.score).toBeDefined();
-        expect(submission.owner).toBeDefined();
-        expect(submission.image).toBeDefined();
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
       //have nerdy comment on submission1
       frisby
       .create("Post a new comment to submission1")
@@ -183,7 +166,7 @@ exports.spec = function(domain, callback){
         comment: 'This is a comment by nerdy'
       })
       .expectStatus(200)
-      //.inspectJSON()
+      .inspectJSON()
       .afterJSON(function(comment){
         expect(comment.commenter).toBeDefined();
         expect(comment.date).toBeDefined();
@@ -198,7 +181,9 @@ exports.spec = function(domain, callback){
       .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/comments/page/1')
       .expectStatus(200)
       .afterJSON(function(comments){
+        //full range of tests here
         expect(comments.length).toEqual(1);
+        expect(comments[0].comment).toBeDefined();
         expect(comments[0].commenter.username).toEqual('nerd314');
         expect(comments[0].commenter.thumbnail).toBeDefined();
         expect(comments[0].date).toBeDefined();
@@ -218,7 +203,8 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       //.inspectJSON()
       .afterJSON(function(comment){
-        expect(comment.commenter).toBeDefined();
+        //full range of tests here
+        expect(comment.commenter).not.toBeDefined();
         expect(comment.date).toBeDefined();
         cb(null);
       })
