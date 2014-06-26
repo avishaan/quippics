@@ -178,14 +178,6 @@ Example Response
   "rank": 1,
   "owner": {username: 'userid'},
   "score": 9,
-  "comments": [
-    {
-      "_id": "535071565897f4b97500001f",
-      "comment": "Another Comment",
-      "commenter": "535071535897f4b975000006",
-      "date": "2014-04-18T00:27:02.136Z"
-    }
-  ],
   "thumbnail": {
       "data": "iVBORw0KGg",
       "contentType": "image/png"

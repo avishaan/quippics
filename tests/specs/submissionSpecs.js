@@ -217,6 +217,8 @@ exports.spec = function(domain, callback){
         expect(submission.score).toBeDefined();
         expect(submission.owner).toBeDefined();
         expect(submission.image).toBeDefined();
+        expect(submission.owner.username).toBeDefined();
+        expect(submission.comments).toBeUndefined();
         cb(null);
       })
       .toss();
