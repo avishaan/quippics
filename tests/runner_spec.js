@@ -10,6 +10,7 @@ var challengeSpec = require('./specs/challengeSpecs.js');
 var submissionSpec = require('./specs/submissionSpecs.js');
 var ballotSpec = require('./specs/ballotSpecs.js');
 var activitySpec = require('./specs/activitySpecs.js');
+var commentSpec = require('./specs/commentSpecs.js');
 //var superSpec = require('./specs/superTest.js');
 var async = require('async');
 
@@ -49,7 +50,14 @@ async.series([
     activitySpec.spec(domain, function(){
       cb(null);
     });
+  },
+  function(cb){
+    console.log("Calling Comment Specs");
+    commentSpec.spec(domain, function(){
+      cb(null);
+    });
   }
+
 ],
   function(err, results){
     //epicSpec.spec(domain); //we run this one last because this set of tests is meant to run last and has no way for a callback
