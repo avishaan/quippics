@@ -628,7 +628,7 @@ response.body: {
 ```
 
 ####Read all the comments for a specific submission
-#####_Status: Not Developed, Not Tested
+#####_Status: Developed, Tested
 GET /v1/challenges/:cid/submissions/:sid/comments/page/:page
 
 Example Response
