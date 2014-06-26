@@ -26,7 +26,7 @@ exports.spec = function(domain, callback){
   jasmine.getEnv().defaultTimeoutInterval = 1000;
   async.series([
     function(cb){
-      console.log("Starting the submission tests");
+      console.log("Starting the comments tests");
       cb(null);
     },
     function(cb){
@@ -36,21 +36,6 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       .afterJSON(function(){
         console.log("Done deleting db");
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
-      //create a test user
-      frisby
-      .create("Create A user who is very generic")
-      .post(domain + '/register', {
-        username: user3.username,
-        password: user3.password
-      })
-      .expectStatus(200)
-      .afterJSON(function(user){
-        user3._id = user._id;
         cb(null);
       })
       .toss();
@@ -93,7 +78,7 @@ exports.spec = function(domain, callback){
         owner: user1._id,
         privacy: 'private',
         expiration: new Date(2015, 3, 14),
-        invites: [user2._id, user3._id]
+        invites: [user2._id]
       };
       frisby
       .create("Have that user create a challenge")
@@ -170,44 +155,6 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       .afterJSON(function(res){
         expect(res).toBeDefined();
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
-      //get my submission in the challenge, aka popular's submission
-      frisby
-      .create("Get mine aka popular's submission in a challenge")
-      .get(domain + '/challenges/' + challenge1._id + '/submissions/user/' + user1._id)
-      .expectStatus(200)
-      //.inspectJSON()
-      .afterJSON(function(submission){
-        expect(submission.thumbnail).toBeDefined();
-        expect(submission.owner).toBeDefined();
-        expect(submission.score).toBeDefined();
-        expect(submission.rank).toBeDefined();
-        //we expect to be in first since nerdy is the only vote and he voted us a 10
-        expect(submission.rank).toEqual(1);
-        expect(submission.score).toEqual(10);
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
-      //get the top submission from a challenge
-      frisby
-      .create("Get a top submission from a set of challenges")
-      .get(domain + '/challenges/' + challenge1._id + '/submissions/top')
-      .expectStatus(200)
-      .afterJSON(function(submission){
-        expect(submission.image).toBeDefined();
-        expect(submission.owner).toBeDefined();
-        //we know that popular user is in first so we expect his to be returned
-        expect(submission.owner).toEqual(user1.username);
-        expect(submission.score).toBeDefined();
-        expect(submission.score).toEqual(10);
-        expect(submission.rank).toBeDefined();
-        expect(submission.rank).toEqual(1);
         cb(null);
       })
       .toss();
