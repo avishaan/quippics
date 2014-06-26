@@ -26,7 +26,7 @@ exports.spec = function(domain, callback){
   jasmine.getEnv().defaultTimeoutInterval = 1000;
   async.series([
     function(cb){
-      console.log("Starting the submission tests");
+      console.log("Starting the activity tests");
       cb(null);
     },
     function(cb){
@@ -236,7 +236,8 @@ exports.spec = function(domain, callback){
       .get(domain + '/users/' + user1._id + '/activities/page/1')
       .expectStatus(200)
       .inspectJSON()
-      .afterJSON(function(submission){
+      .afterJSON(function(activities){
+        expect(activities.length).toEqual(3);
         cb(null);
       })
       .toss();
