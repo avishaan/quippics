@@ -45,7 +45,7 @@ exports.create = function(req, res){
                 .select('username thumbnail')
                 .exec(function(err, user){
                   if (!err){
-                    res.send(200, [
+                    res.send(200, 
                       {comment: req.body.comment,
                         _id: newSubmission.comments[newSubmission.comments.length-1].toJSON()._id.toJSON(),
                         date: Date.now(),
@@ -53,7 +53,7 @@ exports.create = function(req, res){
                           username: user.toJSON().username,
                           thumbnail: user.toJSON().thumbnail
                         }
-                    }]);
+                    });
                   } else {
                     res.send(404);
                   }

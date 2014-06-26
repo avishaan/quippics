@@ -3,6 +3,7 @@ var fs = require('fs');
 var _ = require('underscore');
 var Challenge = require('../models/challenge.js');
 var Ballot = require('../models/ballot.js');
+var Comment = require("../models/comment.js");
 
 var submissionSchema = new mongoose.Schema({
   createdOn: { type: Date, default: Date.now },
@@ -13,7 +14,7 @@ var submissionSchema = new mongoose.Schema({
   thumbnail:
   { data: Buffer, contentType: String },
   ballots: [Ballot.schema],
-  //comments: [Comment.schema],
+  comments: [Comment.schema],
   score: { type: Number, default: 0}, //we calculate this in the pre save
   rank: { type: Number, default: 0}, //this should be calculated before every ballot added
   challenge: { type: mongoose.Schema.Types.ObjectId, ref: "Challenge"} //we save the challenge id of each submission for easy querying

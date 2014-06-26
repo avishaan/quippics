@@ -90,6 +90,9 @@ app.get('/api/v1/users/search/:search', apiAuth(), users.search); //search for a
 app.post('/api/v1/register', users.register); //register new user
 app.post('/api/v1/users', apiAuth(), users.authenticate); //check password of user and return id
 app.put('/api/v1/users/:uid', apiAuth(), users.update); //update an existing user
+//comment routes
+app.post('/api/v1/challenges/:cid/submissions/:sid/comments', apiAuth(), comments.create); //post a comment to a submission
+app.get('/api/v1/challenges/:cid/submissions/:sid/comments/page/:page', apiAuth(), comments.readAll); //get all of the comments
 //challenges routes
 app.post('/api/v1/challenges', apiAuth(), challenges.create); //create a new challenge
 app.get('/api/v1/users/:uid/challenges/archive/page/:page', apiAuth(), challenges.archivedChallenges); //retrieve all challenges that are archived (typically just expired)
@@ -104,8 +107,6 @@ app.get('/api/v1/challenges/:cid/submissions/top', apiAuth(), submissions.readTo
 app.get('/api/v1/challenges/:cid/submissions/:sid', apiAuth(), submissions.readOne); //read the submission specified
 //ballot routes
 app.post('/api/v1/challenges/:cid/submissions/:sid/ballots', apiAuth(), ballots.create); //submit a ballot effectively casting your vote on a submission
-//comment routes
-app.post('/api/v1/challenges/:cid/submissions/:sid/comments', apiAuth(), comments.create); //post a comment to a submission
 //activity routes
 app.get('/api/v1/users/:uid/activities/page/:page', apiAuth(), activities.myActivities); //read all the activities of the user
 //misc routes
