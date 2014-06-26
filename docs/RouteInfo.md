@@ -614,7 +614,7 @@ Comment
 Routes related to reading and creating comments
 
 ####Create a comment on a specified submission
-#####_Status: Not Developed, Not Tested
+#####_Status: Developed, Tested
 POST /v1/challenges/:cid/submissions/:sid/comments
 
 Example Request

@@ -192,6 +192,22 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
+      //get all the comments for a specific submission
+      frisby
+      .create("Get a list comments from a submission")
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/comments')
+      .expectStatus(200)
+      .afterJSON(function(comments){
+        expect(comments.length).toEqual(1);
+        expect(comments[0].commenter.username).toEqual('nerdy314');
+        expect(comments[0].commenter.thumbnail).toBeDefined();
+        expect(comments[0].date).toBeDefined();
+
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
       //have popular comment on submission1
       frisby
       .create("Post a new comment to submission1")
@@ -201,14 +217,25 @@ exports.spec = function(domain, callback){
       })
       .expectStatus(200)
       .afterJSON(function(res){
-        expect(res.comments.length).toEqual(1);
+        expect(res.comments.length).toEqual(2);
         expect(res.comments[0].commenter).toBeDefined();
         expect(res.comments[0].date).toBeDefined();
         cb(null);
       })
       .toss();
+    },
+    function(cb){
+      //get all the comments for a specific submission
+      frisby
+      .create("Get a list comments from a submission")
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/comments')
+      .expectStatus(200)
+      .afterJSON(function(comments){
+        expect(comments.length).toEqual(2);
+        cb(null);
+      })
+      .toss();
     }
-
   ],
   function(err, results){
     callback(null);
