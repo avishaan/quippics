@@ -1,5 +1,5 @@
-- [ ] Add activities on a per user basis
+- [x] Add activities on a per user basis
   - [ ] Change activities to run on post hook instead of pre
 - [ ] Add all tests into TestCases.md
 - [ ] Go through test cases that are missing and addon
-- [ ] Add commenting on a specific submission
+- [x] Add commenting on a specific submission

@@ -623,11 +623,7 @@ response.body: {
   comment: 'This is a comment by nerdy',
   _id: '53aba7341a1afb0000b31e8d',
   date: 1403758388611,
-  commenter: { 
-    username: 'nerd314',
-    thumbnail: 'iVBORw0KGgoAAAANSUh' } 
-  } 
-  , {}, {}
+   {}, {}
 
 ```
 
