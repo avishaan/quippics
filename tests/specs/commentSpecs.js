@@ -42,21 +42,6 @@ exports.spec = function(domain, callback){
     function(cb){
       //create a test user
       frisby
-      .create("Create A user who is very generic")
-      .post(domain + '/register', {
-        username: user3.username,
-        password: user3.password
-      })
-      .expectStatus(200)
-      .afterJSON(function(user){
-        user3._id = user._id;
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
-      //create a test user
-      frisby
       .create("Create A user who is very popular")
       .post(domain + '/register', {
         username: user1.username,
@@ -205,7 +190,7 @@ exports.spec = function(domain, callback){
       //.inspectJSON()
       .afterJSON(function(comment){
         //full range of tests here
-        expect(comment.commenter).not.toBeDefined();
+        expect(comment.commenter).toBeDefined();
         expect(comment.date).toBeDefined();
         cb(null);
       })
