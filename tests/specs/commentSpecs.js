@@ -183,6 +183,7 @@ exports.spec = function(domain, callback){
       .afterJSON(function(comments){
         //full range of tests here
         expect(comments.length).toEqual(1);
+        expect(comments[0]._id).toBeDefined();
         expect(comments[0].comment).toBeDefined();
         expect(comments[0].commenter.username).toEqual('nerd314');
         expect(comments[0].commenter.thumbnail).toBeDefined();
