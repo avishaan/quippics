@@ -155,7 +155,7 @@ exports.spec = function(domain, callback){
         comment: 'This is a comment by nerdy'
       })
       .expectStatus(200)
-      .inspectJSON()
+      //.inspectJSON()
       .afterJSON(function(comment){
         expect(comment.commenter).toBeDefined();
         expect(comment.date).toBeDefined();
