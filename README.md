@@ -37,8 +37,8 @@ The route is located in the route documentation.
 The version differences are specified in each route.
 Route Example: `dev.quippics.us/api/v1/register`
 
--[Information on the routes](./docs/RouteInfo.md)
--[Connecting Routes to Interface](./docs/InterfaceRouteInfo.pdf)
+- [Information on the routes](./docs/RouteInfo.md)
+- [Connecting Routes to Interface (Right Click and Save-As)](./docs/InterfaceRouteInfo.pdf)
 
 Test Cases
 ----------------------
