@@ -52,17 +52,21 @@ exports.friendActivities = function(req, res){
     })
     .exec(function(err, activities){
       if (!err && activities.length){
-        res.send(200, activities);
+        cb(null, activities);
       } else if(!err){
-        res.send(200, activities);
+        cb(null, activities);
       } else {
-        res.send(500, err);
+        cb(err);
       }
     });
   }
-  ], function(err, results){
-
-  })
+  ], function(err, activities){
+    if (!err){
+      return res.send(200, activities);
+    } else{
+      return res.send(500, err);
+    }
+  });
 };
 //read activities from a user
 exports.myActivities = function(req, res){
