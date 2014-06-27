@@ -72,7 +72,7 @@ exports.spec = function(domain, callback){
     },
     function(cb){
       describe("Users", function(){
-        it("Should allow a very nerdy user to register", function(){
+        it("Should allow a very nerdy user to register", function(done){
           superagent
           .post(domain + "/register")
           .type('form')
@@ -83,10 +83,36 @@ exports.spec = function(domain, callback){
           .end(function(err, res){
             expect(res.status).toEqual(200);
             user2._id = res.body._id;
+            done();
             cb(null);
           });
         });
       });
+    },
+    //we need nerdy and popular to be friends
+    function(cb){
+      frisby
+      .create('Popular can send a friend request to nerdy')
+      .post(domain + '/users/' + user2._id + '/friendRequests', {
+        friend: user1._id
+      })
+      .expectStatus(200)
+      .after(function(res){
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create('Nerdy will go ahead and accept populars friend request')
+      .post(domain + '/users/' + user2._id + '/friends', {
+        user: user1._id
+      })
+      .expectStatus(200)
+      .after(function(res){
+        cb(null);
+      })
+      .toss();
     },
     function(cb){
       //setup our challenge
