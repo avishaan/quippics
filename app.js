@@ -110,6 +110,8 @@ app.post('/api/v1/challenges/:cid/submissions/:sid/ballots', apiAuth(), ballots.
 //activity routes
 app.get('/api/v1/activities/users/:uid/page/:page', apiAuth(), activities.myActivities); //read all the activities of the user
 app.get('/api/v1/users/:uid/activities/page/:page', apiAuth(), activities.myActivities); //read all the activities of the user
+app.get('/api/v1/activities/users/:uid/friends/page/:page', apiAuth(), activities.friendActivities); //read all the activities of the friends of the user
+app.get('/api/v1/users/:uid/friends/activities/page/:page', apiAuth(), activities.friendActivities); //read all the activities of the friends of the user
 //misc routes
 app.delete('/api/v1/server', server.delete);
 
