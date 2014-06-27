@@ -291,7 +291,21 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-
+      frisby
+      .create("Get all of the activities of nerdy's friends (popular is only friend)")
+      .get(domain + '/users/' + user2._id + '/friends/activities/page/1')
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(activities){
+        //we would expect the same results popular got when he looked as his activity
+        //since popular is nerdy's only friend
+        expect(activities.length).toEqual(4);
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      cb(null);
     }
 
   ],
