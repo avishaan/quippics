@@ -178,6 +178,69 @@ exports.spec = function(domain, callback){
       .afterJSON(function(activities){
         //full range of tests here
         expect(activities.length).toEqual(4);
+        activities.forEach(function(activity, index, array){
+          //these are the things every activity object should have
+          expect(activity.sentence).toBeDefined();
+          expect(activity.date).toBeDefined();
+          expect(activity.references).toBeDefined();
+          expect(activity._id).toBeDefined();
+          expect(activity.subject).toBeDefined();
+          expect(activity.subject.username).toBeDefined();
+          expect(activity.subject._id).toBeDefined();
+          expect(activity.subject.thumbnail).toBeDefined();
+          //look at type specific properties
+          switch (activity.modelType){
+            case "Submission":{
+              expect(activity.references.submission).toBeDefined();
+              expect(activity.references.submission._id).toBeDefined();
+              expect(activity.references.submission.owner).toBeDefined();
+              expect(activity.owner.username).toBeDefined();
+              expect(activity.owner.thumbnail).toBeDefined();
+              expect(activity.references.challenge._id).toBeDefined();
+              expect(activity.references.challenge.expiration).toBeDefined();
+              expect(activity.references.challenge.owner).toBeDefined();
+              expect(activity.references.challenge.title).toBeDefined();
+              break;
+            }
+            case "Challenge":{
+              expect(activity.references.challenge._id).toBeDefined();
+              expect(activity.references.challenge.expiration).toBeDefined();
+              expect(activity.references.challenge.owner).toBeDefined();
+              expect(activity.references.challenge.title).toBeDefined();
+              break;
+            }
+            case "Ballot":{
+              expect(activity.object).toBeDefined();
+              expect(activity.object.username).toBeDefined();
+              expect(activity.object._id).toBeDefined();
+              expect(activity.object.thumbnail).toBeDefined();
+              expect(activity.score).toBeDefined();
+              expect(activity.references.submission).toBeDefined();
+              expect(activity.references.submission._id).toBeDefined();
+              expect(activity.references.submission.owner).toBeDefined();
+              expect(activity.references.challenge._id).toBeDefined();
+              expect(activity.references.challenge.expiration).toBeDefined();
+              expect(activity.references.challenge.owner).toBeDefined();
+              expect(activity.references.challenge.title).toBeDefined();
+              break;
+            }
+            case "Comment":{
+              expect(activity.object).toBeDefined();
+              expect(activity.object.username).toBeDefined();
+              expect(activity.object._id).toBeDefined();
+              expect(activity.object.thumbnail).toBeDefined();
+              expect(activity.references.submission).toBeDefined();
+              expect(activity.references.submission._id).toBeDefined();
+              expect(activity.references.submission.owner).toBeDefined();
+              expect(activity.references.comment).toBeDefined();
+              break;
+            }
+            default:{
+              //we should never get here, it means something went wrong
+              expect(true).toEqual(false);
+            }
+          }
+        });
         cb(null);
       })
       .toss();
@@ -189,11 +252,13 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       //.inspectJSON()
       .afterJSON(function(activities){
-        //full range of tests here
         expect(activities.length).toEqual(2);
         cb(null);
       })
       .toss();
+    },
+    function(cb){
+
     }
 
   ],
