@@ -593,7 +593,7 @@ Example Response for Challenge
 ```
 
 ####List activities specific to the user
-#####_Status: Not Developed, Not Tested
+#####_Status: Developed, Tested
 GET v1/activities/users/:uid/page/:page
 GET v1/users/:uid/activities/page/:page
 
