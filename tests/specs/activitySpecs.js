@@ -95,8 +95,9 @@ exports.spec = function(domain, callback){
         expiration: new Date(2015, 3, 14),
         invites: [user2._id, user3._id]
       };
+      //popular should see this in activity
       frisby
-      .create("Have that user create a challenge")
+      .create("Have popular create a challenge")
       .post(domain + '/challenges', challenge1)
       .expectStatus(200)
       .afterJSON(function(challenge){
@@ -107,33 +108,8 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      //have nerdy submit into the challenge
-      describe("A Submission", function(){
-        it("can be submitted by a User (Nerdy) into challenge 1", function(done){
-          superagent
-          .post(domain + "/challenges/" + challenge1._id + "/submissions")
-          .type('form')
-          .attach("image", "./tests/specs/images/onepixel.png")
-          .field("owner", user2._id)
-          .end(function(err, res){
-            var submission = res.body;
-            //make sure something was returned in the response body
-            expect(submission).toBeDefined();
-            //make sure the id in the response body was returned
-            expect(submission._id).toBeDefined();
-            //expect 200 response
-            expect(res.status).toEqual(200);
-            submission1._id = submission._id;
-            //console.log("here is the returned superagent submission");
-            //console.log(submission);
-            cb(null);
-            done();
-          });
-        });
-      });
-    },
-    function(cb){
       //have popular submit into a challenge
+      //popular should see this in activity
       describe("A Submission", function(){
         it("can be submitted by a User (Popular) into challenge 1", function(done){
           superagent
@@ -160,7 +136,8 @@ exports.spec = function(domain, callback){
     },
     //DO VOTING HERE
     function(cb){
-      //vote on popular submission in the challenge
+      //nerdy vote on popular submission in the challenge
+      //popular and nerdy should see this in activity
       frisby
       .create("Have nerdy vote on popular submission")
       .post(domain + '/challenges/' + challenge1._id + '/submissions/' + submission2._id + '/ballots/', {
@@ -175,24 +152,8 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      //have nerdy comment on submission1, which is his own challenge
-      frisby
-      .create("Post a new comment to submission1")
-      .post(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/comments',{
-        commenter: user2._id,
-        comment: 'This is a comment by nerdy'
-      })
-      .expectStatus(200)
-      //.inspectJSON()
-      .afterJSON(function(comment){
-        expect(comment.commenter).toBeDefined();
-        expect(comment.date).toBeDefined();
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
       //have nerdy comment on submission2, which is popular user's challenge
+      //popular and nerdy should see this
       frisby
       .create("Post a new comment to submission1")
       .post(domain + '/challenges/' + challenge1._id + '/submissions/' + submission2._id + '/comments',{
@@ -209,19 +170,32 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      //get the activities for a specific user, popular user since it's his challenge
       frisby
-      .create("Get all the users activities")
+      .create("Get all of populars activities")
       .get(domain + '/users/' + user1._id + '/activities/page/1')
       .expectStatus(200)
       //.inspectJSON()
       .afterJSON(function(activities){
         //full range of tests here
-        expect(activities.length).toEqual(5);
+        expect(activities.length).toEqual(4);
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create("Get all of nerdys activities")
+      .get(domain + '/users/' + user2._id + '/activities/page/1')
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(activities){
+        //full range of tests here
+        expect(activities.length).toEqual(2);
         cb(null);
       })
       .toss();
     }
+
   ],
   function(err, results){
     callback(null);

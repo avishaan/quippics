@@ -42,6 +42,7 @@ exports.create = function(req, res){
           submission.comments.push(comment); //add comment to end of array of comments
           submission.save(function(err, newSubmission){
             if(!err){
+              require("../models/activity.js").create(comment);
               res.send(200, comment);
             } else {
               res.send(500, err);
