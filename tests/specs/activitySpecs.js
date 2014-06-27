@@ -175,6 +175,40 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
+      //have nerdy comment on submission1, which is his own challenge
+      frisby
+      .create("Post a new comment to submission1")
+      .post(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/comments',{
+        commenter: user2._id,
+        comment: 'This is a comment by nerdy'
+      })
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(comment){
+        expect(comment.commenter).toBeDefined();
+        expect(comment.date).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //have nerdy comment on submission2, which is popular user's challenge
+      frisby
+      .create("Post a new comment to submission1")
+      .post(domain + '/challenges/' + challenge1._id + '/submissions/' + submission2._id + '/comments',{
+        commenter: user2._id,
+        comment: 'This is a comment by nerdy on popular users challenge'
+      })
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(comment){
+        expect(comment.commenter).toBeDefined();
+        expect(comment.date).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
       //get the activities for a specific user, popular user since it's his challenge
       frisby
       .create("Get all the users activities")
@@ -182,7 +216,8 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       //.inspectJSON()
       .afterJSON(function(activities){
-        expect(activities.length).toEqual(3);
+        //full range of tests here
+        expect(activities.length).toEqual(5);
         cb(null);
       })
       .toss();
