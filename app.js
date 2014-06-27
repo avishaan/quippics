@@ -108,6 +108,7 @@ app.get('/api/v1/challenges/:cid/submissions/:sid', apiAuth(), submissions.readO
 //ballot routes
 app.post('/api/v1/challenges/:cid/submissions/:sid/ballots', apiAuth(), ballots.create); //submit a ballot effectively casting your vote on a submission
 //activity routes
+app.get('/api/v1/activities/users/:uid/page/:page', apiAuth(), activities.myActivities); //read all the activities of the user
 app.get('/api/v1/users/:uid/activities/page/:page', apiAuth(), activities.myActivities); //read all the activities of the user
 //misc routes
 app.delete('/api/v1/server', server.delete);
