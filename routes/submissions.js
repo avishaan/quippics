@@ -10,6 +10,10 @@ exports.readOne = function(req, res){
   .findOne({_id: req.params.sid})
   .select('-comments')
   .populate({
+    path: 'challenge',
+    select: 'title'
+  })
+  .populate({
     path: 'owner',
     select: 'username'
   })

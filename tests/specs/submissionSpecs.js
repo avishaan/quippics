@@ -211,8 +211,10 @@ exports.spec = function(domain, callback){
       .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id)
       .expectStatus(200)
       .afterJSON(function(submission){
+        //full tests here
         expect(submission).toBeDefined();
         expect(submission.challenge).toBeDefined();
+        expect(submission.challenge.title).toBeDefined();
         expect(submission.rank).toBeDefined();
         expect(submission.score).toBeDefined();
         expect(submission.owner).toBeDefined();

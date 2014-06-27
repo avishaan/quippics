@@ -175,8 +175,13 @@ Example Response
   "__v": 4,
   "_id": "535071535897f4b97500000f",
   "challenge": "535071535897f4b97500000b",
+  owner: {
+    username: 'jack1234'
+  },
+  challenge: {
+    title: 'Challenge Title'
+  },
   "rank": 1,
-  "owner": {username: 'userid'},
   "score": 9,
   "thumbnail": {
       "data": "iVBORw0KGg",
