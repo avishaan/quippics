@@ -536,14 +536,7 @@ Example Response for Submissions
           "contentType": "image/png"
       }
   },
-  "owner": {
-      "_id": "536eab77486cbdb681000003",
-      "username": "jill19873069496",
-      "thumbnail": {
-          "data": "iVBORw0KGgoAAAANSUhEUgAAAF,
-          "contentType": "image/png"
-      }
-  },
+  "owner": 536eab77486cbdb681000003,
   "modelType": "Submission",
   "_id": "536eab79486cbdb681000014",
   "object": null,
