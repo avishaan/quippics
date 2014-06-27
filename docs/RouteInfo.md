@@ -587,8 +587,8 @@ Example Response for Challenge
 
 ####List activities specific to the user
 #####_Status: Developed, Tested
-GET v1/activities/users/:uid/page/:page
-GET v1/users/:uid/activities/page/:page
+GET v1/activities/users/:uid/page/:page (depreciated)
+GET v1/users/:uid/activities/page/:page (preferred)
 
 Example Response
 (same as above for activities of all the user's friends)
