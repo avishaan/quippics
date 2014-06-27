@@ -300,6 +300,68 @@ exports.spec = function(domain, callback){
         //we would expect the same results popular got when he looked as his activity
         //since popular is nerdy's only friend
         expect(activities.length).toEqual(4);
+        activities.forEach(function(activity, index, array){
+          //these are the things every activity object should have
+          expect(activity.sentence).toBeDefined();
+          expect(activity.date).toBeDefined();
+          expect(activity.references).toBeDefined();
+          expect(activity._id).toBeDefined();
+          expect(activity.subject).toBeDefined();
+          expect(activity.subject.username).toBeDefined();
+          expect(activity.subject._id).toBeDefined();
+          expect(activity.subject.thumbnail).toBeDefined();
+          //look at type specific properties
+          switch (activity.modelType){
+            case "Submission":{
+              expect(activity.references.submission).toBeDefined();
+              expect(activity.references.submission._id).toBeDefined();
+              expect(activity.references.submission.owner).toBeDefined();
+              expect(activity.owner).toBeDefined();
+              expect(activity.references.challenge._id).toBeDefined();
+              expect(activity.references.challenge.expiration).toBeDefined();
+              expect(activity.references.challenge.owner).toBeDefined();
+              expect(activity.references.challenge.title).toBeDefined();
+              break;
+            }
+            case "Challenge":{
+              expect(activity.references.challenge._id).toBeDefined();
+              expect(activity.references.challenge.expiration).toBeDefined();
+              expect(activity.references.challenge.owner).toBeDefined();
+              expect(activity.references.challenge.title).toBeDefined();
+              break;
+            }
+            case "Ballot":{
+              expect(activity.object).toBeDefined();
+              expect(activity.object.username).toBeDefined();
+              expect(activity.object._id).toBeDefined();
+              expect(activity.object.thumbnail).toBeDefined();
+              expect(activity.score).toBeDefined();
+              expect(activity.references.submission).toBeDefined();
+              expect(activity.references.submission._id).toBeDefined();
+              expect(activity.references.submission.owner).toBeDefined();
+              expect(activity.references.challenge._id).toBeDefined();
+              expect(activity.references.challenge.expiration).toBeDefined();
+              expect(activity.references.challenge.owner).toBeDefined();
+              expect(activity.references.challenge.title).toBeDefined();
+              break;
+            }
+            case "Comment":{
+              expect(activity.object).toBeDefined();
+              expect(activity.object.username).toBeDefined();
+              expect(activity.object._id).toBeDefined();
+              expect(activity.object.thumbnail).toBeDefined();
+              expect(activity.references.submission).toBeDefined();
+              expect(activity.references.submission._id).toBeDefined();
+              expect(activity.references.submission.owner).toBeDefined();
+              expect(activity.references.comment).toBeDefined();
+              break;
+            }
+            default:{
+              //we should never get here, it means something went wrong
+              expect(true).toEqual(false);
+            }
+          }
+        });
         cb(null);
       })
       .toss();
