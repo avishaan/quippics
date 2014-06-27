@@ -175,61 +175,6 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      //get my submission in the challenge, aka popular's submission
-      frisby
-      .create("Get mine aka popular's submission in a challenge")
-      .get(domain + '/challenges/' + challenge1._id + '/submissions/user/' + user1._id)
-      .expectStatus(200)
-      //.inspectJSON()
-      .afterJSON(function(submission){
-        expect(submission.thumbnail).toBeDefined();
-        expect(submission.owner).toBeDefined();
-        expect(submission.score).toBeDefined();
-        expect(submission.rank).toBeDefined();
-        //we expect to be in first since nerdy is the only vote and he voted us a 10
-        expect(submission.rank).toEqual(1);
-        expect(submission.score).toEqual(10);
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
-      //get the top submission from a challenge
-      frisby
-      .create("Get a top submission from a set of challenges")
-      .get(domain + '/challenges/' + challenge1._id + '/submissions/top')
-      .expectStatus(200)
-      .afterJSON(function(submission){
-        expect(submission.image).toBeDefined();
-        expect(submission.owner).toBeDefined();
-        //we know that popular user is in first so we expect his to be returned
-        expect(submission.owner).toEqual(user1.username);
-        expect(submission.score).toBeDefined();
-        expect(submission.score).toEqual(10);
-        expect(submission.rank).toBeDefined();
-        expect(submission.rank).toEqual(1);
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
-      //read an existing submission
-      frisby
-      .create("Get an existing submission, let's get Nerdy's submission")
-      .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id)
-      .expectStatus(200)
-      .afterJSON(function(submission){
-        expect(submission).toBeDefined();
-        expect(submission.challenge).toBeDefined();
-        expect(submission.rank).toBeDefined();
-        expect(submission.score).toBeDefined();
-        expect(submission.owner).toBeDefined();
-        expect(submission.image).toBeDefined();
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
       //get the activities for a specific user, popular user since it's his challenge
       frisby
       .create("Get all the users activities")
