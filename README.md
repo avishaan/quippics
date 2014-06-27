@@ -15,14 +15,30 @@ Technology/Players
 - Mongoose as the object modeler for Node.js.
 - MongoDB as the x-platform document based noSQL database.
 
+Domains
+----------------------
+Each environment is found at a different route. This is to allow fast development
+without disturbing production. The environments are as such in the following table.
+
+| Env Type | Domain | Description                |
+-----------|--------|-----------------------------
+|Dev    | quippics-dev.herokuapp.com  | Should be used to develop the latest version of the app|
+|       | dev.quippics.us (preferred) |       |
+|Test   | quippics-test.herokuapp.com | Should be used for beta testing. Bugs should be fixed to prepare for prod|
+|       | test.quippics.us (preferred)|       |
+|Prod   | epic-api.herokuapp.com      | Should be used for production environment. Only changes at this point are for bug fixes|
+|       | prod.quippics.us (preferred)|       |
+
+
 Documentation
 ----------------------
-There are 2 environments at this time. Each route takes the format of domain/version/route
+Each route takes the format of domain/version/route
 The route is located in the route documentation.
 The version differences are specified in each route.
-The domain is something like quippics-dev.herokuapp.com
+Route Example: `dev.quippics.us/api/v1/register`
 
-[Information on the routes](./docs/RouteInfo.md)
+-[Information on the routes](./docs/RouteInfo.md)
+-[Connecting Routes to Interface](./docs/InterfaceRouteInfo.pdf)
 Test Cases
 ----------------------
 Test cases are bundled into logical groups
