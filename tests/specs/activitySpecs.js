@@ -56,19 +56,23 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      //create a test user
-      frisby
-      .create("Create A user who is very popular")
-      .post(domain + '/register', {
-        username: user1.username,
-        password: user1.password
-      })
-      .expectStatus(200)
-      .afterJSON(function(user){
-        user1._id = user._id;
-        cb(null);
-      })
-      .toss();
+      describe("Users", function(){
+        it("Should allow a very popular user to register", function(done){
+          superagent
+          .post(domain + "/register")
+          .type('form')
+          .attach("image", "./tests/specs/images/defaultProfile.png") //this is based on where you are running jasmine-node from
+          .field("username", user1.username)
+          .field("password", user1.password)
+          .field("email", user1.email)
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            user1._id = res.body._id;
+            done();
+            cb(null);
+          });
+        });
+      });
     },
     function(cb){
       describe("Users", function(){
@@ -224,8 +228,7 @@ exports.spec = function(domain, callback){
               expect(activity.references.submission).toBeDefined();
               expect(activity.references.submission._id).toBeDefined();
               expect(activity.references.submission.owner).toBeDefined();
-              expect(activity.owner.username).toBeDefined();
-              expect(activity.owner.thumbnail).toBeDefined();
+              expect(activity.owner).toBeDefined();
               expect(activity.references.challenge._id).toBeDefined();
               expect(activity.references.challenge.expiration).toBeDefined();
               expect(activity.references.challenge.owner).toBeDefined();
