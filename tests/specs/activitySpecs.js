@@ -71,18 +71,22 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      frisby
-      .create("Create A user who is very nerdy")
-      .post(domain + '/register', {
-        username: user2.username,
-        password: user2.password
-      })
-      .expectStatus(200)
-      .afterJSON(function(user){
-        user2._id = user._id;
-        cb(null);
-      })
-      .toss();
+      describe("Users", function(){
+        it("Should allow a very nerdy user to register", function(){
+          superagent
+          .post(domain + "/register")
+          .type('form')
+          .attach("image", "./tests/specs/images/defaultProfile.png") //this is based on where you are running jasmine-node from
+          .field("username", user2.username)
+          .field("password", user2.password)
+          .field("email", user2.email)
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            user2._id = res.body._id;
+            cb(null);
+          });
+        });
+      });
     },
     function(cb){
       //setup our challenge
