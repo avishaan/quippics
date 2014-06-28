@@ -37,7 +37,14 @@ The route is located in the route documentation.
 The version differences are specified in each route.
 Route Example: `dev.quippics.us/api/v1/register`
 
-- [Information on the routes](./docs/RouteInfo.md)
+- Route Documentation
+  - [Information on Challenge Routes](./docs/challengesRoute.md)
+  - [Information on Submission Routes](./docs/submissionsRoute.md)
+  - [Information on User Routes](./docs/usersRoute.md)
+  - [Information on Friendship Routes](./docs/friendshipsRoute.md)
+  - [Information on Ballot Routes](./docs/ballotsRoute.md)
+  - [Information on Comment Routes](./docs/commentsRoute.md)
+  - [Information on Activity Routes](./docs/activitiesRoute.md)
 - [Connecting Routes to Interface (Right Click and Save-As)](./docs/InterfaceRouteInfo.pdf)
 
 Test Cases
