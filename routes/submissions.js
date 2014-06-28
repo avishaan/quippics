@@ -6,7 +6,7 @@ var perPage = 24; //submission per page
 //get the array of submission id's that the user has voted on
 exports.userVoted = function(req, res){
   Challenge
-    .findOne({_id: req.params.id})
+    .findOne({_id: req.params.cid})
     .select('submissions')//return only the submissions, we don't need the challenge info
     .populate({
       path: 'submissions',
