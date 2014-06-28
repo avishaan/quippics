@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Submission = require("../models/submission.js");
 var Ballot = require("../models/ballot.js");
+var Challenge = require('../models/challenge.js');
 var fs = require('fs');
 
 //function for some debugging when necessary
@@ -9,6 +10,30 @@ exports.debug = function(req, res){
   res.send(200);
 };
 
+//get the array of submission id's that the user has voted on
+exports.userVoted = function(req, res){
+  Challenge
+    .findOne({_id: req.params.cid})
+    .select('submissions')//return only the submissions, we don't need the challenge info
+    .populate({
+      path: 'submissions',
+      select: 'ballots'
+    })
+    //.select('submissions.ballots')
+    .where('submissions')//where voter id equals the uid passed in
+    .exec(function(err, challenge){
+      //todo, this is all async and should be a proper query
+      var votedSubmissions = [];
+      challenge.submissions.forEach(function(submission){
+        submission.ballots.forEach(function(ballot){
+          if (ballot.voter.toString() === req.params.uid){
+            votedSubmissions.push(submission.id);
+          }
+        });
+      });
+      res.send(200, votedSubmissions);
+    });
+};
 //Submit submission for specific challenge
 exports.create = function(req, res){
   //find the challenge

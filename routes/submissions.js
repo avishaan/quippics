@@ -3,30 +3,6 @@ var Submission = require('../models/submission.js');
 var _ = require('underscore');
 var perPage = 24; //submission per page
 
-//get the array of submission id's that the user has voted on
-exports.userVoted = function(req, res){
-  Challenge
-    .findOne({_id: req.params.cid})
-    .select('submissions')//return only the submissions, we don't need the challenge info
-    .populate({
-      path: 'submissions',
-      select: 'ballots'
-    })
-    //.select('submissions.ballots')
-    .where('submissions')//where voter id equals the uid passed in
-    .exec(function(err, challenge){
-      //todo, this is all async and should be a proper query
-      var votedSubmissions = [];
-      challenge.submissions.forEach(function(submission){
-        submission.ballots.forEach(function(ballot){
-          if (ballot.voter.toString() === req.params.uid){
-            votedSubmissions.push(submission.id);
-          }
-        });
-      });
-      res.send(200, votedSubmissions);
-    });
-};
 //read a specific submission
 exports.readOne = function(req, res){
   //find the submission
