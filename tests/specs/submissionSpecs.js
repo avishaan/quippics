@@ -176,7 +176,7 @@ exports.spec = function(domain, callback){
       //get my submission in the challenge, aka nerdy's submission
       frisby
       .create("Get mine aka nerdy's submission in a challenge")
-      .get(domain + '/challenges/' + challenge1._id + '/submissions/user/' + user2._id)
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/users/' + user2._id)
       .expectStatus(200)
       //.inspectJSON()
       .afterJSON(function(submission){
