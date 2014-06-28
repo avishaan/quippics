@@ -141,7 +141,7 @@ response.body:
 }
 ```
 ####Read all the submissions for a challenge where the user has voted
-#####_Status: Not Developed, Not Tested
+#####_Status: Developed, Tested
 GET '/v1/challenges/:cid/submissions/users/:uid/voted'
 
 Example Response
