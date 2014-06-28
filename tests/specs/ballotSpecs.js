@@ -175,6 +175,20 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
+      //get list of submissions nerdy has voted on
+      frisby
+      .create("Get list of submissions nerdy user has voted on")
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/users/' + user2._id + '/voted')
+      .expectStatus(200)
+      .afterJSON(function(array){
+        //all tests here
+        expect(array.length).toEqual(1);
+        expect(array[0]).toEqual(submission2._id);
+        cb(null);
+      })
+      .toss()
+    },
+    function(cb){
       //get my submission in the challenge, aka popular's submission
       frisby
       .create("Get mine aka popular's submission in a challenge")

@@ -107,7 +107,7 @@ app.get('/api/v1/challenges/:cid/submissions/top', apiAuth(), submissions.readTo
 app.get('/api/v1/challenges/:cid/submissions/:sid', apiAuth(), submissions.readOne); //read the submission specified
 //ballot routes
 app.post('/api/v1/challenges/:cid/submissions/:sid/ballots', apiAuth(), ballots.create); //submit a ballot effectively casting your vote on a submission
-app.get('/api/v1/challenges/:cid/submissios/users/:uid/voted', apiAuth(), submissions.userVoted); //list of submissions the user has already voted on
+app.get('/api/v1/challenges/:cid/submissions/users/:uid/voted', apiAuth(), ballots.userVoted); //list of submissions the user has already voted on
 //activity routes
 app.get('/api/v1/activities/users/:uid/page/:page', apiAuth(), activities.myActivities); //read all the activities of the user
 app.get('/api/v1/users/:uid/activities/page/:page', apiAuth(), activities.myActivities); //read all the activities of the user
