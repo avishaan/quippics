@@ -101,7 +101,7 @@ app.post('/api/v1/challenges/:cid/accepts', apiAuth(), challenges.acceptChalleng
 app.post('/api/v1/challenges/:cid/declines', apiAuth(), challenges.declineChallenge); //decline a challenge
 //submission routes
 app.post('/api/v1/challenges/:cid/submissions', apiAuth(), submissions.create); //create a new submission
-//app.get('/api/v1/challenges/:cid/submissios/users/:uid/voted', apiAuth(), submissions.userVoted); //list of submissions the user has already voted on
+app.get('/api/v1/challenges/:cid/submissios/users/:uid/voted', apiAuth(), submissions.userVoted); //list of submissions the user has already voted on
 app.get('/api/v1/challenges/:cid/submissions/page/:page', apiAuth(), submissions.readAll); //read all the submissions in a specific challenge
 app.get('/api/v1/challenges/:cid/submissions/users/:uid', apiAuth(), submissions.userSubmission); //read the submission for a specific user
 app.get('/api/v1/challenges/:cid/submissions/top', apiAuth(), submissions.readTop); //read the top submission in the challenge
