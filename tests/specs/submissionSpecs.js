@@ -184,6 +184,7 @@ exports.spec = function(domain, callback){
         expect(submission.owner).toBeDefined();
         expect(submission.score).toBeDefined();
         expect(submission.rank).toBeDefined();
+        expect(submission.image).toBeUndefined();
         cb(null);
       })
       .toss();

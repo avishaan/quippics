@@ -73,7 +73,10 @@ exports.userSubmission = function(req, res){
   //make sure we are looking at the right challenge, we only want to know for a specific challenge
   Challenge
     .findOne({_id: req.params.cid})
-    .populate('submissions')
+    .populate({
+      path: 'submissions',
+      select: '-image'
+    })
     .exec(function(err, challenge){
       challenge.submissions.some(function(submission, index, submissions){
         //go through all the submission owners until you find my submission
