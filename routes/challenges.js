@@ -3,9 +3,9 @@ var perPage = 24; //challenges per page
 
 //read specific challenge
 exports.read = function(req, res){
-  Challenge.findOne({_id: req.params.id}, function(err, challenge){
-    Challenge.findOne({_id: req.params.cid})
-    .select('title owner _id description tags createdOn expiration')
+  Challenge.findOne({_id: req.params.cid})
+  .select('title owner _id description tags createdOn expiration')
+  .exec(function(err, challenge){
     if (!err) {
       if (challenge){
         res.send(200, challenge);
