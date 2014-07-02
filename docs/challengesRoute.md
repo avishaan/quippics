@@ -57,6 +57,8 @@ Example Response
 ####Read a specific challenge
 #####_Status: Developed, Not Tested
 GET '/v1/challenges/:cid'
+
+Example Response
 ```
 { __v: 0,
   title: 'sampleChallenge',
@@ -68,7 +70,6 @@ GET '/v1/challenges/:cid'
   tags: [ 'tag1', 'tag2', 'tag3' ] 
 }
 ```
-
 ####Accept a challenge invite
 #####_Status: Developed, Tested
 POST '/v1/challenges/:cid/accepts'
