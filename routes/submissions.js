@@ -75,7 +75,7 @@ exports.userSubmission = function(req, res){
     .findOne({_id: req.params.cid})
     .populate({
       path: 'submissions',
-      select: '-image'
+      select: ''
     })
     .exec(function(err, challenge){
       challenge.submissions.some(function(submission, index, submissions){
