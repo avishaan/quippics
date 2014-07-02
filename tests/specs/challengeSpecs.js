@@ -281,6 +281,25 @@ exports.spec = function(domain, callback){
         cb(null);
       })
       .toss();
+    },
+    function(cb){
+      //get a specific challenge
+      frisby
+      .create("Get a specific challenge by id")
+      .get(domain + '/challenges/' + challenge1._id)
+      .expectStatus(200)
+      .afterJSON(function(challenge){
+        expect(challenge.title).toEqual(challenge1.title);
+        expect(challenge.tags[0]).toEqual(challenge1.tags[0]);
+        expect(challenge.tags.length).toEqual(challenge1.tags.length);
+        expect(challenge.owner).toBeDefined();
+        expect(challenge._id).toEqual(challenge1._id);
+        expect(challenge.description).toEqual(challenge1.description);
+        expect(challenge.createdOn).toBeDefined();
+        expect(challenge.expiration).toBeDefined();
+        cb(null);
+      })
+      .toss();
     }
 
   ],
