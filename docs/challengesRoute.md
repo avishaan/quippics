@@ -54,6 +54,20 @@ Example Response
   invites: [ '530ae320b5e51b420300010f' ]
 }
 ```
+####Read a specific challenge
+#####_Status: Developed, Not Tested
+GET '/v1/challenges/:cid'
+```
+{ __v: 0,
+  title: 'sampleChallenge',
+  owner: '52f548514f8c88b137000113',
+  _id: '52f548514f8c88b137000116',
+  description: 'Challenge Description',
+  submissions: [],
+  createdOn: '2014-02-07T20:55:45.259Z',
+  tags: [ 'tag1', 'tag2', 'tag3' ] 
+}
+```
 
 ####Accept a challenge invite
 #####_Status: Developed, Tested
