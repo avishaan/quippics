@@ -65,7 +65,6 @@ Example Response
   owner: '52f548514f8c88b137000113',
   _id: '52f548514f8c88b137000116',
   description: 'Challenge Description',
-  submissions: [],
   createdOn: '2014-02-07T20:55:45.259Z',
   tags: [ 'tag1', 'tag2', 'tag3' ] 
 }
