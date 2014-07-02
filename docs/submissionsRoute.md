@@ -77,6 +77,7 @@ response:
   rank: 1,
   score: 9,
   thumbnail: 'iVBORw0KGgoAAAANSUh', 
+  image: 'iVBORw0KGgoAAAANSUh', 
  }
 ```
 ####Read a specific submission
