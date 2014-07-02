@@ -94,6 +94,7 @@ app.put('/api/v1/users/:uid', apiAuth(), users.update); //update an existing use
 app.post('/api/v1/challenges/:cid/submissions/:sid/comments', apiAuth(), comments.create); //post a comment to a submission
 app.get('/api/v1/challenges/:cid/submissions/:sid/comments/page/:page', apiAuth(), comments.readAll); //get all of the comments
 //challenges routes
+app.get('/api/v1/challenges/:cid', apiAuth(), challenges.read); //get/read a specific challenge
 app.post('/api/v1/challenges', apiAuth(), challenges.create); //create a new challenge
 app.get('/api/v1/users/:uid/challenges/archive/page/:page', apiAuth(), challenges.archivedChallenges); //retrieve all challenges that are archived (typically just expired)
 app.get('/api/v1/users/:uid/challenges/page/:page', apiAuth(), challenges.myChallenges); //retrieve all current challenges applicable to me

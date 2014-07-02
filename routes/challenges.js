@@ -1,6 +1,23 @@
 var Challenge = require("../models/challenge.js");
 var perPage = 24; //challenges per page
 
+//read specific challenge
+exports.read = function(req, res){
+  Challenge.findOne({_id: req.params.id}, function(err, challenge){
+    Challenge.findOne({_id: req.params.cid})
+    .select('title owner _id description tags createdOn expiration')
+    if (!err) {
+      if (challenge){
+        res.send(200, challenge);
+      } else {
+        res.send(404);
+      }
+    } else {
+      res.send(500, err);
+    }
+  });
+};
+
 //decline an invite to a challenge
 exports.declineChallenge = function(req, res){
   //find the challenge
