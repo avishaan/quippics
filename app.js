@@ -22,17 +22,20 @@ var User = require('./models/user.js');
 var passport = require('passport'),
   BasicStrategy = require('passport-http').BasicStrategy;
 
+//setup logentries
+var log = logentries.logger({
+  token: config.logentriesToken,
+});
 var app = express();
 
 // all environments
 if (config.env === 'dev'){
   app.use(express.logger('dev'));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-  //setup logentries
-  var log = logentries.logger({
-    token: config.logentriesToken
+  app.use(function(req, res, next){
+    app.debug()
+    next();
   });
-  log.debug("Debug");
 }
 
 app.set('port', config.expressPort);

@@ -13,7 +13,8 @@ module.exports = function(){
       return {
         dbURI : "mongodb://localhost/" + npmInfo.name,
         expressPort: 8081,
-        env: 'dev' //should be env/prod
+        env: 'dev', //should be env/prod
+        logentriesToken: 'bb995abb-8007-4433-a2af-ea7deba119cf'
       };
     case "test":
     case "testing":
