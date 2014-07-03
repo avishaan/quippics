@@ -18,7 +18,8 @@
     "passport": "^0.2.0",
     "underscore": "^1.6.0",
     "gm": "^1.16.0",
-    "passport-http": "^0.2.2"
+    "passport-http": "^0.2.2",
+    "node-logentries": "^0.1.4"
   },
   "engines": {
     "node": "0.10.26"

@@ -4,6 +4,7 @@
  */
 
 var express = require('express');
+var logentries = require('node-logentries');
 var routes = require('./routes');
 var users = require('./routes/users');
 var challenges = require('./routes/challenges');
@@ -27,7 +28,13 @@ var app = express();
 if (config.env === 'dev'){
   app.use(express.logger('dev'));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  //setup logentries
+  var log = logentries.logger({
+    token: config.logentriesToken
+  });
+  log.debug("Debug");
 }
+
 app.set('port', config.expressPort);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');

@@ -20,14 +20,16 @@ module.exports = function(){
       return {
         dbURI : process.env.MONGODB_URI,
         expressPort: process.env.PORT,
-        env: 'dev' //should be env/prod, can be changed to prod when we are comfy with prod environ
+        env: 'dev', //should be env/prod, can be changed to prod when we are comfy with prod environ
+        logentriesToken: process.env.LOGENTRIES_TOKEN
       };
     case "prod":
     case "production":
       return {
         dbURI : process.env.MONGODB_URI,
         expressPort: process.env.PORT,
-        env: 'dev' //should be env/prod, can be changed to prod when we are comfy with prod environ
+        env: 'dev', //should be env/prod, can be changed to prod when we are comfy with prod environ
+        logentriesToken: process.env.LOGENTRIES_TOKEN
       };
     default:
       throw new Error("No Environment Found");
