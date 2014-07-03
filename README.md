@@ -27,7 +27,7 @@ without disturbing production. The environments are as such in the following tab
 |Test   | quippics-test.herokuapp.com | Should be used for beta testing. Bugs should be fixed to prepare for prod|
 |       | test.quippics.us (preferred)|       |
 |Prod   | epic-api.herokuapp.com      | Should be used for production environment. Only changes at this point are for bug fixes|
-|       | prod.quippics.us (preferred)|       |
+|(Master)| prod.quippics.us (preferred)|       |
 
 
 Documentation
