@@ -4,6 +4,7 @@
  */
 
 var express = require('express');
+var logentries = require('node-logentries');
 var routes = require('./routes');
 var users = require('./routes/users');
 var challenges = require('./routes/challenges');
@@ -21,13 +22,22 @@ var User = require('./models/user.js');
 var passport = require('passport'),
   BasicStrategy = require('passport-http').BasicStrategy;
 
+//setup logentries
+var log = logentries.logger({
+  token: config.logentriesToken,
+});
 var app = express();
 
 // all environments
 if (config.env === 'dev'){
   app.use(express.logger('dev'));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  app.use(function(req, res, next){
+    log.debug()
+    next();
+  });
 }
+
 app.set('port', config.expressPort);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
