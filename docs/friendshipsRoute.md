@@ -53,7 +53,7 @@ POST /v1/users/:uid/friendRequests
 Example Request
 ```
 request.body: {
-  user: 52e73b76ca1c1f8202000008
+  friend: 52e73b76ca1c1f8202000008
 }
 ```
 
