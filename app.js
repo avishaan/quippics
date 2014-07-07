@@ -33,7 +33,7 @@ if (config.env === 'dev'){
   app.use(express.logger('dev'));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   app.use(function(req, res, next){
-    app.debug()
+    log.debug()
     next();
   });
 }
