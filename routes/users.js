@@ -229,7 +229,7 @@ exports.requestFriend = function(req, res){
       return res.send(500, err);
     } else {
       //no error, send ok status to front end
-      return res.send(200);
+      return res.send(200, {clientMsg: "Friend added successfully"});
     }
   });
 };
