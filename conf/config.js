@@ -8,6 +8,7 @@ module.exports = function(){
   switch(process.env.NODE_ENV){
     case null:
     case undefined:
+    case "local":
       return {
         dbURI : "mongodb://localhost/" + npmInfo.name,
         expressPort: 8081,
