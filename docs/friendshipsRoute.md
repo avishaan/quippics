@@ -34,6 +34,11 @@ request.body: {
   user: 52e73b76ca1c1f8202000008
 }
 ```
+Example Response
+```
+request.body: {
+  clientMsg: Friend request accepted
+}
 
 ####Decline a pending friend request
 #####_Status: Developed, Tested

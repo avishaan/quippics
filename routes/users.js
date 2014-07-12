@@ -144,7 +144,8 @@ exports.acceptRequests = function(req, res){
     if(err){
       return res.send(500, err);
     } else {
-      return res.send(200);
+      //no error, send ok status to front end
+      return res.send(200, {clientMsg: "Friend request accepted"});
     }
   });
 };
