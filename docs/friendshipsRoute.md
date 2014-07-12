@@ -56,6 +56,11 @@ request.body: {
   friend: 52e73b76ca1c1f8202000008
 }
 ```
+Example Response
+```
+request.body: {
+  clientMsg: Friend added successfully
+}
 
 ####Read list of friend requests
 #####_Status: Developed, Tested
