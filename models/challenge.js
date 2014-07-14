@@ -13,7 +13,8 @@ var challengeSchema = new mongoose.Schema({
   ],
   participants: [
     { user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, //reference to a user id
-      inviteStatus: { type: String } //lets us know if the user has 'invited', 'accepted', 'declined' the challenge
+      inviteStatus: { type: String }, //lets us know if the user has 'invited', 'accepted', 'declined' the challenge
+      hidden: { type: Boolean, default: false } //if this is true, then don't show in archive
     }
   ],
   submissions: [
