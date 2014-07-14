@@ -269,6 +269,7 @@ exports.listUsers = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   User.find({}, 'username _id thumbnail')
+    .ne('_id', req.params.uid) //don't return the user who is running the query
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
     .exec(function(err, users){

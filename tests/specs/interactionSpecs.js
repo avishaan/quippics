@@ -108,11 +108,13 @@ exports.spec = function(domain, callback){
       .create('Get list of users from nerdy perspective')
       .get(domain + '/users/' + user2.id + '/users/page/1')
       .expectStatus(200)
+      .inspectJSON()
       .afterJSON(function(users){
-        expect(users.length).toEqual(3); //remember there is an admin always watching
+        expect(users.length).toEqual(2); //remember there is an admin always watching 
         expect(users[1]._id).toBeDefined();
         expect(users[1].username).toBeDefined();
         expect(users[1].thumbnail).toBeDefined();
+        expect(_.findWhere(users, {_id: user2.id})).toBeUndefined();//we dont want own user returned in user list
         cb(null);
       })
       .toss();
