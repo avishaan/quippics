@@ -91,6 +91,8 @@ response: {
 #####_Status: Developed, Tested
 GET /v1/users/:uid/users/page/:page
 
+- user in {uid} will not be returned (tested)
+
 Example Response
 ```
 response: [{
