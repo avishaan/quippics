@@ -19,6 +19,7 @@ var user3 = {
 };
 var challenge1 = {};
 var challenge2 = {};
+var challenge3 = {};
 exports.spec = function(domain, callback){
   jasmine.getEnv().defaultTimeoutInterval = 1000;
   async.series([
@@ -280,6 +281,34 @@ exports.spec = function(domain, callback){
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //user can hide a challenge so it doesn't appear in their archive
+      frisby
+      .create("Hide an archived challenge")
+      .post(domain + '/challenges/' + challenge3._id + '/hidden', {
+        user: user2._id
+      })
+      .expectStatus(200)
+      .afterJSON(function(res){
+        expect(res.clientMsg).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //now that the user has hidden their only archive challenge, they should see nothing
+      frisby
+      .create("Get all archived challenges for a user in this case nerdy")
+      .get(domain + '/users/' + user2._id + '/challenges/archive/page/1')
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(challenges){
+        expect(challenges).toBeDefined();
+        expect(challenges.length).toEqual(0);
         cb(null);
       })
       .toss();

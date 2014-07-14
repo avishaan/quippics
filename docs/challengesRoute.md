@@ -122,3 +122,19 @@ response:
           },
    },{},{}]
 ```
+####Hide an Archived Challenge
+#####_Status: Developed, Tested
+POST '/v1/challenges/:cid/hidden'
+
+Example Request
+```
+request: {
+  user: '52f548514f8c88b137000116'
+}
+```
+Example Response
+```
+response: {
+  clientMsg: 'Challenge Hidden'
+}
+```
