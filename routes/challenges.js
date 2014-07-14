@@ -33,7 +33,7 @@ exports.declineChallenge = function(req, res){
         challenge.participants[0].inviteStatus = 'declined';
         challenge.save(function(err, updatedChallenge){
           if (!err && updatedChallenge){
-            res.send(200);
+            res.send(200, {clientMsg: "Challenge Declined"});
           } else {
             res.send(500, err);
           }
@@ -58,7 +58,7 @@ exports.acceptChallenge = function(req, res){
         challenge.participants[0].inviteStatus = 'accepted';
         challenge.save(function(err, updatedChallenge){
           if (!err && updatedChallenge){
-            res.send(200);
+            res.send(200, {clientMsg: "Challenge Accepted!"});
           } else {
             res.send(500, err);
           }
