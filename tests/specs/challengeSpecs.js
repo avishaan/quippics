@@ -272,6 +272,12 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
+      //but lets say that popular had originally declined the challenge
+    },
+    function(cb){
+      //in that case, it shouldn't show up in popular's archive
+    },
+    function(cb){
       //the user with no expired challenges should have nothing in their archive
       frisby
       .create("Get all archived challenges for a user in this case nerdy")
