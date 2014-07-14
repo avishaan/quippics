@@ -73,6 +73,12 @@ Example Response
 #####_Status: Developed, Tested
 POST '/v1/challenges/:cid/accepts'
 
+Example Request
+```
+request: {
+  user: '52f548514f8c88b137000116'
+}
+```
 Example Response
 ```
 response: {
@@ -84,6 +90,12 @@ response: {
 #####_Status: Developed, Tested
 POST '/v1/challenges/:cid/declines'
 
+Example Request
+```
+request: {
+  user: '52f548514f8c88b137000116'
+}
+```
 Example Response
 ```
 response: {
