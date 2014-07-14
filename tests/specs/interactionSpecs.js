@@ -108,7 +108,6 @@ exports.spec = function(domain, callback){
       .create('Get list of users from nerdy perspective')
       .get(domain + '/users/' + user2.id + '/users/page/1')
       .expectStatus(200)
-      .inspectJSON()
       .afterJSON(function(users){
         expect(users.length).toEqual(2); //remember there is an admin always watching 
         expect(users[1]._id).toBeDefined();
