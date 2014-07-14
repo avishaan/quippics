@@ -96,6 +96,7 @@ exports.acceptChallenge = function(req, res){
 exports.archivedChallenges = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
+  //challenges that are expired where user is 1.owner 2.participant not declined 3.participant not hidden
   Challenge
     .find({'participants.inviteStatus': {$ne: 'declined'}}, {participants: {$elemMatch: {user: req.params.uid}}})
     .or([{owner: req.params.uid}, {'participants.user': req.params.uid}, {privacy: 'public'}])
