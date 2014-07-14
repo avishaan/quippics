@@ -151,7 +151,8 @@ exports.spec = function(domain, callback){
         friend: user2.id
       })
       .expectStatus(200)
-      .after(function(res){
+      .afterJSON(function(res){
+        expect(res.clientMsg).toBeDefined();
         cb(null);
       })
       .toss();
@@ -192,7 +193,8 @@ exports.spec = function(domain, callback){
         user: user2.id
       })
       .expectStatus(200)
-      .after(function(res){
+      .afterJSON(function(res){
+        expect(res.clientMsg).toBeDefined();
         cb(null);
       })
       .toss();
@@ -265,7 +267,8 @@ exports.spec = function(domain, callback){
         user: user1.id
       })
       .expectStatus(200)
-      .after(function(res){
+      .afterJSON(function(res){
+        expect(res.clientMsg).toBeDefined();
         cb(null);
       })
       .toss();
