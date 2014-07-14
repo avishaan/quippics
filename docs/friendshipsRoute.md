@@ -39,6 +39,7 @@ Example Response
 request.body: {
   clientMsg: Friend request accepted
 }
+```
 
 ####Decline a pending friend request
 #####_Status: Developed, Tested
@@ -48,6 +49,12 @@ Example Request
 ```
 request.body: {
   user: 52e73b76ca1c1f8202000008
+}
+```
+Example Response
+```
+request.body: {
+  clientMsg: Friend request declined 
 }
 ```
 
@@ -64,8 +71,9 @@ request.body: {
 Example Response
 ```
 request.body: {
-  clientMsg: Friend added successfully
+  clientMsg: Friend requested successfully
 }
+```
 
 ####Read list of friend requests
 #####_Status: Developed, Tested

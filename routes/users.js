@@ -166,7 +166,7 @@ exports.declinedRequests = function(req, res){
       decliner.friendRequests.pull(req.body.user);
       decliner.save(function(err, user){
         if (!err && user){
-          return res.send(200);
+          return res.send(200, {clientMsg: "Friend request declined"});
         } else {
           return res.send(500, err);
         }
@@ -230,7 +230,7 @@ exports.requestFriend = function(req, res){
       return res.send(500, err);
     } else {
       //no error, send ok status to front end
-      return res.send(200, {clientMsg: "Friend added successfully"});
+      return res.send(200, {clientMsg: "Friend requested successfully"});
     }
   });
 };
