@@ -73,9 +73,23 @@ Example Response
 #####_Status: Developed, Tested
 POST '/v1/challenges/:cid/accepts'
 
+Example Response
+```
+response: {
+  clientMsg: 'Challenge Accepted!'
+}
+```
+
 ####Decline a challenge invite
 #####_Status: Developed, Tested
 POST '/v1/challenges/:cid/declines'
+
+Example Response
+```
+response: {
+  clientMsg: 'Challenge Declined'
+}
+```
 
 ####Get list of expired/archived challenges for a specific user
 #####_Status: Developed, Partially Tested
