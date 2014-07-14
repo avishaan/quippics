@@ -305,7 +305,7 @@ exports.spec = function(domain, callback){
       .create("Get all archived challenges for a user in this case nerdy")
       .get(domain + '/users/' + user2._id + '/challenges/archive/page/1')
       .expectStatus(200)
-      //.inspectJSON()
+      .inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(0);

@@ -110,6 +110,7 @@ app.get('/api/v1/users/:uid/challenges/archive/page/:page', apiAuth(), challenge
 app.get('/api/v1/users/:uid/challenges/page/:page', apiAuth(), challenges.myChallenges); //retrieve all current challenges applicable to me
 app.post('/api/v1/challenges/:cid/accepts', apiAuth(), challenges.acceptChallenge); //accept a challenge
 app.post('/api/v1/challenges/:cid/declines', apiAuth(), challenges.declineChallenge); //decline a challenge
+app.post('/api/v1/challenges/:cid/hidden', apiAuth(), challenges.hideChallenge); //hide a challenge
 //submission routes
 app.post('/api/v1/challenges/:cid/submissions', apiAuth(), submissions.create); //create a new submission
 app.get('/api/v1/challenges/:cid/submissions/page/:page', apiAuth(), submissions.readAll); //read all the submissions in a specific challenge
