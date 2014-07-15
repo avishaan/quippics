@@ -380,7 +380,20 @@ exports.spec = function(domain, callback){
         cb(null);
       })
       .toss();
+    },
+    function(cb){
+      //read all the users in a specific challenge
+      frisby
+      .create("Read all users in a specific challenge")
+      .get(domain + '/challenges/' + challenge1._id + '/users/page/1')
+      .expectStatus(200)
+      .inspectJSON()
+      .afterJSON(function(challenge){
+        //cb(null);
+      })
+      .toss();
     }
+
 
   ],
   function(err, results){
