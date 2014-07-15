@@ -98,10 +98,18 @@ exports.archivedChallenges = function(req, res){
   req.params.page = req.params.page || 1;
   //challenges that are expired where user is 1.owner 2.participant not declined 3.participant not hidden
   Challenge
-    .find({'participants.inviteStatus': {$ne: 'declined'}}, {participants: {$elemMatch: {user: req.params.uid}}})
-    .or([{owner: req.params.uid}, {'participants.user': req.params.uid}, {privacy: 'public'}])
+    //.find({'participants.inviteStatus': {$ne: 'declined'}}, {participants: {$elemMatch: {user: req.params.uid}}})
+    //.or([{owner: req.params.uid}, {'participants.user': req.params.uid}, {privacy: 'public'}])
+    //.find({'participants.user': req.params.uid}, {'participants.inviteStatus': 'invited'})
+    .find({})
+    .or([{participants: {$elemMatch: {
+      user: req.params.uid,
+      inviteStatus: {$ne: 'declined'}
+    }}}])//where user matches userid and they didn't decline
+    .or([{owner: req.params.uid}])
+    //.or([{'participants.user': req.params.uid}])
     //.where().ne({'participants.inviteStatus': 'declined'})
-    .select('_id owner title createdOn expiration invites')
+    .select('_id owner title createdOn expiration invites participants')
     //.slice('submissions', 1) //only get one submission for each challenge
     //.populate({
     //  path: 'submissions',

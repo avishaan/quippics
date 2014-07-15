@@ -273,9 +273,30 @@ exports.spec = function(domain, callback){
     },
     function(cb){
       //but lets say that popular had originally declined the challenge
+      frisby
+      .create("Have popular decline the invitation")
+      .post(domain + '/challenges/' + challenge3._id + '/declines', {
+        user: user1.username
+      })
+      .expectStatus(200)
+      .afterJSON(function(res){
+        expect(res.clientMsg).toBeDefined();
+        cb(null);
+      })
+      .toss();
     },
     function(cb){
       //in that case, it shouldn't show up in popular's archive
+      frisby
+      .create("Get all archived challenges for a user in this case popular")
+      .get(domain + '/users/' + user1._id + '/challenges/archive/page/1')
+      .expectStatus(404)
+      //.inspectJSON()
+      .afterJSON(function(challenges){
+        expect(challenges.clientMsg).toBeDefined();
+        cb(null);
+      })
+      .toss();
     },
     function(cb){
       //the user with no expired challenges should have nothing in their archive
@@ -287,7 +308,7 @@ exports.spec = function(domain, callback){
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
-        cb(null);
+        //cb(null);
       })
       .toss();
     },
