@@ -299,25 +299,11 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      //the user with no expired challenges should have nothing in their archive
-      frisby
-      .create("Get all archived challenges for a user in this case nerdy")
-      .get(domain + '/users/' + user2._id + '/challenges/archive/page/1')
-      .expectStatus(200)
-      //.inspectJSON()
-      .afterJSON(function(challenges){
-        expect(challenges).toBeDefined();
-        expect(challenges.length).toEqual(1);
-        //cb(null);
-      })
-      .toss();
-    },
-    function(cb){
       //user can hide a challenge so it doesn't appear in their archive
       frisby
       .create("Hide an archived challenge")
       .post(domain + '/challenges/' + challenge3._id + '/hidden', {
-        user: user2._id
+        user: user3._id
       })
       .expectStatus(200)
       .afterJSON(function(res){
@@ -329,13 +315,27 @@ exports.spec = function(domain, callback){
     function(cb){
       //now that the user has hidden their only archive challenge, they should see nothing
       frisby
+      .create("Get all archived challenges for a user in this case user3")
+      .get(domain + '/users/' + user3._id + '/challenges/archive/page/1')
+      .expectStatus(404)
+      //.inspectJSON()
+      .afterJSON(function(res){
+        expect(res).toBeDefined();
+        expect(res.clientMsg).toEqual("Couldn't find any challenges for this user");
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //nerdy should still be able to see the expired challenge as he is the owner
+      frisby
       .create("Get all archived challenges for a user in this case nerdy")
       .get(domain + '/users/' + user2._id + '/challenges/archive/page/1')
       .expectStatus(200)
-      .inspectJSON()
+      //.inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
-        expect(challenges.length).toEqual(0);
+        expect(challenges.length).toEqual(1);
         cb(null);
       })
       .toss();
