@@ -19,28 +19,29 @@ exports.read = function(req, res){
 };
 //hide a challenge from the user archive
 exports.hideChallenge = function(req, res){
-
   Challenge
-  //only return the user in the participants
-    .findOne({_id: req.params.cid}, {participants: {$elemMatch: {user: req.body.user}}})
-    //.or([{owner: req.params.uid}, {privacy: 'public'}])
-    .select('_id owner title createdOn expiration participants invites')
-    .exec(function(err, challenge){
-      if (!err && challenge) {
-        //set the inviteStatus to declined 
-        //TODO need to use upsert here
-        challenge.participants[0].hidden = true;
-        challenge.save(function(err, updatedChallenge){
-          if (!err && updatedChallenge){
-            res.send(200, {clientMsg: "Challenge Hidden"});
-          } else {
-            res.send(500, err);
-          }
-        });
+  .update(
+    {
+      _id: req.params.cid,
+      participants: {$elemMatch: {user: req.body.user}}
+    },
+    {
+      'participants.$.hidden': true
+    },
+    {
+      multi: false
+    },
+    function(err, numAffected){
+      if (!err && numAffected == 1){
+        return res.send(200, {clientMsg: "Challenge Hidden"});
+      } else if (!err){
+        res.send(500, {clientMsg: "Multiple Challenge Hidden"});
+        throw new Error('Multiple Challenge Updated as hidden');
       } else {
         res.send(500, err);
+        throw new Error('Error trying to hide a challenge');
       }
-    });
+  });
 };
 //decline an invite to a challenge
 exports.declineChallenge = function(req, res){
@@ -104,9 +105,10 @@ exports.archivedChallenges = function(req, res){
     .find({})
     .or([{participants: {$elemMatch: {
       user: req.params.uid,
-      inviteStatus: {$ne: 'declined'}
+      inviteStatus: {$ne: 'declined'},
+      hidden: false
     }}}])//where user matches userid and they didn't decline
-    .or([{owner: req.params.uid}])
+    .or([{owner: req.params.uid}]) //where the user is the owner
     //.or([{'participants.user': req.params.uid}])
     //.where().ne({'participants.inviteStatus': 'declined'})
     .select('_id owner title createdOn expiration invites participants')
