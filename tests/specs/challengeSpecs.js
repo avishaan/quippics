@@ -1,4 +1,5 @@
 var frisby = require('frisby');
+var superagent = require('superagent');
 var async = require('async');
 
 var user1 = {
@@ -54,6 +55,27 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
+      describe("Register User", function(){
+        it("should register nerdy", function(done){
+          superagent
+          .post(domain + '/register')
+          .type('form')
+          .attach('image', './tests/specs/images/defaultProfile.png')
+          .field('username', user2.username)
+          .field('password', user2.password)
+          .field('email', user2.email)
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body).toBeDefined();
+            user2._id = res.body._id;
+            console.log('user2', user2._id);
+            done();
+            cb(null);
+          });
+        });
+      });
+    },
+    function(cb){
       //create a test user
       frisby
       .create("Create A user who is very popular")
@@ -69,21 +91,10 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      frisby
-      .create("Create A user who is very nerdy")
-      .post(domain + '/register', {
-        username: user2.username,
-        password: user2.password
-      })
-      .expectStatus(200)
-      .afterJSON(function(user){
-        user2._id = user._id;
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
       //setup our challenge
+      console.log('user1', user1._id);
+      console.log('user2', user2._id);
+      console.log('user3', user3._id);
       challenge1 = {
         title: 'Challenge1 Title',
         description: 'Challenge1 Description',
