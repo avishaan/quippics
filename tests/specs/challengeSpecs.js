@@ -174,6 +174,28 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
+      //popular should now have two challenges, both invited
+      frisby
+      .create("Get all the challenges for the popular user")
+      .get(domain + '/users/' + user1._id + '/challenges/page/1')
+      .expectStatus(200)
+      .afterJSON(function(challenges){
+        expect(challenges).toBeDefined();
+        expect(challenges.length).toEqual(2);
+        challenges.forEach(function(challenge, index){
+          if (challenge.owner === user1._id){
+            expect(challenge.inviteStatus).toEqual('owner');
+            expect(challenge.participants).toBeUndefined();
+          } else {
+            expect(challenge.participants.length).toEqual(1);
+            expect(challenge.participants[0].inviteStatus).toEqual('invited');
+          }
+        });
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
       //check now nerdy should have an additional challenge
       frisby
       .create("Get all the challenges for the nerdy user")
