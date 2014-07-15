@@ -1,4 +1,5 @@
 var Challenge = require("../models/challenge.js");
+var User = require("../models/user.js");
 var perPage = 24; //challenges per page
 
 //read specific challenge
@@ -15,6 +16,18 @@ exports.read = function(req, res){
     } else {
       res.send(500, err);
     }
+  });
+};
+//get/read all the users participating in a challenge
+exports.readUsers = function(req, res){
+  Challenge
+  .findOne({_id: req.params.cid})
+  .populate({
+    path: 'participants.user',
+    select: 'username thumbnail'
+  })
+  .exec(function(err, challenge){
+    debugger;
   });
 };
 //hide a challenge from the user archive
