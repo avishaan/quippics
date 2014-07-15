@@ -45,53 +45,55 @@ exports.hideChallenge = function(req, res){
 };
 //decline an invite to a challenge
 exports.declineChallenge = function(req, res){
-  //find the challenge
   Challenge
-  //only return the user in the participants
-    .findOne({_id: req.params.cid}, {participants: {$elemMatch: {user: req.body.user}}})
-    //.or([{owner: req.params.uid}, {privacy: 'public'}])
-    .select('_id owner title createdOn expiration participants invites')
-    .exec(function(err, challenge){
-      if (!err && challenge) {
-        //set the inviteStatus to declined 
-        //TODO need to use upsert here
-        challenge.participants[0].inviteStatus = 'declined';
-        challenge.save(function(err, updatedChallenge){
-          if (!err && updatedChallenge){
-            res.send(200, {clientMsg: "Challenge Declined"});
-          } else {
-            res.send(500, err);
-          }
-        });
+  .update(
+    {
+      _id: req.params.cid,
+      participants: {$elemMatch: {user: req.body.user}}
+    },
+    {
+      'participants.$.inviteStatus': 'declined'
+    },
+    {
+      multi: false
+    },
+    function(err, numAffected){
+      if (!err && numAffected == 1){
+        return res.send(200, {clientMsg: "Challenge Declined"});
+      } else if (!err){
+        res.send(500, {clientMsg: "Multiple Challenge Declined"});
+        throw new Error('Multiple Challenge Updated as declined');
       } else {
         res.send(500, err);
+        throw new Error('Error with a  declined challenge');
       }
-    });
+  });
 };
 //accept an invite to a challenge
 exports.acceptChallenge = function(req, res){
-  //find the challenge
   Challenge
-  //only return the user in the participants
-    .findOne({_id: req.params.cid}, {participants: {$elemMatch: {user: req.body.user}}})
-    //.or([{owner: req.params.uid}, {privacy: 'public'}])
-    .select('_id owner title createdOn expiration participants invites')
-    .exec(function(err, challenge){
-      if (!err && challenge) {
-        //set the inviteStatus to accepted
-        //TODO need to use upsert here
-        challenge.participants[0].inviteStatus = 'accepted';
-        challenge.save(function(err, updatedChallenge){
-          if (!err && updatedChallenge){
-            res.send(200, {clientMsg: "Challenge Accepted!"});
-          } else {
-            res.send(500, err);
-          }
-        });
+  .update(
+    {
+      _id: req.params.cid,
+      participants: {$elemMatch: {user: req.body.user}}
+    },
+    {
+      'participants.$.inviteStatus': 'accepted'
+    },
+    {
+      multi: false
+    },
+    function(err, numAffected){
+      if (!err && numAffected === 1){
+        return res.send(200, {clientMsg: "Challenge Accepted"});
+      } else if (!err){
+        res.send(500, {clientMsg: "Multiple Challenge Accepted"});
+        throw new Error('Multiple Challenge Updated as accepted');
       } else {
         res.send(500, err);
+        throw new Error('Error with a  accepted challenge');
       }
-    });
+  });
 };
 //all archived challenges applicable to me
 exports.archivedChallenges = function(req, res){

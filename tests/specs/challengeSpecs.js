@@ -124,7 +124,7 @@ exports.spec = function(domain, callback){
       frisby
       .create("Have nerdy accept the invitation")
       .post(domain + '/challenges/' + challenge1._id + '/accepts', {
-        user: user2.username
+        user: user2._id
       })
       .expectStatus(200)
       .afterJSON(function(res){
@@ -194,7 +194,7 @@ exports.spec = function(domain, callback){
       frisby
       .create("Have popular decline the invitation")
       .post(domain + '/challenges/' + challenge2._id + '/declines', {
-        user: user1.username
+        user: user1._id
       })
       .expectStatus(200)
       .afterJSON(function(res){
@@ -276,7 +276,7 @@ exports.spec = function(domain, callback){
       frisby
       .create("Have popular decline the invitation")
       .post(domain + '/challenges/' + challenge3._id + '/declines', {
-        user: user1.username
+        user: user1._id
       })
       .expectStatus(200)
       .afterJSON(function(res){
