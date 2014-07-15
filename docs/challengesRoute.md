@@ -138,3 +138,13 @@ response: {
   clientMsg: 'Challenge Hidden'
 }
 ```
+
+####Get list of users participating in a challenge
+#####_Status: Developed, Not Tested
+GET '/v1/challenges/:cid/users/page/:page'
+
+Example Response
+```
+response:
+
+```
