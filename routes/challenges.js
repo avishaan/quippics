@@ -21,6 +21,11 @@ exports.read = function(req, res){
 };
 //get/read all the users participating in a challenge
 exports.readUsers = function(req, res){
+   req.params.page = req.params.page || 1;
+    //.skip(perPage * (req.params.page - 1))
+    //.limit(perPage)
+    //.sort({expiration: 'ascending'})
+
   Challenge
   .aggregate()
   .match({ '_id': mongoose.Types.ObjectId(req.params.cid)})
@@ -29,6 +34,9 @@ exports.readUsers = function(req, res){
     'user': '$participants.user',
     '_id': 0
   })
+  .sort({'user': 'ascending'}) //we are actually sorting by userid since we haven't populated with the username field yet
+  .skip(perPage * (req.params.page - 1))
+  .limit(perPage)
   .exec(function(err, users){
     User
     .populate(users, {
