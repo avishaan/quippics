@@ -420,6 +420,8 @@ exports.spec = function(domain, callback){
       .get(domain + '/challenges/' + challenge1._id + '/users/page/2')
       .expectStatus(200)
       .afterJSON(function(participants){
+        //this makes sure the pagination is working, with only a few
+        //users we expect nothing to return
         expect(participants.length).toEqual(0);
         cb(null);
       })
