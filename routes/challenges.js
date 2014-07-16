@@ -21,28 +21,19 @@ exports.read = function(req, res){
 };
 //get/read all the users participating in a challenge
 exports.readUsers = function(req, res){
-  /*
-  Challenge
-  .findOne({_id: req.params.cid})
-  .populate({
-    path: 'participants.user',
-    select: 'username thumbnail'
-  })
-  .exec(function(err, challenge){
-    debugger;
-  });
-  */
   Challenge
   .aggregate()
   .match({ '_id': mongoose.Types.ObjectId(req.params.cid)})
   .unwind('participants')
   .project({
-    user: '$participants.user'
+    'user': '$participants.user',
+    '_id': 0
   })
   .exec(function(err, users){
     User
     .populate(users, {
-      path: 'user'
+      path: 'user',
+      select: 'username thumbnail'
     }, function(err, popUsers){
       debugger;
     });
