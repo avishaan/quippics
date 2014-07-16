@@ -1,5 +1,6 @@
 var Challenge = require("../models/challenge.js");
 var User = require("../models/user.js");
+var mongoose = require('mongoose');
 var perPage = 24; //challenges per page
 
 //read specific challenge
@@ -20,6 +21,7 @@ exports.read = function(req, res){
 };
 //get/read all the users participating in a challenge
 exports.readUsers = function(req, res){
+  /*
   Challenge
   .findOne({_id: req.params.cid})
   .populate({
@@ -27,6 +29,34 @@ exports.readUsers = function(req, res){
     select: 'username thumbnail'
   })
   .exec(function(err, challenge){
+    debugger;
+  });
+  */
+  Challenge
+  .aggregate()
+  .match({ '_id': mongoose.Types.ObjectId(req.params.cid)})
+  .project({
+    title: 1,
+    description: 1
+  })
+  //.aggregate(
+  //  {
+  //    $match: {
+  //      '_id': req.params.cid
+  //    }
+  //  },
+  //  {
+  //    $unwind: '$participants'
+  //  },
+  //  {
+  //    $project: {
+  //      users: "$participants.user"
+  //    }
+  //  }
+  //)
+  .exec(function(err, users){
+    req;
+    mongoose;
     debugger;
   });
 };
