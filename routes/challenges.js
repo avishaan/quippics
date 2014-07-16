@@ -35,7 +35,7 @@ exports.readUsers = function(req, res){
       path: 'user',
       select: 'username thumbnail'
     }, function(err, popUsers){
-      debugger;
+      res.send(200, popUsers);
     });
   });
 };

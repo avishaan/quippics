@@ -40,19 +40,24 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      //create a test user
-      frisby
-      .create("Create A user who is very generic")
-      .post(domain + '/register', {
-        username: user3.username,
-        password: user3.password
-      })
-      .expectStatus(200)
-      .afterJSON(function(user){
-        user3._id = user._id;
-        cb(null);
-      })
-      .toss();
+      describe("Register User", function(){
+        it("should register popular", function(done){
+          superagent
+          .post(domain + '/register')
+          .type('form')
+          .attach('image', './tests/specs/images/defaultProfile.png')
+          .field('username', user1.username)
+          .field('password', user1.password)
+          .field('email', user1.email)
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body).toBeDefined();
+            user1._id = res.body._id;
+            done();
+            cb(null);
+          });
+        });
+      });
     },
     function(cb){
       describe("Register User", function(){
@@ -68,7 +73,6 @@ exports.spec = function(domain, callback){
             expect(res.status).toEqual(200);
             expect(res.body).toBeDefined();
             user2._id = res.body._id;
-            console.log('user2', user2._id);
             done();
             cb(null);
           });
@@ -76,25 +80,27 @@ exports.spec = function(domain, callback){
       });
     },
     function(cb){
-      //create a test user
-      frisby
-      .create("Create A user who is very popular")
-      .post(domain + '/register', {
-        username: user1.username,
-        password: user1.password
-      })
-      .expectStatus(200)
-      .afterJSON(function(user){
-        user1._id = user._id;
-        cb(null);
-      })
-      .toss();
+      describe("Register User", function(){
+        it("should register generic", function(done){
+          superagent
+          .post(domain + '/register')
+          .type('form')
+          .attach('image', './tests/specs/images/defaultProfile.png')
+          .field('username', user3.username)
+          .field('password', user3.password)
+          .field('email', user3.email)
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body).toBeDefined();
+            user3._id = res.body._id;
+            done();
+            cb(null);
+          });
+        });
+      });
     },
     function(cb){
       //setup our challenge
-      console.log('user1', user1._id);
-      console.log('user2', user2._id);
-      console.log('user3', user3._id);
       challenge1 = {
         title: 'Challenge1 Title',
         description: 'Challenge1 Description',
@@ -398,9 +404,12 @@ exports.spec = function(domain, callback){
       .create("Read all users in a specific challenge")
       .get(domain + '/challenges/' + challenge1._id + '/users/page/1')
       .expectStatus(200)
-      .inspectJSON()
-      .afterJSON(function(challenge){
-        //cb(null);
+      .afterJSON(function(participants){
+        expect(participants[0].user.username).toBeDefined();
+        expect(participants.length).toEqual(2);
+        expect(participants[0].user.thumbnail).toBeDefined();
+        expect(participants[0].user._id).toBeDefined();
+        cb(null);
       })
       .toss();
     }

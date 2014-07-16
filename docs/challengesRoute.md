@@ -146,5 +146,16 @@ GET '/v1/challenges/:cid/users/page/:page'
 Example Response
 ```
 response:
-
+ [{ user:
+     { username: 'nerd314',
+       _id: '53c5d5706d2e9dd22de41d13',
+       thumbnail:
+        { data: 'iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAAAAAAdwx7eAAAAB', 
+          contentType: 'image/png' } } },
+  { user:
+     { username: 'user3',
+       _id: '53c5d5706d2e9dd22de41d14',
+       thumbnail:
+        { data: 'iVBORw0KGgoAAAANSUhEUgAAAFoAAABaCAAAAAAdwx7eAAAAB', 
+          contentType: 'image/png' } } } ]
 ```
