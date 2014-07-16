@@ -35,29 +35,17 @@ exports.readUsers = function(req, res){
   Challenge
   .aggregate()
   .match({ '_id': mongoose.Types.ObjectId(req.params.cid)})
+  .unwind('participants')
   .project({
-    title: 1,
-    description: 1
+    user: '$participants.user'
   })
-  //.aggregate(
-  //  {
-  //    $match: {
-  //      '_id': req.params.cid
-  //    }
-  //  },
-  //  {
-  //    $unwind: '$participants'
-  //  },
-  //  {
-  //    $project: {
-  //      users: "$participants.user"
-  //    }
-  //  }
-  //)
   .exec(function(err, users){
-    req;
-    mongoose;
-    debugger;
+    User
+    .populate(users, {
+      path: 'user'
+    }, function(err, popUsers){
+      debugger;
+    });
   });
 };
 //hide a challenge from the user archive
