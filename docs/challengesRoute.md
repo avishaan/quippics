@@ -7,6 +7,8 @@ Routes here are related to creating, reading challenges.
 #####_Status: Developed, Partially Tested  
 GET '/v1/users/:uid/challenges/page/:page'
 
+- challenges will continue to be returned 24hrs after expiration for voting (not tested)
+
 Example Response
 ```
 response: [ { __v: 1,
