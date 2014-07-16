@@ -412,9 +412,19 @@ exports.spec = function(domain, callback){
         cb(null);
       })
       .toss();
+    },
+    function(cb){
+      //read all the users in a specific challenge
+      frisby
+      .create("Read all users in a specific challenge")
+      .get(domain + '/challenges/' + challenge1._id + '/users/page/2')
+      .expectStatus(200)
+      .afterJSON(function(participants){
+        expect(participants.length).toEqual(0);
+        cb(null);
+      })
+      .toss();
     }
-
-
   ],
   function(err, results){
     callback(null);

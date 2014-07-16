@@ -140,7 +140,7 @@ response: {
 ```
 
 ####Get list of users participating in a challenge
-#####_Status: Developed, Not Tested
+#####_Status: Developed, Tested
 GET '/v1/challenges/:cid/users/page/:page'
 
 Example Response
