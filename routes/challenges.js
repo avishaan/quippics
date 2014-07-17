@@ -1,6 +1,7 @@
 var Challenge = require("../models/challenge.js");
 var User = require("../models/user.js");
 var mongoose = require('mongoose');
+var async = require('async');
 var perPage = 24; //challenges per page
 
 //read specific challenge
@@ -21,30 +22,52 @@ exports.read = function(req, res){
 };
 //get/read all the users participating in a challenge
 exports.readUsers = function(req, res){
-   req.params.page = req.params.page || 1;
-    //.skip(perPage * (req.params.page - 1))
-    //.limit(perPage)
-    //.sort({expiration: 'ascending'})
-
-  Challenge
-  .aggregate()
-  .match({ '_id': mongoose.Types.ObjectId(req.params.cid)})
-  .unwind('participants')
-  .project({
-    'user': '$participants.user',
-    '_id': 0
-  })
-  .sort({'user': 'ascending'}) //we are actually sorting by userid since we haven't populated with the username field yet
-  .skip(perPage * (req.params.page - 1))
-  .limit(perPage)
-  .exec(function(err, users){
-    User
-    .populate(users, {
-      path: 'user',
-      select: 'username thumbnail'
-    }, function(err, popUsers){
-      res.send(200, popUsers);
-    });
+  req.params.page = req.params.page || 1;
+  async.waterfall([
+    function(cb){
+      Challenge
+      .aggregate()
+      .match({ '_id': mongoose.Types.ObjectId(req.params.cid)})
+      .unwind('participants')
+      .project({
+        'user': '$participants.user',
+        '_id': 0
+      })
+      .sort({'user': 'ascending'}) //we are actually sorting by userid since we haven't populated with the username field yet
+      .skip(perPage * (req.params.page - 1))
+      .limit(perPage)
+      .exec(function(err, users){
+        if (!err && users){
+          cb(null, users);
+        } else if (!err){
+          cb({clientMsg: 'Could not Retrieve Users'});
+        } else {
+          cb(err);
+        }
+      });
+    },
+    function(users, cb){
+      User
+      .populate(users, {
+        path: 'user',
+        select: 'username thumbnail'
+      }, function(err, popUsers){
+        if (!err && popUsers){
+          cb(null, popUsers);
+        } else if (!err){
+          cb({clientMsg: 'Could not Retrieve Users'});
+        } else {
+          cb(err);
+        }
+      });
+    }
+    ],
+    function(err, results){
+      if (!err && results){
+        return res.send(200, results);
+      } else {
+        return res.send(500, err);
+      }
   });
 };
 //hide a challenge from the user archive
