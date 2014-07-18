@@ -211,7 +211,7 @@ exports.spec = function(domain, callback){
       .create("Get an existing submission, let's get Nerdy's submission")
       .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id)
       .expectStatus(200)
-      .inspectJSON()
+      //.inspectJSON()
       .afterJSON(function(submission){
         //full tests here
         expect(submission).toBeDefined();
