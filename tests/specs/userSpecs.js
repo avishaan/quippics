@@ -84,7 +84,7 @@ exports.spec = function(domain, callback){
       .create('Get user2 profile information')
       .get(domain + '/users/' + user2._id)
       .expectStatus(200)
-      .inspectJSON()
+      //.inspectJSON()
       .afterJSON(function(profile){
         expect(profile.username).toEqual(user2.username);
         expect(profile.password).toBeUndefined();
@@ -173,7 +173,7 @@ exports.spec = function(domain, callback){
           superagent
           .put(domain + '/users/' + user2._id)
           .type('form')
-          .attach("image", "./tests/specs/images/defaultSubmission.jpg") //this is based on where you are running jasmine-node from
+          .attach("image", "./tests/specs/images/onepixel.png") //this is based on where you are running jasmine-node from
           .field("username", user2.username)
           .field("password", user2.password)
           .field("email", user2.email)
@@ -191,7 +191,17 @@ exports.spec = function(domain, callback){
             //save the user's userid for future reference
             //user2._id = user._id;
             done();
-            cb(null);
+            frisby
+            .create('Get user2 profile information')
+            .get(domain + '/users/' + user2._id)
+            .expectStatus(200)
+            //.inspectJSON()
+            .afterJSON(function(profile){
+              //make sure the thumbnail data has changed
+              expect(profile.thumbnail.data).not.toEqual(user2.thumbnail.data);
+              cb(null);
+            })
+            .toss();
           });
         });
       });
