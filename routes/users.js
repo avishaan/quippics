@@ -302,7 +302,7 @@ exports.update = function(req, res){
     if (!err){
       if (user){
         //get the information passed in from the body and set it to the properties of the model
-        //user.username  = req.body.username ? req.body.username : user.username;
+        user.username  = req.body.newUsername ? req.body.newUsername : user.username;
         user.email = req.body.email ? req.body.email : user.email;
         user.password = req.body.newPassword ? req.body.newPassword : user.password;
         user.addImage(req, function(){
