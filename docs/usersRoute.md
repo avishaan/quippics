@@ -7,6 +7,9 @@ Routes here are related to user registrations, login, etc
 #####_Status: Developed, Tested
 POST /v1/register
 
+- User who registers with existing username receives 500 response (tested)
+- User who registers with existing username different case receives 500 response (tested)
+
 Example Request (multipart with images)
 ```
 request.body:
@@ -38,6 +41,9 @@ response:
 ####Update an existing user
 #####_Status: Developed, Tested
 PUT /v1/users/:uid
+
+- User can change their profile picture
+- User can change their password (tested)
 
 Example Request (multipart with images)
 ```
@@ -71,6 +77,9 @@ response:
 ####Authenticate user and return userid
 #####_Status: Developed, Tested
 POST /v1/users
+
+- Login with incorrect password returns 401 reponse (tested)
+- Username is case insensitive during login (tested)
 
 Example Request
 ```
