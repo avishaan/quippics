@@ -51,6 +51,7 @@ Example Request (multipart with images)
   username: 'jack1985',
   password: 'password',
   newPassword(opt): 'passwordupdate',
+  newUsername(opt): 'usernameupdate'
   email(opt): 'jack1985@gmail.com'
 };
 ```
