@@ -232,6 +232,46 @@ exports.spec = function(domain, callback){
         .toss();
       })
       .toss();
+    },
+    function(cb){
+      //user should be able to change their username
+      user1.oldUsername = user1.username;
+      user1.username = 'newUsername';
+      user1.email = 'newemail@gmail.com';
+
+      frisby.create('Have user1 change their username')
+      .put(domain + '/users/' + user1._id, {
+        newUsername: user1.username,
+        email: user1.email
+      })
+      .expectStatus(200)
+      .afterJSON(function(user3){
+        //check that we can still log in with the updated user
+        frisby.create('User should be able to login with new password')
+        .post( domain + '/users', {
+          username: user1.username,
+          password: user1.password
+        })
+        .expectStatus(200)
+        .afterJSON(function(res){
+          expect(res._id).toBeDefined();
+          //make sure the userid is still the same
+          expect(res._id).toEqual(user1._id);
+          //check the username in the profile information
+          frisby
+          .create('Profile information should have the updated username')
+          .get(domain + '/users/' + user1._id)
+          .expectStatus(200)
+          .afterJSON(function(profile){
+            expect(profile.username).toEqual(user1.username);
+            expect(profile.username).not.toEqual(user1.oldUsername);
+            cb(null);
+          })
+          .toss();
+        })
+        .toss();
+      })
+      .toss();
     }
   ],
   function(err, results){
