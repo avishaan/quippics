@@ -275,7 +275,7 @@ exports.spec = function(domain, callback){
     }
   ],
   function(err, results){
-    //callback(null);
+    callback(null);
   });
 };
 
