@@ -211,6 +211,7 @@ exports.spec = function(domain, callback){
       .create("Get an existing submission, let's get Nerdy's submission")
       .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id)
       .expectStatus(200)
+      .inspectJSON()
       .afterJSON(function(submission){
         //full tests here
         expect(submission).toBeDefined();
@@ -221,6 +222,7 @@ exports.spec = function(domain, callback){
         expect(submission.owner).toBeDefined();
         expect(submission.image).toBeDefined();
         expect(submission.owner.username).toBeDefined();
+        expect(submission.owner._id).toBeDefined();
         expect(submission.comments).toBeUndefined();
         cb(null);
       })
