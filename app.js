@@ -19,7 +19,6 @@ var db = require('./dbs/db');
 var util = require('./routes/util');
 var server = require('./routes/server');
 var User = require('./models/user.js');
-var apnagent = require('apnagent');
 var passport = require('passport'),
   BasicStrategy = require('passport-http').BasicStrategy;
 
@@ -31,26 +30,6 @@ var app = express();
 
 // local environment
 if (config.env === 'local'){
-  var agent = new apnagent.Agent();
-  agent
-  .set('pfx file', path.join(__dirname, config.pfxPath))
-  .enable('sandbox');
-
-  agent.connect(function(err){
-    // handle any auth problems
-    if (err && err.name === 'GatewayAuthorizationError'){
-      console.log('Authentication Error: %s', err.message);
-      process.exit(1);
-    }
-    else if (err) {
-      //handle other errors
-      throw err;
-    } else {
-      // it worked, don't be so surprised...
-      var env = agent.enabled('sandbox') ? 'sandbox' : 'production';
-      console.log('apnagent [%s] gateway connected', env);
-    }
-  });
 
 }
 // dev/local environments
@@ -64,8 +43,6 @@ if (config.env === 'dev' ||
   });
 }
 // all environments
-
-app.set('apn', agent);
 app.set('port', config.expressPort);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -115,6 +92,7 @@ app.get('/api/v1/server', function(req, res){
   res.send(200, {clientMsg: "We are up and running"});
 });
 app.get('/api/v1/apn', function(req, res){
+  var agent = require('./apn/apn.js');
   agent.createMessage()
   .device('<a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be94>')
   .alert('Hello Jello!')
