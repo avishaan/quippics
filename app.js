@@ -33,8 +33,24 @@ var app = express();
 if (config.env === 'local'){
   var agent = new apnagent.Agent();
   agent
-  .set('pfx file', path.join(config.pfxPath))
+  .set('pfx file', path.join(__dirname, config.pfxPath))
   .enable('sandbox');
+
+  agent.connect(function(err){
+    // handle any auth problems
+    if (err && err.name === 'GatewayAuthorizationError'){
+      console.log('Authentication Error: %s', err.message);
+      process.exit(1);
+    }
+    else if (err) {
+      //handle other errors
+      throw err;
+    } else {
+      // it worked, don't be so surprised...
+      var env = agent.enabled('sandbox') ? 'sandbox' : 'production';
+      console.log('apnagent [%s] gateway connected', env);
+    }
+  });
 
 }
 // dev/local environments
@@ -102,7 +118,9 @@ app.get('/api/v1/apn', function(req, res){
   agent.createMessage()
   .device('<a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be94>')
   .alert('Hello Jello!')
-  .send();
+  .send(function(err){
+    debugger;
+  });
   res.send(200, 'attempting');
 });
 
