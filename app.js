@@ -29,6 +29,14 @@ var log = logentries.logger({
 });
 var app = express();
 
+// local environment
+if (config.env === 'local'){
+  var agent = new apnagent.Agent();
+  agent
+  .set('pfx file', path.join(config.pfxPath))
+  .enable('sandbox');
+
+}
 // dev/local environments
 if (config.env === 'dev' ||
     config.env === 'local'){
@@ -39,7 +47,9 @@ if (config.env === 'dev' ||
     next();
   });
 }
+// all environments
 
+app.set('apn', agent);
 app.set('port', config.expressPort);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -87,6 +97,13 @@ app.post('/api/v1/mirror', util.mirror); //route will mirror back to you whateve
 app.get('/users', users.list);
 app.get('/api/v1/server', function(req, res){
   res.send(200, {clientMsg: "We are up and running"});
+});
+app.get('/api/v1/apn', function(req, res){
+  agent.createMessage()
+  .device('<a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be94>')
+  .alert('Hello Jello!')
+  .send();
+  res.send(200, 'attempting');
 });
 
 //friends routes
