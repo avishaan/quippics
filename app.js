@@ -19,6 +19,7 @@ var db = require('./dbs/db');
 var util = require('./routes/util');
 var server = require('./routes/server');
 var User = require('./models/user.js');
+var apnagent = require('apnagent');
 var passport = require('passport'),
   BasicStrategy = require('passport-http').BasicStrategy;
 
@@ -28,7 +29,7 @@ var log = logentries.logger({
 });
 var app = express();
 
-// dev environments
+// dev/local environments
 if (config.env === 'dev' ||
     config.env === 'local'){
   app.use(express.logger('dev'));
