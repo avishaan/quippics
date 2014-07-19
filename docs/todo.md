@@ -1,5 +1,6 @@
 - [x] Add activities on a per user basis
   - [ ] Change activities to run on post hook instead of pre
 - [ ] Add all tests into TestCases.md
-- [ ] Go through test cases that are missing and addon
+- [x] Go through test cases that are missing and addon
 - [x] Add commenting on a specific submission
+- [ ] Integrate APN
