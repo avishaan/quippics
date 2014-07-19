@@ -11,7 +11,8 @@ module.exports = function(){
         dbURI : "mongodb://localhost/" + npmInfo.name,
         expressPort: 8081,
         env: 'dev', //should be env/prod
-        logentriesToken: ''
+        logentriesToken: '',
+        pfxPath: './cert/pfx-local.p12'
       };
     case "dev":
     case "development":
@@ -19,7 +20,8 @@ module.exports = function(){
         dbURI : process.env.MONGODB_URI,
         expressPort: process.env.PORT,
         env: 'dev', //should be env/prod
-        logentriesToken: 'bb995abb-8007-4433-a2af-ea7deba119cf'
+        logentriesToken: 'bb995abb-8007-4433-a2af-ea7deba119cf',
+        pfxPath: './cert/pfx-dev.p12'
       };
     case "test":
     case "testing":
@@ -27,7 +29,8 @@ module.exports = function(){
         dbURI : process.env.MONGODB_URI,
         expressPort: process.env.PORT,
         env: 'dev', //should be env/prod, can be changed to prod when we are comfy with prod environ
-        logentriesToken: process.env.LOGENTRIES_TOKEN
+        logentriesToken: process.env.LOGENTRIES_TOKEN,
+        pfxPath: './cert/pfx-test.p12'
       };
     case "prod":
     case "production":
@@ -35,7 +38,8 @@ module.exports = function(){
         dbURI : process.env.MONGODB_URI,
         expressPort: process.env.PORT,
         env: 'dev', //should be env/prod, can be changed to prod when we are comfy with prod environ
-        logentriesToken: process.env.LOGENTRIES_TOKEN
+        logentriesToken: process.env.LOGENTRIES_TOKEN,
+        pfxPath: './cert/pfx-prod.p12'
       };
     default:
       throw new Error("No Environment Found");
