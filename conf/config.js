@@ -10,7 +10,7 @@ module.exports = function(){
       return {
         dbURI : "mongodb://localhost/" + npmInfo.name,
         expressPort: 8081,
-        env: 'dev', //should be env/prod
+        env: 'local', //should be env/prod
         logentriesToken: '',
         pfxPath: './cert/pfx-local.p12'
       };

@@ -28,8 +28,9 @@ var log = logentries.logger({
 });
 var app = express();
 
-// all environments
-if (config.env === 'dev'){
+// dev environments
+if (config.env === 'dev' ||
+    config.env === 'local'){
   app.use(express.logger('dev'));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   app.use(function(req, res, next){
