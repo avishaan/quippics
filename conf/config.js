@@ -3,8 +3,6 @@ var npmInfo = require('../package.json');
 module.exports = function(){
   console.log("Node Env Variable: " + process.env.NODE_ENV);
 
-
-
   switch(process.env.NODE_ENV){
     case null:
     case undefined:
