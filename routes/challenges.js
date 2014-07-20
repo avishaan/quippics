@@ -100,6 +100,11 @@ exports.hideChallenge = function(req, res){
 };
 //decline an invite to a challenge
 exports.declineChallenge = function(req, res){
+  //check the user sent everything first
+  if (!isObjectId(req.params.cid) &&
+      !isObjectId(req.body.user)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Challenge
   .update(
     {
@@ -116,11 +121,10 @@ exports.declineChallenge = function(req, res){
       if (!err && numAffected == 1){
         return res.send(200, {clientMsg: "Challenge Declined"});
       } else if (!err){
-        res.send(500, {clientMsg: "Multiple Challenge Declined"});
-        throw new Error('Multiple Challenge Updated as declined');
+        console.log('numAffected: ', numAffected, 'user', req.body.user);
+        return res.send(500, {clientMsg: "Couldn't Decline Challenge, try later"});
       } else {
-        res.send(500, err);
-        throw new Error('Error with a  declined challenge');
+        return res.send(500, err);
       }
   });
 };
