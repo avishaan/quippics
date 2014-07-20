@@ -276,6 +276,13 @@ exports.myChallenges = function(req, res){
 };
 //make a new challenge
 exports.create = function(req, res){
+  if (!validator.isAlphanumeric(req.body.title) &&
+      !validator.isAlphanumeric(req.body.description) &&
+      !validator.isAlphanumeric(req.body.description) &&
+      !isObjectId(req.body.owner)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   var newChallenge = new Challenge({
     title: req.body.title,
     description: req.body.description,
@@ -294,11 +301,15 @@ exports.create = function(req, res){
   }
   newChallenge.save(function(err, challenge){
     if (!err){
+      if (challenge){
       //assuming a good save, add a proper activity
       require("../models/activity.js").create(challenge);
-      res.send(200, challenge);
+      return res.send(200, challenge);
+      } else {
+        return res.send(500, {clientMsg: "Could not save challenge at this time"});
+      }
     } else {
-      res.send(500, err);
+      return res.send(500, err);
     }
   });
 };
