@@ -74,6 +74,11 @@ exports.readUsers = function(req, res){
 };
 //hide a challenge from the user archive
 exports.hideChallenge = function(req, res){
+  //check the user sent everything first
+  if (!isObjectId(req.params.cid) &&
+      !isObjectId(req.body.user)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Challenge
   .update(
     {
@@ -90,11 +95,10 @@ exports.hideChallenge = function(req, res){
       if (!err && numAffected == 1){
         return res.send(200, {clientMsg: "Challenge Hidden"});
       } else if (!err){
-        res.send(500, {clientMsg: "Multiple Challenge Hidden"});
-        throw new Error('Multiple Challenge Updated as hidden');
+        console.log('numAffected: ', numAffected, 'user', req.body.user);
+        return res.send(500, {clientMsg: "Couldn't Hide Challenge, try later"});
       } else {
-        res.send(500, err);
-        throw new Error('Error trying to hide a challenge');
+        return res.send(500, err);
       }
   });
 };
