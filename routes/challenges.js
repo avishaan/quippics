@@ -2,6 +2,8 @@ var Challenge = require("../models/challenge.js");
 var User = require("../models/user.js");
 var mongoose = require('mongoose');
 var async = require('async');
+var validator = require('validator');
+var isObjectId = require('valid-objectid').isValid;
 var perPage = 24; //challenges per page
 
 //read specific challenge
@@ -124,6 +126,11 @@ exports.declineChallenge = function(req, res){
 };
 //accept an invite to a challenge
 exports.acceptChallenge = function(req, res){
+  //check the user sent everything first
+  if (!isObjectId(req.params.cid) &&
+      !isObjectId(req.body.user)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Challenge
   .update(
     {
@@ -140,11 +147,10 @@ exports.acceptChallenge = function(req, res){
       if (!err && numAffected === 1){
         return res.send(200, {clientMsg: "Challenge Accepted"});
       } else if (!err){
-        res.send(500, {clientMsg: "Multiple Challenge Accepted"});
-        throw new Error('Multiple Challenge Updated as accepted');
+        console.log('numAffected: ', numAffected, 'user', req.body.user);
+        return res.send(500, {clientMsg: "Couldn't Accept Challenge, try later"});
       } else {
-        res.send(500, err);
-        throw new Error('Error with a  accepted challenge');
+        return res.send(500, err);
       }
   });
 };
