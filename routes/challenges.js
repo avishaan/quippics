@@ -18,7 +18,7 @@ exports.read = function(req, res){
       if (challenge){
         return res.send(200, challenge);
       } else {
-        return res.send(200, {clientMsg: "No Challenges Found"});
+        return res.send(404, {clientMsg: "No Challenges Found"});
       }
     } else {
       res.send(500, err);
@@ -29,7 +29,7 @@ exports.read = function(req, res){
 exports.readUsers = function(req, res){
   req.params.page = req.params.page || 1;
   if (!isObjectId(req.params.cid) &&
-      !validatorIsNumeric(req.params.page)){
+      !validator.isNumeric(req.params.page)){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
    async.waterfall([
@@ -172,6 +172,10 @@ exports.acceptChallenge = function(req, res){
 //all archived challenges applicable to me
 exports.archivedChallenges = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
+  if (!isObjectId(req.params.cid) &&
+      !validator.isNumeric(req.params.page)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   req.params.page = req.params.page || 1;
   //challenges that are expired where user is 1.owner 2.participant not declined 3.participant not hidden
   Challenge
@@ -195,7 +199,6 @@ exports.archivedChallenges = function(req, res){
     //})
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
-    //TODO fix this date offset, this was a temp patch
     .where('expiration').lt(Date.now())
     //only return participant status of user performing this query
     //.elemMatch('participants', { user: req.params.uid })
@@ -213,12 +216,12 @@ exports.archivedChallenges = function(req, res){
             //  challenges[index].inviteStatus = 'owner';
             //}
           });
-          res.send(200, challenges);
+          return res.send(200, challenges);
         } else {
-          res.send(404, {clientMsg: "Couldn't find any challenges for this user"});
+          return res.send(404, {clientMsg: "Couldn't find any challenges for this user"});
         }
       } else {
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };
@@ -226,6 +229,10 @@ exports.archivedChallenges = function(req, res){
 exports.myChallenges = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
+  if (!isObjectId(req.params.cid) &&
+      !validator.isNumeric(req.params.page)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Challenge
     .find({'participants.inviteStatus': {$ne: 'declined'}}, {participants: {$elemMatch: {user: req.params.uid}}})
     .or([{owner: req.params.uid}, {'participants.user': req.params.uid}, {privacy: 'public'}])
@@ -258,12 +265,12 @@ exports.myChallenges = function(req, res){
             //TODO calculate unscored submissions
             challenges[index].unscored = 99;
           });
-          res.send(200, challenges);
+          return res.send(200, challenges);
         } else {
-          res.send(404, {clientMsg: "Couldn't find any challenges for this user"});
+          return res.send(404, {clientMsg: "Couldn't find any challenges for this user"});
         }
       } else {
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };
