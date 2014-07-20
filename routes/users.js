@@ -7,6 +7,8 @@
 var User = require("../models/user.js");
 var perPage = 24;
 var async = require('async');
+var validator = require('validator');
+var isObjectId = require('valid-objectid').isValid;
 var _ = require('underscore');
 
 exports.list = function(req, res){
@@ -45,12 +47,12 @@ exports.search = function(req, res){
     .exec(function(err, users){
       if (!err){
         if (users){
-          res.send(users);
+          return res.send(users);
         } else {
-          res.send(404, {clientMsg: "No users found, try another search term"});
+          return res.send(404, {clientMsg: "No users found, try another search term"});
         }
       } else {
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };
@@ -59,6 +61,12 @@ exports.friendRequests = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   var skip = perPage * (req.params.page - 1);
+  if (!validator.isNumeric(req.params.page) &&
+      !validator.isAlphanumeric(req.body.description) &&
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   User.findOne({_id: req.params.uid})
     .select('friendRequests')
     .populate({
@@ -72,12 +80,12 @@ exports.friendRequests = function(req, res){
     .exec(function(err, user){
       if (!err){
         if (user) {
-          res.send(200, user); //return the list of friends and their usernames
+          return res.send(200, user); //return the list of friends and their usernames
         } else {
-          res.send(404, {clientMsg: "Couldn't find user"});
+          return res.send(404, {clientMsg: "Couldn't find user"});
         }
       } else {
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };
@@ -85,6 +93,11 @@ exports.friendRequests = function(req, res){
 exports.acceptRequests = function(req, res){
   var requestorId = req.body.user;
   var acceptorId = req.params.uid;
+  if (!isObjectId(req.body.user) &&
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   //TODO make this parallel, they can go at the same time
   async.series([
     function(cb){
@@ -95,20 +108,24 @@ exports.acceptRequests = function(req, res){
     .select('friendRequests friends')
     .exec(function(err, acceptor){
       //load the information from the acceptor
-      if (!err && acceptor){
-        //TODO whatif !err !acceptor
+      if (!err){
+        if (acceptor){
         //remove the requestor from the acceptors friendRequests array
         acceptor.friendRequests.pull(requestorId);
         //add the requestor to the friends array of the acceptor
         acceptor.friends.addToSet(requestorId);
         acceptor.save(function(err, savedAcceptor){
           if (!err && savedAcceptor){
-            //TODO whatif !err !savedAcceptor
             cb(null, savedAcceptor);
+          } else if (!err && !savedAcceptor){
+            cb({clientMsg: "Could not save updated friend in acceptor"});
           } else {
             cb(err);
           }
         });
+        } else {
+          cb({clientMsg: "Couldn't find user accepting the request"});
+        }
       } else {
         cb(err);
       }
@@ -123,17 +140,19 @@ exports.acceptRequests = function(req, res){
       .exec(function(err, requestor){
         //load the information from the requestor
         if(!err && requestor) {
-          //TODO whatif !err and !requestor
           //add the acceptor to the friends array of the requestor
           requestor.friends.addToSet(acceptorId);
           requestor.save(function(err, savedRequestor){
             if (!err && savedRequestor){
-              //TODO whatif !err and !savedRequestor
               cb(null, savedRequestor);
+            } else if(!err && !savedRequestor){
+              cb({clientMsg: "Could not save updated friend in requestor"});
             } else {
               cb(err);
             }
           });
+        } else if(!err && !requestor){
+          cb({clientMsg: "Could not find user requesting the acceptance of the request"});
         } else {
           cb(err);
         }
