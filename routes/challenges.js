@@ -278,7 +278,6 @@ exports.myChallenges = function(req, res){
 exports.create = function(req, res){
   if (!validator.isAlphanumeric(req.body.title) &&
       !validator.isAlphanumeric(req.body.description) &&
-      !validator.isAlphanumeric(req.body.description) &&
       !isObjectId(req.body.owner)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
