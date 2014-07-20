@@ -8,14 +8,17 @@ var perPage = 24; //challenges per page
 
 //read specific challenge
 exports.read = function(req, res){
+  if (!isObjectId(req.params.cid)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Challenge.findOne({_id: req.params.cid})
   .select('title owner _id description tags createdOn expiration')
   .exec(function(err, challenge){
     if (!err) {
       if (challenge){
-        res.send(200, challenge);
+        return res.send(200, challenge);
       } else {
-        res.send(404);
+        return res.send(200, {clientMsg: "No Challenges Found"});
       }
     } else {
       res.send(500, err);
@@ -25,7 +28,11 @@ exports.read = function(req, res){
 //get/read all the users participating in a challenge
 exports.readUsers = function(req, res){
   req.params.page = req.params.page || 1;
-  async.waterfall([
+  if (!isObjectId(req.params.cid) &&
+      !validatorIsNumeric(req.params.page)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+   async.waterfall([
     function(cb){
       Challenge
       .aggregate()
@@ -42,7 +49,7 @@ exports.readUsers = function(req, res){
         if (!err && users){
           cb(null, users);
         } else if (!err){
-          cb({clientMsg: 'Could not Retrieve Users'});
+          cb({clientMsg: 'No Users Present'});
         } else {
           cb(err);
         }
@@ -57,7 +64,7 @@ exports.readUsers = function(req, res){
         if (!err && popUsers){
           cb(null, popUsers);
         } else if (!err){
-          cb({clientMsg: 'Could not Retrieve Users'});
+          cb({clientMsg: 'No Users Present'});
         } else {
           cb(err);
         }
