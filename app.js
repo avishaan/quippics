@@ -12,6 +12,7 @@ var submissions = require('./routes/submissions');
 var ballots = require('./routes/ballots');
 var comments = require('./routes/comments');
 var activities = require('./routes/activities');
+var apns = require('./routes/apns');
 var http = require('http');
 var path = require('path');
 var config = require('./conf/config.js');
@@ -91,16 +92,7 @@ app.get('/users', users.list);
 app.get('/api/v1/server', function(req, res){
   res.send(200, {clientMsg: "We are up and running"});
 });
-app.get('/api/v1/apn', function(req, res){
-  var agent = require('./apn/apn.js');
-  agent.createMessage()
-  .device('<a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be94>')
-  .alert('Hello Jello!')
-  .send(function(err){
-    debugger;
-  });
-  res.send(200, 'attempting');
-});
+app.post('/api/v1/apns/debug', apns.debugPush); //debug push notifcations
 
 //friends routes
 app.post('/api/v1/users/:uid/declinedRequests', apiAuth(), users.declinedRequests);
