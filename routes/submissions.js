@@ -1,11 +1,17 @@
 var Challenge = require('../models/challenge.js');
 var Submission = require('../models/submission.js');
 var _ = require('underscore');
+var validator = require('validator');
+var isObjectId = require('valid-objectid').isValid;
 var perPage = 24; //submission per page
 
 //read a specific submission
 exports.readOne = function(req, res){
   //find the submission
+  if (!isObjectId(req.params.sid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Submission
   .findOne({_id: req.params.sid})
   .select('-comments')
@@ -20,16 +26,20 @@ exports.readOne = function(req, res){
   .exec(function(err, submission){
     if (!err){ //no error
       if (submission){ //we found a submission by that id
-        res.send(200, submission);
+        return res.send(200, submission);
       } else { //found nothing by that id
-        res.send(404);
+        return res.send(404), {clientMsg: "Couldn't find this submission, try again"};
       }
     } else { //some sort of error encountered
-      res.send(500, err);
+      return res.send(500, err);
     }
   });
 };
 exports.readTop = function(req, res){
+  if (!isObjectId(req.params.cid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Challenge
     .findOne({_id: req.params.cid})
     .populate({
@@ -40,7 +50,7 @@ exports.readTop = function(req, res){
       if (!err){
         //TODO could use aggregation framework for this instead
         challenge.topSubmission(challenge, function(err, submission){ //return the top submission from the challenge
-          if (!err){
+          if (!err && submission){
             //find the submission again and populate the username this time
             Submission
               .findOne({_id: submission._id.toJSON()})
@@ -53,24 +63,26 @@ exports.readTop = function(req, res){
                 submission = submission.toJSON();
                 //make the username the owner value instead of the complex object
                 submission.owner = submission.owner.username;
-                res.send(200, submission);
+                return res.send(200, submission);
               });
           } else if (!submission){
-            res.send(404, err);
-          }
-          else {
-            res.send(500, err);
+            return res.send(404, {clientMsg: "Couldn't find any top challenges"});
+          } else {
+            return res.send(500, err);
           }
         });
       } else {
-        console.log(err);
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
-}
+};
 //read challenge of a specific user
 exports.userSubmission = function(req, res){
   //make sure we are looking at the right challenge, we only want to know for a specific challenge
+  if (!isObjectId(req.params.cid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Challenge
     .findOne({_id: req.params.cid})
     .populate({
@@ -78,23 +90,29 @@ exports.userSubmission = function(req, res){
       select: ''
     })
     .exec(function(err, challenge){
-      challenge.submissions.some(function(submission, index, submissions){
-        //go through all the submission owners until you find my submission
-        //return that and stop the some (vs forEach) by returning something true
-        if (submission.owner.toString() === req.params.uid){
-          submission.getRank(function(rank){
-            //need to make json object since we can't add rank directly to model
-            //TODO need to fix this
-            var submissionObj = submission.toJSON();
-            submissionObj.rank = rank;
-            return res.send(200, submissionObj);
-          });
-          return true; //this will stop 'some' from running otherwise eventually the elseif will still hit
-        } else if ((index + 1) === submissions.length){
-          //if we get to the end of the array and didn't find a match, send a not found back
-          res.send(404, {clientMsg: "This user doesn't have a submission here"});
-        }
-      });
+      if (!err && challenge){
+        challenge.submissions.some(function(submission, index, submissions){
+          //go through all the submission owners until you find my submission
+          //return that and stop the some (vs forEach) by returning something true
+          if (submission.owner.toString() === req.params.uid){
+            submission.getRank(function(rank){
+              //need to make json object since we can't add rank directly to model
+              //TODO need to fix this
+              var submissionObj = submission.toJSON();
+              submissionObj.rank = rank;
+              return res.send(200, submissionObj);
+            });
+            return true; //this will stop 'some' from running otherwise eventually the elseif will still hit
+          } else if ((index + 1) === submissions.length){
+            //if we get to the end of the array and didn't find a match, send a not found back
+            return res.send(404, {clientMsg: "This user doesn't have a submission here"});
+          }
+        });
+      } else if (!challenge){
+        return res.send(404, {clientMsg: "This user doesn't have a submission here"});
+      } else {
+        return res.send(500, err);
+      }
     });
 };
 //Read all the challenge in a submission
@@ -102,6 +120,11 @@ exports.readAll = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   //find all the submissions for a specific challenge
+  if (!validator.isNumeric(req.params.page) &&
+      !isObjectId(req.params.cid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Challenge
     .findById(req.params.cid)
     .sort('createdOn')
@@ -113,19 +136,24 @@ exports.readAll = function(req, res){
     })
     .exec(function(err, challenge){
       if (!err){
-        if (challenge){
-          res.send(200, challenge.submissions);
+        if (challenge && challenge.submissions.length){
+          return res.send(200, challenge.submissions);
         } else {
-          res.send(404);
+          return res.send(404, {clientMsg: "No Submissions in Challenge Found"});
         }
       } else {
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };
 //Submit submission for specific challenge
 exports.create = function(req, res){
   //see if the owner already has submitted a challenge here
+  if (!isObjectId(req.params.cid) &&
+      !isObjectId(req.body.owner)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Challenge
     .findOne({_id: req.params.cid})
     .populate({
@@ -136,7 +164,7 @@ exports.create = function(req, res){
     .exec(function(err, challenge){
       //if the length of the populated submissions array is one it means the user has already made a submission
       if (challenge.toJSON().submissions.length === 1){
-        res.send(409, {clientMsg: "You have already submitted. You can't submit again"});
+        return res.send(409, {clientMsg: "You have already submitted. You can't submit again"});
       } else { //user hasn't submitted, go ahead and let him make his submission
         //find the challenge
         Challenge
@@ -176,7 +204,7 @@ exports.create = function(req, res){
                   });
                 });
               } else { //no challenge was returned
-                return res.send(404);
+                return res.send(404, {clientMsg: "Could not find a challenge at this id"});
               }
             } else {
               return res.send(500, err);

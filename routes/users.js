@@ -7,6 +7,8 @@
 var User = require("../models/user.js");
 var perPage = 24;
 var async = require('async');
+var validator = require('validator');
+var isObjectId = require('valid-objectid').isValid;
 var _ = require('underscore');
 
 exports.list = function(req, res){
@@ -45,12 +47,12 @@ exports.search = function(req, res){
     .exec(function(err, users){
       if (!err){
         if (users){
-          res.send(users);
+          return res.send(users);
         } else {
-          res.send(404, {clientMsg: "No users found, try another search term"});
+          return res.send(404, {clientMsg: "No users found, try another search term"});
         }
       } else {
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };
@@ -59,6 +61,12 @@ exports.friendRequests = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   var skip = perPage * (req.params.page - 1);
+  if (!validator.isNumeric(req.params.page) &&
+      !validator.isAlphanumeric(req.body.description) &&
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   User.findOne({_id: req.params.uid})
     .select('friendRequests')
     .populate({
@@ -72,12 +80,12 @@ exports.friendRequests = function(req, res){
     .exec(function(err, user){
       if (!err){
         if (user) {
-          res.send(200, user); //return the list of friends and their usernames
+          return res.send(200, user); //return the list of friends and their usernames
         } else {
-          res.send(404, {clientMsg: "Couldn't find user"});
+          return res.send(404, {clientMsg: "Couldn't find user"});
         }
       } else {
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };
@@ -85,6 +93,11 @@ exports.friendRequests = function(req, res){
 exports.acceptRequests = function(req, res){
   var requestorId = req.body.user;
   var acceptorId = req.params.uid;
+  if (!isObjectId(req.body.user) &&
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   //TODO make this parallel, they can go at the same time
   async.series([
     function(cb){
@@ -95,20 +108,24 @@ exports.acceptRequests = function(req, res){
     .select('friendRequests friends')
     .exec(function(err, acceptor){
       //load the information from the acceptor
-      if (!err && acceptor){
-        //TODO whatif !err !acceptor
+      if (!err){
+        if (acceptor){
         //remove the requestor from the acceptors friendRequests array
         acceptor.friendRequests.pull(requestorId);
         //add the requestor to the friends array of the acceptor
         acceptor.friends.addToSet(requestorId);
         acceptor.save(function(err, savedAcceptor){
           if (!err && savedAcceptor){
-            //TODO whatif !err !savedAcceptor
             cb(null, savedAcceptor);
+          } else if (!err && !savedAcceptor){
+            cb({clientMsg: "Could not save updated friend in acceptor"});
           } else {
             cb(err);
           }
         });
+        } else {
+          cb({clientMsg: "Couldn't find user accepting the request"});
+        }
       } else {
         cb(err);
       }
@@ -123,17 +140,19 @@ exports.acceptRequests = function(req, res){
       .exec(function(err, requestor){
         //load the information from the requestor
         if(!err && requestor) {
-          //TODO whatif !err and !requestor
           //add the acceptor to the friends array of the requestor
           requestor.friends.addToSet(acceptorId);
           requestor.save(function(err, savedRequestor){
             if (!err && savedRequestor){
-              //TODO whatif !err and !savedRequestor
               cb(null, savedRequestor);
+            } else if(!err && !savedRequestor){
+              cb({clientMsg: "Could not save updated friend in requestor"});
             } else {
               cb(err);
             }
           });
+        } else if(!err && !requestor){
+          cb({clientMsg: "Could not find user requesting the acceptance of the request"});
         } else {
           cb(err);
         }
@@ -157,6 +176,11 @@ exports.declinedRequests = function(req, res){
   //        { $pull: {friendRequests: {_id: req.body.user}}}, function(err, num, raw){
   //          res.send(200);
   //        });
+  if (!isObjectId(req.body.user) &&
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   User
   .findOne({_id: req.params.uid})
   .select('_id friendRequests')
@@ -167,10 +191,14 @@ exports.declinedRequests = function(req, res){
       decliner.save(function(err, user){
         if (!err && user){
           return res.send(200, {clientMsg: "Friend request declined"});
+        } else if (!err && !user){
+          return res.send(500, {clientMsg: "Couldn't decline friend request, try again"});
         } else {
           return res.send(500, err);
         }
       });
+    } else if(!err){
+      return res.send(404, {clientMsg: "Couldn't find user, check user id"})
     } else {
       return res.send(500, err);
     }
@@ -178,6 +206,11 @@ exports.declinedRequests = function(req, res){
 };
 //make a friend request from user in body to user in the :uid
 exports.requestFriend = function(req, res){
+  if (!isObjectId(req.params.uid) &&
+      !isObjectId(req.body.friend)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   async.series([
     function(cb){
       //find the user initiating the request
@@ -196,8 +229,13 @@ exports.requestFriend = function(req, res){
             initiator.requestedFriends.addToSet(req.params.uid);
             //save the update initator
             initiator.save(function(err, user){
-              //TODO this is not important but maybe do some error checking eventually
+              if (!err && user){
               return cb(null);//go to next step in the series 
+              } else if (!err){
+                return cb({clientMsg: "Could not save friend request, try again later"});
+              } else {
+                return cb(err);
+              }
             });
           }
         } else {
@@ -216,9 +254,16 @@ exports.requestFriend = function(req, res){
           //add the initiator to the acceptor's friendRequests
           acceptor.friendRequests.addToSet(req.body.friend);
           acceptor.save(function(err, user){
-            //TODO this is not important but eventually should do error checking
-            return cb(null);
-          })
+            if (!err && user){
+              return cb(null);
+            } else if (!err){
+              return cb({clientMsg: "Could not save friend request, try again later"});
+            } else {
+              return cb(err);
+            }
+          });
+        } else if (!err){
+          return cb({clientMsg: "Could not find user, check user and try again later"});
         } else {
           return cb(err);
         }
@@ -240,6 +285,12 @@ exports.listFriends = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   var skip = perPage * (req.params.page - 1);
+
+  if (!validator.isNumeric(req.params.page) &&
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   User.findOne({_id: req.params.uid})
     .select('friends')
     .populate({
@@ -253,12 +304,12 @@ exports.listFriends = function(req, res){
     .exec(function(err, user){
       if (!err){
         if (user) {
-          res.send(200, user); //return the list of friends and their usernames
+          return res.send(200, user); //return the list of friends and their usernames
         } else {
-          res.send(404, {clientMsg: "Couldn't find user"});
+          return res.send(404, {clientMsg: "Couldn't find user"});
         }
       } else {
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };
@@ -268,36 +319,51 @@ exports.listUsers = function(req, res){
   //TODO, show users with pending friend requests
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
+  if (!validator.isNumeric(req.params.page) &&
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   User.find({}, 'username _id thumbnail')
     .ne('_id', req.params.uid) //don't return the user who is running the query
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
     .exec(function(err, users){
-      if(!err){
-        res.send(200, users);
+      if(!err && users.length){
+        return res.send(200, users);
+      } else if (!err){
+        return res.send(404, {clientMsg: "Could not find users"});
       } else {
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };
 //get profile of a user
 exports.profile = function(req, res){
+  if (!isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   User.findOne({_id: req.params.uid})
     .select('username email thumbnail rank')
     .exec(function(err, user){
       if (!err){ //no error
         if (user){
-          res.send(200, user);
+          return res.send(200, user);
         } else { //we didn't find a user but no error
-          res.send(404);
+          return res.send(404, {clientMsg: "Could not find user"});
         }
       } else { //error occured
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };
 //Update a user here
 exports.update = function(req, res){
+  if (!isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   User.findOne({_id: req.params.uid}, function(err, user){
     if (!err){
       if (user){
@@ -309,21 +375,21 @@ exports.update = function(req, res){
           //save the user the user to the database.
           user.save(function(err, updatedUser){
             if (!err){
-              res.send(200, {
+              return res.send(200, {
                 username: updatedUser.username,
                 _id : updatedUser._id
               });
             } else { //there was some sort of db error saving
-              res.send(500, err);
+              return res.send(500, err);
             }
           });
         });
       } else { //no user found, no error
-        res.send(404);
+        return res.send(404);
       }
     } else { //some sort of error, let the client know
       console.log("some error");
-      res.send(500, err);
+      return res.send(500, err);
     }
 
   });

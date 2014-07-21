@@ -2,18 +2,23 @@ var Challenge = require("../models/challenge.js");
 var User = require("../models/user.js");
 var mongoose = require('mongoose');
 var async = require('async');
+var validator = require('validator');
+var isObjectId = require('valid-objectid').isValid;
 var perPage = 24; //challenges per page
 
 //read specific challenge
 exports.read = function(req, res){
+  if (!isObjectId(req.params.cid)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Challenge.findOne({_id: req.params.cid})
   .select('title owner _id description tags createdOn expiration')
   .exec(function(err, challenge){
     if (!err) {
       if (challenge){
-        res.send(200, challenge);
+        return res.send(200, challenge);
       } else {
-        res.send(404);
+        return res.send(404, {clientMsg: "No Challenges Found"});
       }
     } else {
       res.send(500, err);
@@ -23,7 +28,11 @@ exports.read = function(req, res){
 //get/read all the users participating in a challenge
 exports.readUsers = function(req, res){
   req.params.page = req.params.page || 1;
-  async.waterfall([
+  if (!isObjectId(req.params.cid) &&
+      !validator.isNumeric(req.params.page)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+   async.waterfall([
     function(cb){
       Challenge
       .aggregate()
@@ -40,7 +49,7 @@ exports.readUsers = function(req, res){
         if (!err && users){
           cb(null, users);
         } else if (!err){
-          cb({clientMsg: 'Could not Retrieve Users'});
+          cb({clientMsg: 'No Users Present'});
         } else {
           cb(err);
         }
@@ -55,7 +64,7 @@ exports.readUsers = function(req, res){
         if (!err && popUsers){
           cb(null, popUsers);
         } else if (!err){
-          cb({clientMsg: 'Could not Retrieve Users'});
+          cb({clientMsg: 'No Users Present'});
         } else {
           cb(err);
         }
@@ -72,6 +81,11 @@ exports.readUsers = function(req, res){
 };
 //hide a challenge from the user archive
 exports.hideChallenge = function(req, res){
+  //check the user sent everything first
+  if (!isObjectId(req.params.cid) &&
+      !isObjectId(req.body.user)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Challenge
   .update(
     {
@@ -88,16 +102,20 @@ exports.hideChallenge = function(req, res){
       if (!err && numAffected == 1){
         return res.send(200, {clientMsg: "Challenge Hidden"});
       } else if (!err){
-        res.send(500, {clientMsg: "Multiple Challenge Hidden"});
-        throw new Error('Multiple Challenge Updated as hidden');
+        console.log('numAffected: ', numAffected, 'user', req.body.user);
+        return res.send(500, {clientMsg: "Couldn't Hide Challenge, try later"});
       } else {
-        res.send(500, err);
-        throw new Error('Error trying to hide a challenge');
+        return res.send(500, err);
       }
   });
 };
 //decline an invite to a challenge
 exports.declineChallenge = function(req, res){
+  //check the user sent everything first
+  if (!isObjectId(req.params.cid) &&
+      !isObjectId(req.body.user)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Challenge
   .update(
     {
@@ -114,16 +132,20 @@ exports.declineChallenge = function(req, res){
       if (!err && numAffected == 1){
         return res.send(200, {clientMsg: "Challenge Declined"});
       } else if (!err){
-        res.send(500, {clientMsg: "Multiple Challenge Declined"});
-        throw new Error('Multiple Challenge Updated as declined');
+        console.log('numAffected: ', numAffected, 'user', req.body.user);
+        return res.send(500, {clientMsg: "Couldn't Decline Challenge, try later"});
       } else {
-        res.send(500, err);
-        throw new Error('Error with a  declined challenge');
+        return res.send(500, err);
       }
   });
 };
 //accept an invite to a challenge
 exports.acceptChallenge = function(req, res){
+  //check the user sent everything first
+  if (!isObjectId(req.params.cid) &&
+      !isObjectId(req.body.user)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Challenge
   .update(
     {
@@ -140,17 +162,20 @@ exports.acceptChallenge = function(req, res){
       if (!err && numAffected === 1){
         return res.send(200, {clientMsg: "Challenge Accepted"});
       } else if (!err){
-        res.send(500, {clientMsg: "Multiple Challenge Accepted"});
-        throw new Error('Multiple Challenge Updated as accepted');
+        console.log('numAffected: ', numAffected, 'user', req.body.user);
+        return res.send(500, {clientMsg: "Couldn't Accept Challenge, try later"});
       } else {
-        res.send(500, err);
-        throw new Error('Error with a  accepted challenge');
+        return res.send(500, err);
       }
   });
 };
 //all archived challenges applicable to me
 exports.archivedChallenges = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
+  if (!isObjectId(req.params.cid) &&
+      !validator.isNumeric(req.params.page)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   req.params.page = req.params.page || 1;
   //challenges that are expired where user is 1.owner 2.participant not declined 3.participant not hidden
   Challenge
@@ -174,7 +199,6 @@ exports.archivedChallenges = function(req, res){
     //})
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
-    //TODO fix this date offset, this was a temp patch
     .where('expiration').lt(Date.now())
     //only return participant status of user performing this query
     //.elemMatch('participants', { user: req.params.uid })
@@ -192,12 +216,12 @@ exports.archivedChallenges = function(req, res){
             //  challenges[index].inviteStatus = 'owner';
             //}
           });
-          res.send(200, challenges);
+          return res.send(200, challenges);
         } else {
-          res.send(404, {clientMsg: "Couldn't find any challenges for this user"});
+          return res.send(404, {clientMsg: "Couldn't find any challenges for this user"});
         }
       } else {
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };
@@ -205,6 +229,10 @@ exports.archivedChallenges = function(req, res){
 exports.myChallenges = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
+  if (!isObjectId(req.params.cid) &&
+      !validator.isNumeric(req.params.page)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Challenge
     .find({'participants.inviteStatus': {$ne: 'declined'}}, {participants: {$elemMatch: {user: req.params.uid}}})
     .or([{owner: req.params.uid}, {'participants.user': req.params.uid}, {privacy: 'public'}])
@@ -237,17 +265,23 @@ exports.myChallenges = function(req, res){
             //TODO calculate unscored submissions
             challenges[index].unscored = 99;
           });
-          res.send(200, challenges);
+          return res.send(200, challenges);
         } else {
-          res.send(404, {clientMsg: "Couldn't find any challenges for this user"});
+          return res.send(404, {clientMsg: "Couldn't find any challenges for this user"});
         }
       } else {
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };
 //make a new challenge
 exports.create = function(req, res){
+  if (!validator.isAlphanumeric(req.body.title) &&
+      !validator.isAlphanumeric(req.body.description) &&
+      !isObjectId(req.body.owner)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   var newChallenge = new Challenge({
     title: req.body.title,
     description: req.body.description,
@@ -266,11 +300,15 @@ exports.create = function(req, res){
   }
   newChallenge.save(function(err, challenge){
     if (!err){
+      if (challenge){
       //assuming a good save, add a proper activity
       require("../models/activity.js").create(challenge);
-      res.send(200, challenge);
+      return res.send(200, challenge);
+      } else {
+        return res.send(500, {clientMsg: "Could not save challenge at this time"});
+      }
     } else {
-      res.send(500, err);
+      return res.send(500, err);
     }
   });
 };

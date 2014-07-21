@@ -2,10 +2,16 @@ var mongoose = require('mongoose');
 var Comment = require("../models/comment.js");
 var Submission = require("../models/submission.js");
 var User = require("../models/user.js");
+var validator = require('validator');
+var isObjectId = require('valid-objectid').isValid;
 
 
 //Read all the comments for a specific submission
 exports.readAll = function(req, res){
+  if (!isObjectId(req.params.sid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Submission
     .findOne({_id: req.params.sid})
     .select('comments')
@@ -16,18 +22,24 @@ exports.readAll = function(req, res){
     .exec(function(err, submission){
       if (!err){
         if (submission){
-          res.send(200, submission.comments);
+          return res.send(200, submission.comments);
         } else {
-          res.send(404);
+          return res.send(404, {clientMsg: "Could not find a submission with that id"});
         }
       } else {
-        res.send(200, err);
+        return res.send(500, err);
       }
     });
 };
 
 //Create a new comment for as specific submission
 exports.create = function(req, res){
+  if (!isObjectId(req.body.commenter) &&
+      !validator.isAlphanumeric(req.body.comment) &&
+      !isObjectId(req.params.sid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Submission
     .findOne({_id: req.params.sid})
     .select('comments owner _id')
@@ -41,37 +53,42 @@ exports.create = function(req, res){
           });
           submission.comments.push(comment); //add comment to end of array of comments
           submission.save(function(err, newSubmission){
-            if(!err){
+            if(!err && newSubmission){
               require("../models/activity.js").create(comment);
-              res.send(200, comment);
+              return res.send(200, comment);
+            } else if(!err){
+              return res.send(404, {clientMsg: "Couldn't save comment"});
             } else {
-              res.send(500, err);
+              return res.send(500, err);
             }
           });
         } else {
-          res.send(404);
+          return res.send(404, {clientMsg: "Could not find submission with that id"});
         }
       } else {
-        res.send(500);
+        return res.send(500, err);
       }
     });
-
-
 };
 
 //Read one comment for a specific submission
 exports.readOne = function(req, res){
+  if (!isObjectId(req.params.comid) &&
+      !isObjectId(req.params.sid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Submission
     .findOne({_id: req.params.sid})
     .exec(function(err, submission){
       if (!err){
         if (submission.comments.id(req.params.comid)){
-          res.send(200, submission.comments.id(req.params.comid));
+          return res.send(200, submission.comments.id(req.params.comid));
         } else {
-          res.send(404);
+          return res.send(404, {clientMsg: "Could not find submission"});
         }
       } else {
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };

@@ -2,6 +2,8 @@ var mongoose = require('mongoose');
 var Submission = require("../models/submission.js");
 var Ballot = require("../models/ballot.js");
 var Challenge = require('../models/challenge.js');
+var validator = require('validator');
+var isObjectId = require('valid-objectid').isValid;
 var fs = require('fs');
 
 //function for some debugging when necessary
@@ -12,6 +14,10 @@ exports.debug = function(req, res){
 
 //get the array of submission id's that the user has voted on
 exports.userVoted = function(req, res){
+  if (!isObjectId(req.params.cid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Challenge
     .findOne({_id: req.params.cid})
     .select('submissions')//return only the submissions, we don't need the challenge info
@@ -22,21 +28,33 @@ exports.userVoted = function(req, res){
     //.select('submissions.ballots')
     .where('submissions')//where voter id equals the uid passed in
     .exec(function(err, challenge){
-      //todo, this is all async and should be a proper query
-      var votedSubmissions = [];
-      challenge.submissions.forEach(function(submission){
-        submission.ballots.forEach(function(ballot){
-          if (ballot.voter.toString() === req.params.uid){
-            votedSubmissions.push(submission.id);
-          }
+      if (!err && challenge){
+        //todo, this is all async and should be a proper query
+        var votedSubmissions = [];
+        challenge.submissions.forEach(function(submission){
+          submission.ballots.forEach(function(ballot){
+            if (ballot.voter.toString() === req.params.uid){
+              votedSubmissions.push(submission.id);
+            }
+          });
         });
-      });
-      res.send(200, votedSubmissions);
+        return res.send(200, votedSubmissions);
+      } else if (!err){
+        return res.send(404, {clientMsg: "Could not find Challenge with that id"});
+      } else {
+        return res.send(500, err);
+      }
     });
 };
-//Submit submission for specific challenge
+//Submit vote for specific submission
 exports.create = function(req, res){
   //find the challenge
+  if (!isObjectId(req.body.voter) &&
+      !validator.isNumeric(req.body.score) &&
+      !isObjectId(req.params.sid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Submission.findOne({_id: req.params.sid}, function(err, submission){
     if (!err){
       if (submission){
@@ -49,22 +67,20 @@ exports.create = function(req, res){
         submission.ballots.push(newBallot);
         //newBallot.save();
         submission.save(function(err, submission){
-          if (!err){
+          if (!err && submission){
             require("../models/activity.js").create(submission.ballots.id(newBallot.id));
-            res.send(200, submission);
+            return res.send(200, submission);
+          } if (!err) {
+            return res.send(500, {clientMsg: "Could not save submission"});
           } else {
-            res.send(500, err);
+            return res.send(500, err);
           }
         });
-
-
       } else { //no challenge was returned
-        res.send(404);
+        return res.send(404, {clientMsg: "No Submission found with that id"});
       }
     } else {
-      res.send(500, err);
+      return res.send(500, err);
     }
   });
 };
-
-
