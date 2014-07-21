@@ -38,7 +38,7 @@ alert: "Hello Jello!"
 ```
 
 ####Debug a challenge invite request
-#####_Status: Developed, Not Tested
+#####_Status: Not Developed, Not Tested
 POST /v1/apns/challenge/debug
 
 **Notes:**
