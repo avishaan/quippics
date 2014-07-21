@@ -1,10 +1,17 @@
 var Activity = require('../models/activity.js');
 var User = require('../models/user.js');
 var async = require('async');
+var validator = require('validator');
+var isObjectId = require('valid-objectid').isValid;
 var perPage = 24; //submissions per page
 
 //read activities from a user's friends
 exports.friendActivities = function(req, res){
+  if (!validator.isNumeric(req.params.page) &&
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   //find the activities related to a user (where the subject or object match the user's friends)
   async.waterfall([
   function(cb){
@@ -54,7 +61,7 @@ exports.friendActivities = function(req, res){
       if (!err && activities.length){
         cb(null, activities);
       } else if(!err){
-        cb(null, activities);
+        cb({clientMsg: "Could not find activities for user's friends"});
       } else {
         cb(err);
       }
@@ -71,6 +78,11 @@ exports.friendActivities = function(req, res){
 //read activities from a user
 exports.myActivities = function(req, res){
   //find the activities related to a user (where the subject or object match the user)
+  if (!validator.isNumeric(req.params.page) &&
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   Activity
   .find()
   .or([{subject: req.params.uid}, {object: req.params.uid}])
@@ -99,11 +111,11 @@ exports.myActivities = function(req, res){
   })
   .exec(function(err, activities){
     if (!err && activities.length){
-      res.send(200, activities);
+      return res.send(200, activities);
     } else if(!err){
-      res.send(200, activities);
+      return res.send(404, {clientMsg: "No Activities Found for this user"});
     } else {
-      res.send(500, err);
+      return res.send(500, err);
     }
   });
 };
