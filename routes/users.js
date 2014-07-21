@@ -340,17 +340,21 @@ exports.listUsers = function(req, res){
 };
 //get profile of a user
 exports.profile = function(req, res){
+  if (!isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   User.findOne({_id: req.params.uid})
     .select('username email thumbnail rank')
     .exec(function(err, user){
       if (!err){ //no error
         if (user){
-          res.send(200, user);
+          return res.send(200, user);
         } else { //we didn't find a user but no error
-          res.send(404);
+          return res.send(404, {clientMsg: "Could not find user"});
         }
       } else { //error occured
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };
