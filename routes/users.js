@@ -254,7 +254,6 @@ exports.requestFriend = function(req, res){
           //add the initiator to the acceptor's friendRequests
           acceptor.friendRequests.addToSet(req.body.friend);
           acceptor.save(function(err, user){
-            //TODO this is not important but eventually should do error checking
             if (!err && user){
               return cb(null);
             } else if (!err){
@@ -263,6 +262,8 @@ exports.requestFriend = function(req, res){
               return cb(err);
             }
           });
+        } else if (!err){
+          return cb({clientMsg: "Could not find user, check user and try again later"});
         } else {
           return cb(err);
         }
@@ -284,6 +285,12 @@ exports.listFriends = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   var skip = perPage * (req.params.page - 1);
+
+  if (!validator.isNumeric(req.params.page) &&
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   User.findOne({_id: req.params.uid})
     .select('friends')
     .populate({
@@ -297,12 +304,12 @@ exports.listFriends = function(req, res){
     .exec(function(err, user){
       if (!err){
         if (user) {
-          res.send(200, user); //return the list of friends and their usernames
+          return res.send(200, user); //return the list of friends and their usernames
         } else {
-          res.send(404, {clientMsg: "Couldn't find user"});
+          return res.send(404, {clientMsg: "Couldn't find user"});
         }
       } else {
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };
