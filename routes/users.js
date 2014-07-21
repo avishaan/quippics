@@ -197,7 +197,7 @@ exports.declinedRequests = function(req, res){
           return res.send(500, err);
         }
       });
-    } else if(!err && !user){
+    } else if(!err){
       return res.send(404, {clientMsg: "Couldn't find user, check user id"})
     } else {
       return res.send(500, err);
@@ -206,6 +206,11 @@ exports.declinedRequests = function(req, res){
 };
 //make a friend request from user in body to user in the :uid
 exports.requestFriend = function(req, res){
+  if (!isObjectId(req.params.uid) &&
+      !isObjectId(req.body.friend)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   async.series([
     function(cb){
       //find the user initiating the request
@@ -224,8 +229,13 @@ exports.requestFriend = function(req, res){
             initiator.requestedFriends.addToSet(req.params.uid);
             //save the update initator
             initiator.save(function(err, user){
-              //TODO this is not important but maybe do some error checking eventually
+              if (!err && user){
               return cb(null);//go to next step in the series 
+              } else if (!err){
+                return cb({clientMsg: "Could not save friend request, try again later"});
+              } else {
+                return cb(err);
+              }
             });
           }
         } else {
@@ -245,8 +255,14 @@ exports.requestFriend = function(req, res){
           acceptor.friendRequests.addToSet(req.body.friend);
           acceptor.save(function(err, user){
             //TODO this is not important but eventually should do error checking
-            return cb(null);
-          })
+            if (!err && user){
+              return cb(null);
+            } else if (!err){
+              return cb({clientMsg: "Could not save friend request, try again later"});
+            } else {
+              return cb(err);
+            }
+          });
         } else {
           return cb(err);
         }
