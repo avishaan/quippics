@@ -360,6 +360,10 @@ exports.profile = function(req, res){
 };
 //Update a user here
 exports.update = function(req, res){
+  if (!isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   User.findOne({_id: req.params.uid}, function(err, user){
     if (!err){
       if (user){
@@ -371,21 +375,21 @@ exports.update = function(req, res){
           //save the user the user to the database.
           user.save(function(err, updatedUser){
             if (!err){
-              res.send(200, {
+              return res.send(200, {
                 username: updatedUser.username,
                 _id : updatedUser._id
               });
             } else { //there was some sort of db error saving
-              res.send(500, err);
+              return res.send(500, err);
             }
           });
         });
       } else { //no user found, no error
-        res.send(404);
+        return res.send(404);
       }
     } else { //some sort of error, let the client know
       console.log("some error");
-      res.send(500, err);
+      return res.send(500, err);
     }
 
   });
