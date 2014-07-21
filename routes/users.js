@@ -176,6 +176,11 @@ exports.declinedRequests = function(req, res){
   //        { $pull: {friendRequests: {_id: req.body.user}}}, function(err, num, raw){
   //          res.send(200);
   //        });
+  if (!isObjectId(req.body.user) &&
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   User
   .findOne({_id: req.params.uid})
   .select('_id friendRequests')
@@ -186,10 +191,14 @@ exports.declinedRequests = function(req, res){
       decliner.save(function(err, user){
         if (!err && user){
           return res.send(200, {clientMsg: "Friend request declined"});
+        } else if (!err && !user){
+          return res.send(500, {clientMsg: "Couldn't decline friend request, try again"});
         } else {
           return res.send(500, err);
         }
       });
+    } else if(!err && !user){
+      return res.send(404, {clientMsg: "Couldn't find user, check user id"})
     } else {
       return res.send(500, err);
     }
