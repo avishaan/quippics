@@ -45,6 +45,7 @@ Route Example: `dev.quippics.us/api/v1/register`
   - [Information on Ballot Routes](./docs/ballotsRoute.md)
   - [Information on Comment Routes](./docs/commentsRoute.md)
   - [Information on Activity Routes](./docs/activitiesRoute.md)
+  - [Information on Apple Notifications Routes](./docs/apnsRoute.md)
 - [Connecting Routes to Interface (Right Click and Save-As)](./docs/InterfaceRouteInfo.pdf)
 
 
