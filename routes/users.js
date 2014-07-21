@@ -319,15 +319,22 @@ exports.listUsers = function(req, res){
   //TODO, show users with pending friend requests
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
+  if (!validator.isNumeric(req.params.page) &&
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   User.find({}, 'username _id thumbnail')
     .ne('_id', req.params.uid) //don't return the user who is running the query
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
     .exec(function(err, users){
-      if(!err){
-        res.send(200, users);
+      if(!err && users.length){
+        return res.send(200, users);
+      } else if (!err){
+        return res.send(404, {clientMsg: "Could not find users"});
       } else {
-        res.send(500, err);
+        return res.send(500, err);
       }
     });
 };
