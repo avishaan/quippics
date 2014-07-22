@@ -38,8 +38,8 @@ alert: "Hello Jello!"
 ```
 
 ####Debug a challenge invite request
-#####_Status: Not Developed, Not Tested
-POST /v1/apns/challenge/debug
+#####_Status: Developed, Not Tested
+POST /v1/apns/challenges/debug
 
 **Notes:**
 - A successful http response without err means the message was parsed and accepted
@@ -74,3 +74,38 @@ response:
 }
 ```
 
+####Debug a submission notifcation request
+#####_Status: Not Developed, Not Tested
+POST /v1/apns/submissions/debug
+
+**Notes:**
+- A successful http response without err means the message was parsed and accepted
+  by Apple. It doesn't mean that the message was successfully delivered nor received by user
+
+Example Request
+```
+request.body:
+{
+  uuid: '<a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95>'
+};
+```
+Example Http Response
+```
+response:
+{ 
+  clientMsg: 'Attempting',
+  err: 'Gateway Error'
+}
+```
+Example iOS Response
+```
+response:
+{ 
+  _id: '52fc632f2c769a7503000003',
+  type: 'submission',
+  alert: {
+    body: 'There was a new submission!',
+    action-loc-key: 'rate submission!'
+  }
+}
+```
