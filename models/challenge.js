@@ -23,6 +23,27 @@ var challengeSchema = new mongoose.Schema({
   privacy: { type: String }
 });
 
+challengeSchema.pre('save', function(next){
+  //plumbing so we can tell if a model is new in the post save
+  this._wasNew = this.isNew;
+  next();
+});
+
+challengeSchema.post('save', function(){
+  if (this._wasNew){
+    this.emit('new');
+  } else {
+    this.emit('update');
+  }
+});
+
+challengeSchema.post('new', function(){
+  this.invites.forEach(function(user, index){
+    console.log("Placeholder to send invite request to: ", user);
+    console.log("Type", "challenge", "Id", this._id, "Title", this.title);
+  }, this);
+});
+
 //find the top submission in a challenge
 challengeSchema.methods.topSubmission = function(challenge, cb){
   //find the top submission in the array of submission from the challenge
