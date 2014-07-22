@@ -48,6 +48,26 @@ submissionSchema.post('save', function(){
   }
 });
 
+//do the following after save on new instance
+submissionSchema.post('new', function(){
+  //lookup challenge for submission
+  this
+  .populate({
+    path: 'challenge',
+    select: 'participants title'
+  }, function(err, submission){
+    submission.challenge.participants.forEach(function(user, index){
+      //send notification if they have not explicitly declined the challenge invite
+      if (user.inviteStatus === 'invited' ||
+          user.inviteStatus === 'accepted'){
+        console.log('Placeholder to send invite request to: ', user._id, 'invite status: ', user.inviteStatus);
+        console.log('Type', 'submission', 'Id', submission._id, 'Title', submission.challenge.title);
+      }
+    });
+  });
+  //send notification to each user who is still subscribing to notifications
+});
+
 //find challenge of a submission //TODO, we already store this, why the hell are we looking for it!?
 submissionSchema.methods.findChallenge = function(next){
   //find the challenge this submissions exists in and pass that to the callback
