@@ -38,6 +38,16 @@ submissionSchema.pre('save', function(next){ //right before saving a new submiss
   }
 });
 
+//do the following after each successful save
+submissionSchema.post('save', function(){
+  if (this.wasNew){
+    //emit the specific wasNew event
+    this.emit('new');
+  } else {
+    this.emit('update');
+  }
+});
+
 //find challenge of a submission //TODO, we already store this, why the hell are we looking for it!?
 submissionSchema.methods.findChallenge = function(next){
   //find the challenge this submissions exists in and pass that to the callback
