@@ -31,6 +31,7 @@ challengeSchema.pre('save', function(next){
 
 challengeSchema.post('save', function(){
   if (this._wasNew){
+    //emit the specific wasNew event
     this.emit('new');
   } else {
     this.emit('update');
