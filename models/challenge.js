@@ -25,12 +25,12 @@ var challengeSchema = new mongoose.Schema({
 
 challengeSchema.pre('save', function(next){
   //plumbing so we can tell if a model is new in the post save
-  this._wasNew = this.isNew;
+  this.wasNew = this.isNew;
   next();
 });
 
 challengeSchema.post('save', function(){
-  if (this._wasNew){
+  if (this.wasNew){
     //emit the specific wasNew event
     this.emit('new');
   } else {
