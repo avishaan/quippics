@@ -93,6 +93,7 @@ app.get('/api/v1/server', function(req, res){
   res.send(200, {clientMsg: "We are up and running"});
 });
 app.post('/api/v1/apns/debug', apns.debugPush); //debug push notifcations
+app.post('/api/v1/apns/challenges/debug', apns.debugChallenge); //debug push notifcations for challenges
 
 //friends routes
 app.post('/api/v1/users/:uid/declinedRequests', apiAuth(), users.declinedRequests);

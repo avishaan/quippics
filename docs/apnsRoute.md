@@ -63,6 +63,14 @@ response:
 Example iOS Response
 ```
 response:
-alert: "You have been invited to a challenge!"
+{ 
+  _id: '52fc632f2c769a7503000003',
+  title: 'Challenge 1 title',
+  type: 'challenge',
+  alert: {
+    body: 'You were invited to a new challenge',
+    action-loc-key: 'accepted challenge!'
+  }
+}
 ```
 
