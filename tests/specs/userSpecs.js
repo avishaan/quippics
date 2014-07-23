@@ -5,6 +5,7 @@ var superagent = require('superagent');
 var user1 = {
   username: 'user1',
   password: 'password1',
+  uuid: 'a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95',
   email: 'email@yahoo.com'
 };
 var user2 = {
@@ -117,7 +118,8 @@ exports.spec = function(domain, callback){
       frisby.create('Login user1')
       .post(domain + '/users', {
         username: user1.username,
-        password: user1.password
+        password: user1.password,
+        uuid: user1.uuid
       })
       .expectStatus(200)
       .afterJSON(function(res){
@@ -131,7 +133,8 @@ exports.spec = function(domain, callback){
       frisby.create('Login user1 with wrong password')
       .post(domain + '/users', {
         username: user1.username,
-        password: 'badpassword'
+        password: 'badpassword',
+        uuid: user1.uuid
       })
       .expectStatus(401)
       .after(function(){
@@ -144,7 +147,8 @@ exports.spec = function(domain, callback){
       frisby.create('Login user1 with all uppercase username')
       .post(domain + '/users', {
         username: user1.username.toUpperCase(),
-        password: user1.password
+        password: user1.password,
+        uuid: user1.uuid
       })
       .expectStatus(200)
       .after(function(){
@@ -222,7 +226,8 @@ exports.spec = function(domain, callback){
         frisby.create('User should be able to login with new password')
         .post( domain + '/users', {
           username: user1.username,
-          password: user1.password
+          password: user1.password,
+          uuid: user1.uuid
         })
         .expectStatus(200)
         .afterJSON(function(res){
@@ -250,7 +255,8 @@ exports.spec = function(domain, callback){
         frisby.create('User should be able to login with new password')
         .post( domain + '/users', {
           username: user1.username,
-          password: user1.password
+          password: user1.password,
+          uuid: user1.uuid
         })
         .expectStatus(200)
         .afterJSON(function(res){
