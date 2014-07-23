@@ -16,6 +16,8 @@ var userSchema = new mongoose.Schema({
   username: {type: String, unique: true},
   firstName: {type: String},
   lastName: {type: String},
+  deviceToken: {type: String}, //unique token set with each login
+  allowNotifications: {type: Boolean, default: true}, //whether or not to send the user notifications
   email: {type: String},
   friends: [
     {type: mongoose.Schema.Types.ObjectId, ref: 'User'}

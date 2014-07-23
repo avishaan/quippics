@@ -16,6 +16,9 @@ exports.list = function(req, res){
 };
 //Authenticate a user in order to get the user id here
 exports.authenticate = function(req, res){
+  if (!validator.isLength(req.body.uuid, 1, 100)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
   var user = new User({
     username: req.body.username,
     password: req.body.password
@@ -23,8 +26,18 @@ exports.authenticate = function(req, res){
   user.authenticate(function(err, authUser){
     if (!err){
       if (authUser){
-        return res.send(200, {
-          '_id': authUser._id
+        //update the user's token
+        authUser.update({deviceToken: req.body.uuid}, {}, function(err, numAffected, raw){
+          if (!err){
+            return res.send(200, {
+              '_id': authUser._id
+            });
+          } else {
+            return res.send(500, {
+              clientMsg: "Could not update token",
+              err: err
+            });
+          }
         });
       } else {
         return res.send(401, {
