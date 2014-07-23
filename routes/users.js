@@ -9,6 +9,7 @@ var perPage = 24;
 var async = require('async');
 var validator = require('validator');
 var isObjectId = require('valid-objectid').isValid;
+var Device = require('apnagent').Device;
 var _ = require('underscore');
 
 exports.list = function(req, res){
@@ -27,7 +28,8 @@ exports.authenticate = function(req, res){
     if (!err){
       if (authUser){
         //update the user's token
-        authUser.update({deviceToken: req.body.uuid}, {}, function(err, numAffected, raw){
+        var token = new Device(req.body.uuid).toString();
+        authUser.update({deviceToken: token}, {}, function(err, numAffected, raw){
           if (!err){
             return res.send(200, {
               '_id': authUser._id
