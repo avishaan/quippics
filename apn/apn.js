@@ -2,15 +2,20 @@ var apnagent = require('apnagent');
 var path = require('path');
 var config = require('../conf/config.js');
 
-var agent = module.exports = new apnagent.Agent();
+if (config.env === 'prod'){
+  var agent = module.exports = new apnagent.Agent();
+} else if (config.env === 'local'){
+  var agent = module.exports = new apnagent.MockAgent();
+} else {
+  var agent = module.exports = new apnagent.Agent();
+  agent
+  .enable('sandbox');
+}
 
 //set the credentials
 agent
 .set('pfx file', path.join(process.cwd(), config.pfxPath));
 //credentials were for development
-agent
-.enable('sandbox');
-
 
 agent.
   connect(function(err){
