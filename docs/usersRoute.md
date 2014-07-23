@@ -85,8 +85,9 @@ POST /v1/users
 Example Request
 ```
 request: {
-  username: 'jill1987'
-  password: 'password'
+  username: 'jill1987',
+  password: 'password',
+  uuid: 'a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95'
 }
 ```
 
