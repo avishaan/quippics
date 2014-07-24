@@ -81,7 +81,7 @@ feedback.use(function(device, timestamp, next){
   console.log("Device: %s at time: %s wants to unsub", device.toString(), timestamp);
   User.stopNotifications({device: device, timestamp: timestamp}, function(err){
     if (err){
-      console.warn("error: ", err, "trace: ", new Error().trace);
+      console.warn("error: ", err, "stack: ", new Error().stack);
     }
   });
   next(); //we don't really need to wait for anything to finish as there is no error reporting
