@@ -17,6 +17,9 @@ if (config.env === 'prod'){
   feedback.enable('sandbox');
 }
 
+//set some options
+feedback.set('concurrency', 1); //low priority to the feedback api, need to serve reqs
+
 //set the credentials
 agent
 .set('pfx file', path.join(process.cwd(), config.pfxPath));
