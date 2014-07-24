@@ -72,3 +72,11 @@ feedback.connect(function (err) {
     console.log('apngent Feedback gateway connected');
   }
 });
+
+feedback.use(function(device, timestamp, next){
+  console.log("Device: %s at time: %s", device.toString(), timestamp);
+  //find the user with that token
+  //check the timestamp, make sure the feedback event is newer than the current timestamp
+  //if the feedback event was newer, go ahead and set allowNotifications to false
+  //if feedback event was older, just ignore since it means they registered after unsubbing
+});
