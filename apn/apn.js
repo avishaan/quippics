@@ -20,6 +20,7 @@ if (config.env === 'prod'){
 //set the credentials
 agent
 .set('pfx file', path.join(process.cwd(), config.pfxPath));
+ feedback.set('pfx file', path.join(process.cwd(), config.pfxPath));
 //credentials were for development
 
 agent.
