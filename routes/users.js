@@ -17,7 +17,8 @@ exports.list = function(req, res){
 };
 //Authenticate a user in order to get the user id here
 exports.authenticate = function(req, res){
-  if (!validator.isLength(req.body.uuid, 1, 100)){
+  if (!validator.isLength(req.body.uuid, 1, 100) ||
+      !validator.isNumeric(req.body.tokenTimestamp)){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
   var user = new User({
@@ -76,8 +77,7 @@ exports.friendRequests = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   var skip = perPage * (req.params.page - 1);
-  if (!validator.isNumeric(req.params.page) &&
-      !validator.isAlphanumeric(req.body.description) &&
+  if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -108,7 +108,7 @@ exports.friendRequests = function(req, res){
 exports.acceptRequests = function(req, res){
   var requestorId = req.body.user;
   var acceptorId = req.params.uid;
-  if (!isObjectId(req.body.user) &&
+  if (!isObjectId(req.body.user) ||
       !isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -191,7 +191,7 @@ exports.declinedRequests = function(req, res){
   //        { $pull: {friendRequests: {_id: req.body.user}}}, function(err, num, raw){
   //          res.send(200);
   //        });
-  if (!isObjectId(req.body.user) &&
+  if (!isObjectId(req.body.user) ||
       !isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -221,7 +221,7 @@ exports.declinedRequests = function(req, res){
 };
 //make a friend request from user in body to user in the :uid
 exports.requestFriend = function(req, res){
-  if (!isObjectId(req.params.uid) &&
+  if (!isObjectId(req.params.uid) ||
       !isObjectId(req.body.friend)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -301,7 +301,7 @@ exports.listFriends = function(req, res){
   req.params.page = req.params.page || 1;
   var skip = perPage * (req.params.page - 1);
 
-  if (!validator.isNumeric(req.params.page) &&
+  if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -334,7 +334,7 @@ exports.listUsers = function(req, res){
   //TODO, show users with pending friend requests
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
-  if (!validator.isNumeric(req.params.page) &&
+  if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
