@@ -1,7 +1,9 @@
 var apnagent = require('apnagent');
+var User = require('../models/user.js');
 var path = require('path');
 var config = require('../conf/config.js');
 
+//set environment based options
 if (config.env === 'prod'){
   var agent = module.exports = new apnagent.Agent();
   var feedback = new apnagent.Feedback();
@@ -9,7 +11,9 @@ if (config.env === 'prod'){
   var agent = module.exports = new apnagent.MockAgent();
   agent.enable('sandbox');
   var feedback = new apnagent.MockFeedback();
-  feedback.enable('sandbox');
+  feedback
+  .enable('sandbox')
+  .set('interval', '1s'); // connection time to feedback service every 1s 
 } else {
   var agent = module.exports = new apnagent.Agent();
   agent.enable('sandbox');
@@ -17,7 +21,7 @@ if (config.env === 'prod'){
   feedback.enable('sandbox');
 }
 
-//set some options
+//set some options global
 feedback.set('concurrency', 1); //low priority to the feedback api, need to serve reqs
 
 //set the credentials
@@ -74,9 +78,16 @@ feedback.connect(function (err) {
 });
 
 feedback.use(function(device, timestamp, next){
-  console.log("Device: %s at time: %s", device.toString(), timestamp);
-  //find the user with that token
-  //check the timestamp, make sure the feedback event is newer than the current timestamp
-  //if the feedback event was newer, go ahead and set allowNotifications to false
-  //if feedback event was older, just ignore since it means they registered after unsubbing
+  console.log("Device: %s at time: %s wants to unsub", device.toString(), timestamp);
+  User.stopNotifications({device: device, timestamp: timestamp}, function(err){
+    if (err){
+      console.warn("error: ", err, "trace: ", new Error().trace);
+    }
+  });
+  next(); //we don't really need to wait for anything to finish as there is no error reporting
 });
+
+setTimeout(function () {
+  feedback.unsub('feedface00');
+  feedback.unsub('feedface01');
+}, 2500);

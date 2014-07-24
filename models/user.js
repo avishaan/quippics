@@ -169,6 +169,36 @@ userSchema.methods.checkPassword = function(testPassword, cb){
     }
   });
 };
+//find user by token and unsubscribe
+userSchema.statics.stopNotifications = function(options, cb){
+  if (!options.device || !options.timestamp){
+    return cb({
+      clientMsg: "Malformed request",
+    });
+  }
+  User
+  .findOne({deviceToken: options.device.toString()})
+  .select('allowNotifications tokenTimestamp')
+  .exec(function(err, user){
+    if (!err && user){
+      //compare the timestamps
+      if (user.tokenTimestamp < options.timestamp ){
+        //user registered and THEN an unsub came in, stop notifications
+        user.allowNotifications = false;
+        user.save(); //it's not important, assume a save
+        return cb();
+      }
+    } else if (!err && !user){
+      //found no user, ignore. maybe the user was deleted
+      return cb();
+    } else {
+      return cb({
+        clientMsg: "Couldn't find user",
+        err: err
+      });
+    }
+  });
+}
 /**
  * Add a DewDrop supporter to a user. Keep in mind often times you will support a user that doesn't
  * exist yet in which case you will need to create him right then
