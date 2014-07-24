@@ -30,14 +30,14 @@ exports.authenticate = function(req, res){
       if (authUser){
         //update the user's token
         var token = new Device(req.body.uuid).toString();
-        authUser.update({deviceToken: token}, {}, function(err, numAffected, raw){
+        authUser.update({deviceToken: token, tokenTimestamp: req.body.tokenTimestamp}, {}, function(err, numAffected, raw){
           if (!err){
             return res.send(200, {
               '_id': authUser._id
             });
           } else {
             return res.send(500, {
-              clientMsg: "Could not update token",
+              clientMsg: "Could not update token/timestamp",
               err: err
             });
           }
