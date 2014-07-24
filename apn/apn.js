@@ -4,14 +4,17 @@ var config = require('../conf/config.js');
 
 if (config.env === 'prod'){
   var agent = module.exports = new apnagent.Agent();
+  var feedback = new apnagent.Feedback();
 } else if (config.env === 'local'){
   var agent = module.exports = new apnagent.MockAgent();
-  agent
-  .enable('sandbox');
+  agent.enable('sandbox');
+  var feedback = new apnagent.MockFeedback();
+  feedback.enable('sandbox');
 } else {
   var agent = module.exports = new apnagent.Agent();
-  agent
-  .enable('sandbox');
+  agent.enable('sandbox');
+  var feedback = new apnagent.Feedback();
+  feedback.enable('sandbox');
 }
 
 //set the credentials
@@ -51,5 +54,17 @@ agent.on('message:error', function(err, msg){
       //unlikely but could occur over a dead socket
       console.log('[message:error] other error: %s, error#: %d', err.message, err.code);
     }
+  }
+});
+
+feedback.connect(function (err) {
+  if (err && 'FeedbackAuthorizationError' === err.name) {
+    console.log('Feedback Gateway Error %s: %s', err.name, err.message);
+    console.log("check certs");
+  } else if (err) {
+    console.log('Feedback Gateway Error %s: %s', err.name, err.message);
+    throw err;
+  } else {
+    console.log('apngent Feedback gateway connected');
   }
 });
