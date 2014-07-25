@@ -16,6 +16,9 @@ var userSchema = new mongoose.Schema({
   username: {type: String, unique: true},
   firstName: {type: String},
   lastName: {type: String},
+  deviceToken: {type: String}, //unique token set with each login
+  allowNotifications: {type: Boolean, default: true}, //whether or not to send the user notifications
+  tokenTimestamp: {type: Date}, //date of last registration
   email: {type: String},
   friends: [
     {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
@@ -166,6 +169,36 @@ userSchema.methods.checkPassword = function(testPassword, cb){
     }
   });
 };
+//find user by token and unsubscribe
+userSchema.statics.stopNotifications = function(options, cb){
+  if (!options.device || !options.timestamp){
+    return cb({
+      clientMsg: "Malformed request",
+    });
+  }
+  User
+  .findOne({deviceToken: options.device.toString()})
+  .select('allowNotifications tokenTimestamp')
+  .exec(function(err, user){
+    if (!err && user){
+      //compare the timestamps
+      if (user.tokenTimestamp < options.timestamp ){
+        //user registered and THEN an unsub came in, stop notifications
+        user.allowNotifications = false;
+        user.save(); //it's not important, assume a save
+        return cb();
+      }
+    } else if (!err && !user){
+      //found no user, ignore. maybe the user was deleted
+      return cb();
+    } else {
+      return cb({
+        clientMsg: "Couldn't find user",
+        err: err
+      });
+    }
+  });
+}
 /**
  * Add a DewDrop supporter to a user. Keep in mind often times you will support a user that doesn't
  * exist yet in which case you will need to create him right then

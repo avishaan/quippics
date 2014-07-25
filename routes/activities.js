@@ -7,7 +7,7 @@ var perPage = 24; //submissions per page
 
 //read activities from a user's friends
 exports.friendActivities = function(req, res){
-  if (!validator.isNumeric(req.params.page) &&
+  if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -78,7 +78,7 @@ exports.friendActivities = function(req, res){
 //read activities from a user
 exports.myActivities = function(req, res){
   //find the activities related to a user (where the subject or object match the user)
-  if (!validator.isNumeric(req.params.page) &&
+  if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
