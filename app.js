@@ -108,6 +108,7 @@ app.get('/api/v1/users/:uid', apiAuth(), users.profile); //profile of specific u
 app.get('/api/v1/users/search/:search', apiAuth(), users.search); //search for a specific user
 app.post('/api/v1/register', users.register); //register new user
 app.post('/api/v1/users', apiAuth(), users.authenticate); //check password of user and return id
+app.put('/api/v1/users/:uid/device', apiAuth(), users.registerDevice); //register the user's device
 app.put('/api/v1/users/:uid', apiAuth(), users.update); //update an existing user
 //comment routes
 app.post('/api/v1/challenges/:cid/submissions/:sid/comments', apiAuth(), comments.create); //post a comment to a submission
