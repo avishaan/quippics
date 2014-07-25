@@ -75,6 +75,28 @@ response:
 }
 ```
 
+####Register the user's device
+#####_Status: Developed, Not Tested
+POST /v1/users/:uid/device
+
+- Expecting value in seconds from UTC epoch
+
+Example Request
+```
+request: {
+  user: '52f548514f8c88b137000113',
+  uuid: 'a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95',
+  tokenTimestamp: '1406168673694'
+}
+```
+
+Example Response
+```
+response: {
+  clientMsg: 'Successfully registered device'
+}
+```
+
 ####Authenticate user and return userid
 #####_Status: Developed, Tested
 POST /v1/users
