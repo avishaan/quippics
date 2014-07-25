@@ -119,9 +119,7 @@ exports.spec = function(domain, callback){
       frisby.create('Login user1')
       .post(domain + '/users', {
         username: user1.username,
-        password: user1.password,
-        uuid: user1.uuid,
-        tokenTimestamp: user1.tokenTimestamp
+        password: user1.password
       })
       .expectStatus(200)
       .afterJSON(function(res){
@@ -135,9 +133,7 @@ exports.spec = function(domain, callback){
       frisby.create('Login user1 with wrong password')
       .post(domain + '/users', {
         username: user1.username,
-        password: 'badpassword',
-        uuid: user1.uuid,
-        tokenTimestamp: user1.tokenTimestamp
+        password: 'badpassword'
       })
       .expectStatus(401)
       .after(function(){
@@ -150,9 +146,7 @@ exports.spec = function(domain, callback){
       frisby.create('Login user1 with all uppercase username')
       .post(domain + '/users', {
         username: user1.username.toUpperCase(),
-        password: user1.password,
-        uuid: user1.uuid,
-        tokenTimestamp: user1.tokenTimestamp
+        password: user1.password
       })
       .expectStatus(200)
       .after(function(){
@@ -230,9 +224,7 @@ exports.spec = function(domain, callback){
         frisby.create('User should be able to login with new password')
         .post( domain + '/users', {
           username: user1.username,
-          password: user1.password,
-          uuid: user1.uuid,
-          tokenTimestamp: user1.tokenTimestamp
+          password: user1.password
         })
         .expectStatus(200)
         .afterJSON(function(res){
@@ -260,9 +252,7 @@ exports.spec = function(domain, callback){
         frisby.create('User should be able to login with new password')
         .post( domain + '/users', {
           username: user1.username,
-          password: user1.password,
-          uuid: user1.uuid,
-          tokenTimestamp: user1.tokenTimestamp
+          password: user1.password
         })
         .expectStatus(200)
         .afterJSON(function(res){
