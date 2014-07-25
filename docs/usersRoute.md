@@ -84,7 +84,6 @@ POST /v1/users/:uid/device
 Example Request
 ```
 request: {
-  user: '52f548514f8c88b137000113',
   uuid: 'a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95',
   tokenTimestamp: '1406168673694'
 }
