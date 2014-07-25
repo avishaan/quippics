@@ -2,6 +2,7 @@ var mongoose = require("mongoose");
 var fs = require('fs');
 var _ = require('underscore');
 var Challenge = require('../models/challenge.js');
+var User = require('../models/user.js');
 var Ballot = require('../models/ballot.js');
 var Comment = require("../models/comment.js");
 
@@ -54,15 +55,30 @@ submissionSchema.post('new', function(){
   this
   .populate({
     path: 'challenge',
-    select: 'participants title'
+    select: 'participants title',
+    match: {"participants.inviteStatus": {$in: ['invited', 'accepted']}}
   }, function(err, submission){
+    //we have all users that have either accepted or invited to challenge, notify!
+    User.sendNotifications({
+      users: submission.challenge.participants,
+      payload: {
+        alert: {
+          'body': 'You were invited to a new challenge!',
+          'action-loc-key': 'accept challenge!'
+        },
+        body: {
+          'type': 'submission',
+          '_id': submission._id,
+          'title': submission.challenge.title
+        }
+      }
+    }, function(err){
+
+    });
     submission.challenge.participants.forEach(function(user, index){
       //send notification if they have not explicitly declined the challenge invite
-      if (user.inviteStatus === 'invited' ||
-          user.inviteStatus === 'accepted'){
-        console.log('Placeholder to send invite request to: ', user._id, 'invite status: ', user.inviteStatus);
-        console.log('Type', 'submission', 'Id', submission._id, 'Title', submission.challenge.title);
-      }
+      console.log('Placeholder to send invite request to: ', user._id, 'invite status: ', user.inviteStatus);
+      console.log('Type', 'submission', 'Id', submission._id, 'Title', submission.challenge.title);
     });
   });
   //send notification to each user who is still subscribing to notifications

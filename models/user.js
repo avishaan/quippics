@@ -5,6 +5,7 @@ var SALT_WORK_FACTOR = 6;
 var fs = require('fs');
 var gm = require('gm');
 var im = gm.subClass({ imageMagick: true});
+var agent = require('../apn/apn.js');
 /*
 |-------------------------------------------------------------
 | User Schema
@@ -169,6 +170,50 @@ userSchema.methods.checkPassword = function(testPassword, cb){
     }
   });
 };
+
+/**
+ * Send user(s) notifications about an event
+ * @param {object} options The options for the notifications
+ * @config {array} array of userid(s) Array of string userids
+ * @config {object} payload of message, passed directly to agent
+ * @param {function} cb
+ * @config {object} err Passed Error
+ * @config {object} user returned mongoose user object
+ */
+userSchema.statics.sendNotifications = function(options, cb){
+  if (!options.users || !options.payload){
+    return cb({
+      clientMsg: "Malformed request",
+    });
+  }
+  var alert = options.payload.alert;
+  var body = options.payload.body;
+
+  User.find({_id: options.users})
+  .select('allowNotifications deviceToken')
+  .lean()
+  .exec(function(err, users){
+    if (!err && users.length){
+      users.forEach(function(user, index){
+        if (user.allowNotifications && user.deviceToken){
+          //if the user wants notifications and has deviceToken
+          agent.createMessage()
+          .device(user.deviceToken)
+          .alert(alert)
+          .set(body)
+          .send(function(err){
+          });
+          //we don't care about the '.send' callback as we listen for errors on agent
+          return cb(null);
+        }
+      });
+    } else if (!err){
+      return cb(null);
+    } else {
+      return cb(err);
+    }
+  });
+};
 //find user by token and unsubscribe
 userSchema.statics.stopNotifications = function(options, cb){
   if (!options.device || !options.timestamp){
@@ -198,7 +243,7 @@ userSchema.statics.stopNotifications = function(options, cb){
       });
     }
   });
-}
+};
 /**
  * Add a DewDrop supporter to a user. Keep in mind often times you will support a user that doesn't
  * exist yet in which case you will need to create him right then
