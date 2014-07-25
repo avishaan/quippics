@@ -14,6 +14,15 @@ if (config.env === 'prod'){
   feedback
   .enable('sandbox')
   .set('interval', '1s'); // connection time to feedback service every 1s 
+//  User.create({
+//    username: 'test',
+//    deviceToken: 'feedface01',
+//    tokenTimestamp: Date.now()
+//  });
+//  debugger;
+//  setTimeout(function () {
+//    feedback.unsub('feedface01');
+//  }, 2500);
 } else {
   var agent = module.exports = new apnagent.Agent();
   agent.enable('sandbox');
@@ -87,7 +96,3 @@ feedback.use(function(device, timestamp, next){
   next(); //we don't really need to wait for anything to finish as there is no error reporting
 });
 
-setTimeout(function () {
-  feedback.unsub('feedface00');
-  feedback.unsub('feedface01');
-}, 2500);
