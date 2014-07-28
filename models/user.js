@@ -178,7 +178,6 @@ userSchema.methods.checkPassword = function(testPassword, cb){
  * @config {object} payload of message, passed directly to agent
  * @param {function} cb
  * @config {object} err Passed Error
- * @config {object} user returned mongoose user object
  */
 userSchema.statics.sendNotifications = function(options, cb){
   if (!options.users || !options.payload){
@@ -189,7 +188,7 @@ userSchema.statics.sendNotifications = function(options, cb){
   var alert = options.payload.alert;
   var body = options.payload.body;
 
-  User.find({_id: options.users})
+  User.find({_id: {$in: options.users}})
   .select('allowNotifications deviceToken')
   .lean()
   .exec(function(err, users){

@@ -56,11 +56,13 @@ submissionSchema.post('new', function(){
   .populate({
     path: 'challenge',
     select: 'participants title',
-    match: {"participants.inviteStatus": {$in: ['invited', 'accepted']}}
+    match: {"participants.inviteStatus": {$in: ['invited', 'accepted']}} //check inviteStatus
   }, function(err, submission){
     //we have all users that have either accepted or invited to challenge, notify!
+    //put returned participants into an array of userids
+    var users = _.pluck(submission.challenge.participants, 'user');
     User.sendNotifications({
-      users: submission.challenge.participants,
+      users: users,
       payload: {
         alert: {
           'body': 'You were invited to a new challenge!',
@@ -73,7 +75,9 @@ submissionSchema.post('new', function(){
         }
       }
     }, function(err){
-
+      if (err){
+        console.error("Error! ", err, new Error().stack);
+      }
     });
     submission.challenge.participants.forEach(function(user, index){
       //send notification if they have not explicitly declined the challenge invite
