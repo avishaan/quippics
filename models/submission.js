@@ -65,8 +65,8 @@ submissionSchema.post('new', function(){
       users: users,
       payload: {
         alert: {
-          'body': 'You were invited to a new challenge!',
-          'action-loc-key': 'accept challenge!'
+          'body': 'A new submission was made!',
+          'action-loc-key': 'look at submission'
         },
         body: {
           'type': 'submission',
