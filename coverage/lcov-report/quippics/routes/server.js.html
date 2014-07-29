@@ -195,20 +195,20 @@
     </style>
 </head>
 <body>
-<div class="header high">
+<div class="header low">
     <h1>Code coverage report for <span class="entity">quippics/routes/server.js</span></h1>
     <h2>
         
-        Statements: <span class="metric">81.48% <small>(22 / 27)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Statements: <span class="metric">22.22% <small>(6 / 27)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Branches: <span class="metric">50% <small>(5 / 10)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">0% <small>(0 / 10)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Functions: <span class="metric">100% <small>(10 / 10)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">0% <small>(0 / 10)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Lines: <span class="metric">81.48% <small>(22 / 27)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">22.22% <small>(6 / 27)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
     </h2>
@@ -298,12 +298,12 @@
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7</span>
-<span class="cline-any cline-yes">7</span>
-<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -311,9 +311,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7</span>
-<span class="cline-any cline-yes">7</span>
-<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -321,9 +321,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7</span>
-<span class="cline-any cline-yes">7</span>
-<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -331,9 +331,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7</span>
-<span class="cline-any cline-yes">7</span>
-<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -341,15 +341,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -368,59 +368,59 @@ var Challenge = require("../models/challenge.js");
 var Submission = require("../models/submission.js");
 var Activity = require("../models/activity.js");
 var async = require('async');
-exports.delete = function (req, res){
-  async.parallel([
-    function(cb){
+exports.delete = <span class="fstat-no" title="function not covered" >function (req, res){</span>
+<span class="cstat-no" title="statement not covered" >  async.parallel([</span>
+<span class="fstat-no" title="function not covered" >    function(cb){</span>
       //Clear the users
-      User.remove({}, function(err, users){
-        <span class="missing-if-branch" title="else path not taken" >E</span>if (!err){
-          cb(null, users);
+<span class="cstat-no" title="statement not covered" >      User.remove({}, <span class="fstat-no" title="function not covered" >function(err, users){</span></span>
+<span class="cstat-no" title="statement not covered" >        if (!err){</span>
+<span class="cstat-no" title="statement not covered" >          cb(null, users);</span>
         } else {
 <span class="cstat-no" title="statement not covered" >          cb(err);</span>
         }
       });
     },
-    function(cb){
+<span class="fstat-no" title="function not covered" >    function(cb){</span>
       //clear the challenges
-      Challenge.remove({}, function(err, challenges){
-        <span class="missing-if-branch" title="else path not taken" >E</span>if (!err){
-          cb(null, challenges);
+<span class="cstat-no" title="statement not covered" >      Challenge.remove({}, <span class="fstat-no" title="function not covered" >function(err, challenges){</span></span>
+<span class="cstat-no" title="statement not covered" >        if (!err){</span>
+<span class="cstat-no" title="statement not covered" >          cb(null, challenges);</span>
         } else {
 <span class="cstat-no" title="statement not covered" >          cb(err);</span>
         }
       });
     },
-    function(cb){
+<span class="fstat-no" title="function not covered" >    function(cb){</span>
       //clear the submissions
-      Submission.remove({}, function(err, submissions){
-        <span class="missing-if-branch" title="else path not taken" >E</span>if (!err){
-          cb(null, submissions);
+<span class="cstat-no" title="statement not covered" >      Submission.remove({}, <span class="fstat-no" title="function not covered" >function(err, submissions){</span></span>
+<span class="cstat-no" title="statement not covered" >        if (!err){</span>
+<span class="cstat-no" title="statement not covered" >          cb(null, submissions);</span>
         } else {
 <span class="cstat-no" title="statement not covered" >          cb(err);</span>
         }
       });
     },
-    function(cb){
+<span class="fstat-no" title="function not covered" >    function(cb){</span>
       //clear the activities
-      Activity.remove({}, function(err, activities){
-        <span class="missing-if-branch" title="else path not taken" >E</span>if (!err){
-          cb(null, activities);
+<span class="cstat-no" title="statement not covered" >      Activity.remove({}, <span class="fstat-no" title="function not covered" >function(err, activities){</span></span>
+<span class="cstat-no" title="statement not covered" >        if (!err){</span>
+<span class="cstat-no" title="statement not covered" >          cb(null, activities);</span>
         } else {
 <span class="cstat-no" title="statement not covered" >          cb(err);</span>
         }
       });
     }
   ],
-  function(err, results){
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (err){
+<span class="fstat-no" title="function not covered" >  function(err, results){</span>
+<span class="cstat-no" title="statement not covered" >    if (err){</span>
 <span class="cstat-no" title="statement not covered" >      return res.send(500, err);</span>
     } else {
       //send to the front end how many items were removed
-      new User({
+<span class="cstat-no" title="statement not covered" >      new User({</span>
         username: 'admin',
         password: 'admin'
       }).save();
-      return res.send(200, {
+<span class="cstat-no" title="statement not covered" >      return res.send(200, {</span>
         "users": results[0],
         "challenges": results[1],
         "submissions": results[2],
@@ -434,7 +434,7 @@ exports.delete = function (req, res){
 
 </div>
 <div class="footer">
-    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Jul 28 2014 19:38:08 GMT-0700 (PDT)</div>
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Jul 28 2014 22:37:28 GMT-0700 (PDT)</div>
 </div>
 
 <script src="../../prettify.js"></script>

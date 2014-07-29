@@ -199,16 +199,16 @@
     <h1>Code coverage report for <span class="entity">quippics/routes/comments.js</span></h1>
     <h2>
         
-        Statements: <span class="metric">46.34% <small>(19 / 41)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Statements: <span class="metric">21.95% <small>(9 / 41)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Branches: <span class="metric">31.03% <small>(9 / 29)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">0% <small>(0 / 29)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Functions: <span class="metric">42.86% <small>(3 / 7)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">0% <small>(0 / 7)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Lines: <span class="metric">46.34% <small>(19 / 41)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">21.95% <small>(9 / 41)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
     </h2>
@@ -346,28 +346,28 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -439,29 +439,29 @@ exports.readAll = <span class="fstat-no" title="function not covered" >function(
 };
 &nbsp;
 //Create a new comment for as specific submission
-exports.create = function(req, res){
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (!isObjectId(req.body.commenter) ||
+exports.create = <span class="fstat-no" title="function not covered" >function(req, res){</span>
+<span class="cstat-no" title="statement not covered" >  if (!isObjectId(req.body.commenter) ||</span>
       !validator.isAscii(req.body.comment) ||
       !isObjectId(req.params.sid)
      ){
 <span class="cstat-no" title="statement not covered" >    return res.send(400, {clientMsg: "Malformed Request"});</span>
   }
-  Submission
+<span class="cstat-no" title="statement not covered" >  Submission</span>
     .findOne({_id: req.params.sid})
     .select('comments owner _id')
-    .exec(function(err, submission){
-      <span class="missing-if-branch" title="else path not taken" >E</span>if (!err){
-        <span class="missing-if-branch" title="else path not taken" >E</span>if (submission){
+    .exec(<span class="fstat-no" title="function not covered" >function(err, submission){</span>
+<span class="cstat-no" title="statement not covered" >      if (!err){</span>
+<span class="cstat-no" title="statement not covered" >        if (submission){</span>
           //we use create of instance subdoc instead of the normal new so that an id is assigned right away as well as validation
-          var comment = submission.comments.create({
+<span class="cstat-no" title="statement not covered" >          var comment = submission.comments.create({</span>
             comment: req.body.comment,
             commenter: req.body.commenter
           });
-          submission.comments.push(comment); //add comment to end of array of comments
-          submission.save(function(err, newSubmission){
-            <span class="missing-if-branch" title="else path not taken" >E</span>if(!err &amp;&amp; newSubmission){
-              require("../models/activity.js").create(comment);
-              return res.send(200, comment);
+<span class="cstat-no" title="statement not covered" >          submission.comments.push(comment); </span>//add comment to end of array of comments
+<span class="cstat-no" title="statement not covered" >          submission.save(<span class="fstat-no" title="function not covered" >function(err, newSubmission){</span></span>
+<span class="cstat-no" title="statement not covered" >            if(!err &amp;&amp; newSubmission){</span>
+<span class="cstat-no" title="statement not covered" >              require("../models/activity.js").create(comment);</span>
+<span class="cstat-no" title="statement not covered" >              return res.send(200, comment);</span>
             } else <span class="cstat-no" title="statement not covered" >if(!err){</span>
 <span class="cstat-no" title="statement not covered" >              return res.send(404, {clientMsg: "Couldn't save comment"});</span>
             } else {
@@ -503,7 +503,7 @@ exports.readOne = <span class="fstat-no" title="function not covered" >function(
 
 </div>
 <div class="footer">
-    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Jul 28 2014 19:38:08 GMT-0700 (PDT)</div>
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Jul 28 2014 22:37:28 GMT-0700 (PDT)</div>
 </div>
 
 <script src="../../prettify.js"></script>
