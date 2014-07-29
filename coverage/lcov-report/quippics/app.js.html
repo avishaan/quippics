@@ -199,16 +199,16 @@
     <h1>Code coverage report for <span class="entity">quippics/app.js</span></h1>
     <h2>
         
-        Statements: <span class="metric">88.17% <small>(82 / 93)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Statements: <span class="metric">95.7% <small>(89 / 93)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Branches: <span class="metric">40% <small>(4 / 10)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">70% <small>(7 / 10)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Functions: <span class="metric">25% <small>(2 / 8)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">75% <small>(6 / 8)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Lines: <span class="metric">89.13% <small>(82 / 92)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">95.65% <small>(88 / 92)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
     </h2>
@@ -406,8 +406,8 @@
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">101</span>
+<span class="cline-any cline-yes">101</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -423,20 +423,20 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">63</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">74</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">74</span>
+<span class="cline-any cline-yes">74</span>
+<span class="cline-any cline-yes">74</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -554,9 +554,9 @@ var app = express();
     config.env === 'local'){
   app.use(express.logger('dev'));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-  app.use(<span class="fstat-no" title="function not covered" >function(req, res, next){</span>
-<span class="cstat-no" title="statement not covered" >    log.debug();</span>
-<span class="cstat-no" title="statement not covered" >    next();</span>
+  app.use(function(req, res, next){
+    log.debug();
+    next();
   });
 }
 // all environments
@@ -572,20 +572,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 &nbsp;
 //I am a terrible person for what I am about to do, but I need a quickfix
 //TODO, TODO TODO!!!!j fix this thing immediately before the universe explodes
-Buffer.prototype.toJSON = <span class="fstat-no" title="function not covered" >function(){</span> <span class="cstat-no" title="statement not covered" >return this.toString("base64");}</span>;
+Buffer.prototype.toJSON = function(){ return this.toString("base64");};
 &nbsp;
 //authentication strategy
-passport.use(new BasicStrategy(<span class="fstat-no" title="function not covered" >function(username, password, done){</span>
+passport.use(new BasicStrategy(function(username, password, done){
   //our authenticate method is for an instance, let's reuse our model authenticate here 
   //create a user instance
-<span class="cstat-no" title="statement not covered" >  var user = new User({</span>
+  var user = new User({
     username: username,
     password: password
   });
   //run it's authenticate method and check the response
-<span class="cstat-no" title="statement not covered" >  user.authenticate(<span class="fstat-no" title="function not covered" >function(err, user){</span></span>
-<span class="cstat-no" title="statement not covered" >    if (!err &amp;&amp; user){</span>
-<span class="cstat-no" title="statement not covered" >      return done(null, user);</span>
+  user.authenticate(function(err, user){
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (!err &amp;&amp; user){
+      return done(null, user);
     } else {
 <span class="cstat-no" title="statement not covered" >      return done(null, false);</span>
     }
@@ -668,7 +668,7 @@ http.createServer(app).listen(app.get('port'), function(){
 
 </div>
 <div class="footer">
-    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Jul 28 2014 22:37:28 GMT-0700 (PDT)</div>
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Jul 29 2014 00:08:03 GMT-0700 (PDT)</div>
 </div>
 
 <script src="../prettify.js"></script>
