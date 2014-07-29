@@ -15,12 +15,32 @@ var _ = require('underscore');
 exports.list = function(req, res){
   res.send("respond with a resource");
 };
-//Authenticate a user in order to get the user id here
-exports.authenticate = function(req, res){
+exports.registerDevice = function(req, res){
+  //expect a user param
   if (!validator.isLength(req.body.uuid, 1, 100) ||
-      !validator.isNumeric(req.body.tokenTimestamp)){
+      !isObjectId(req.params.uid) ||
+        !validator.isNumeric(req.body.tokenTimestamp)){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
+  //normalize token
+  var token = new Device(req.body.uuid).toString();
+  //find user associated with the id and do the update
+  User.update({_id: req.params.uid}, {deviceToken: token, tokenTimestamp: req.body.tokenTimestamp}, {}, function(err, numAffected, raw){
+    if (!err){
+      return res.send(200, {
+        'clientMsg': "Successfully registered device"
+      });
+    } else {
+      return res.send(500, {
+        clientMsg: "Could not update token/timestamp",
+        err: err
+      });
+    }
+  });
+};
+
+//Authenticate a user in order to get the user id here
+exports.authenticate = function(req, res){
   var user = new User({
     username: req.body.username,
     password: req.body.password
@@ -28,19 +48,8 @@ exports.authenticate = function(req, res){
   user.authenticate(function(err, authUser){
     if (!err){
       if (authUser){
-        //update the user's token
-        var token = new Device(req.body.uuid).toString();
-        authUser.update({deviceToken: token, tokenTimestamp: req.body.tokenTimestamp}, {}, function(err, numAffected, raw){
-          if (!err){
-            return res.send(200, {
-              '_id': authUser._id
-            });
-          } else {
-            return res.send(500, {
-              clientMsg: "Could not update token/timestamp",
-              err: err
-            });
-          }
+        return res.send(200, {
+          '_id': authUser._id
         });
       } else {
         return res.send(401, {

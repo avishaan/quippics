@@ -56,6 +56,13 @@ agent.
   }
 });
 
+agent.on('mock:message', function (raw) {
+  var device = new apnagent.Device(raw.deviceToken);
+  console.log('mock:message');
+  console.log('==> %d - %s', raw.identifier, device.toString());
+  console.log(JSON.stringify(raw.payload, null, 2));
+});
+
 agent.on('message:error', function(err, msg){
   if (err){
     if (err.name === 'GatewayNotificationError'){
