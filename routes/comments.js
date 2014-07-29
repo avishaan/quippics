@@ -34,8 +34,8 @@ exports.readAll = function(req, res){
 
 //Create a new comment for as specific submission
 exports.create = function(req, res){
-  if (!isObjectId(req.body.commenter) &&
-      !validator.isAlphanumeric(req.body.comment) &&
+  if (!isObjectId(req.body.commenter) ||
+      !validator.isAscii(req.body.comment) ||
       !isObjectId(req.params.sid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -73,7 +73,7 @@ exports.create = function(req, res){
 
 //Read one comment for a specific submission
 exports.readOne = function(req, res){
-  if (!isObjectId(req.params.comid) &&
+  if (!isObjectId(req.params.comid) ||
       !isObjectId(req.params.sid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});

@@ -5,18 +5,24 @@ var superagent = require('superagent');
 var user1 = {
   username: 'popular123',
   password: '123',
-  email: 'popular123@gmail.com'
+  email: 'popular123@gmail.com',
+  uuid: 'a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95',
+  tokenTimestamp: Date.now()
 };
 
 var user2 = {
   username: 'nerd314',
   password: '314',
-  email: 'nerd314@gmail.com'
+  email: 'nerd314@gmail.com',
+  uuid: 'a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be76',
+  tokenTimestamp: Date.now()
 };
 var user3 = {
   username: 'user3',
   password: 'password',
-  email: 'user3@gmail.com'
+  email: 'user3@gmail.com',
+  uuid: 'a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be77',
+  tokenTimestamp: Date.now()
 };
 var challenge1 = {};
 var challenge2 = {};
@@ -80,6 +86,48 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       .afterJSON(function(user){
         user2._id = user._id;
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create("Register user1 device")
+      .post(domain + '/users/' + user1._id + '/device', {
+        uuid: user1.uuid,
+        tokenTimestamp: user1.tokenTimestamp
+      })
+      .expectStatus(200)
+      .afterJSON(function(res){
+        expect(res.clientMsg).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create("Register user2 device")
+      .post(domain + '/users/' + user2._id + '/device', {
+        uuid: user2.uuid,
+        tokenTimestamp: user2.tokenTimestamp
+      })
+      .expectStatus(200)
+      .afterJSON(function(res){
+        expect(res.clientMsg).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create("Register user3 device")
+      .post(domain + '/users/' + user3._id + '/device', {
+        uuid: user3.uuid,
+        tokenTimestamp: user3.tokenTimestamp
+      })
+      .expectStatus(200)
+      .afterJSON(function(res){
+        expect(res.clientMsg).toBeDefined();
         cb(null);
       })
       .toss();

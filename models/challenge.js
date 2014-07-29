@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var _ = require('underscore');
+var User = require('../models/user.js');
 
 var challengeSchema = new mongoose.Schema({
   title: { type: String },
@@ -39,6 +40,26 @@ challengeSchema.post('save', function(){
 });
 
 challengeSchema.post('new', function(){
+  //put returned participants into an array of userids
+  var users = _.pluck(this.participants, 'user');
+  User.sendNotifications({
+    users: users,
+    payload: {
+      alert: {
+        'body': 'You are invited to a new Challenge!',
+        'action-loc-key': 'challenge accepted!'
+      },
+      body: {
+        'type': 'challenge',
+        '_id': this._id,
+        'title': this.title
+      }
+    }
+  }, function(err){
+    if (err){
+      console.error("Error! ", err, new Error().stack);
+    }
+  });
   this.invites.forEach(function(user, index){
     console.log("Placeholder to send invite request to: ", user);
     console.log("Type", "challenge", "Id", this._id, "Title", this.title);

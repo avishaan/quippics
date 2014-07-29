@@ -49,8 +49,8 @@ exports.userVoted = function(req, res){
 //Submit vote for specific submission
 exports.create = function(req, res){
   //find the challenge
-  if (!isObjectId(req.body.voter) &&
-      !validator.isNumeric(req.body.score) &&
+  if (!isObjectId(req.body.voter) ||
+      !validator.isNumeric(req.body.score) ||
       !isObjectId(req.params.sid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});

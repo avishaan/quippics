@@ -5,7 +5,9 @@ var superagent = require('superagent');
 var user1 = {
   username: 'user1',
   password: 'password1',
-  email: 'email@yahoo.com'
+  uuid: 'a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95',
+  email: 'email@yahoo.com',
+  tokenTimestamp: Date.now()
 };
 var user2 = {
   username: 'user2',

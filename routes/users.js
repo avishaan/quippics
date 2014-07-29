@@ -9,11 +9,36 @@ var perPage = 24;
 var async = require('async');
 var validator = require('validator');
 var isObjectId = require('valid-objectid').isValid;
+var Device = require('apnagent').Device;
 var _ = require('underscore');
 
 exports.list = function(req, res){
   res.send("respond with a resource");
 };
+exports.registerDevice = function(req, res){
+  //expect a user param
+  if (!validator.isLength(req.body.uuid, 1, 100) ||
+      !isObjectId(req.params.uid) ||
+        !validator.isNumeric(req.body.tokenTimestamp)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  //normalize token
+  var token = new Device(req.body.uuid).toString();
+  //find user associated with the id and do the update
+  User.update({_id: req.params.uid}, {deviceToken: token, tokenTimestamp: req.body.tokenTimestamp}, {}, function(err, numAffected, raw){
+    if (!err){
+      return res.send(200, {
+        'clientMsg': "Successfully registered device"
+      });
+    } else {
+      return res.send(500, {
+        clientMsg: "Could not update token/timestamp",
+        err: err
+      });
+    }
+  });
+};
+
 //Authenticate a user in order to get the user id here
 exports.authenticate = function(req, res){
   var user = new User({
@@ -61,8 +86,7 @@ exports.friendRequests = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   var skip = perPage * (req.params.page - 1);
-  if (!validator.isNumeric(req.params.page) &&
-      !validator.isAlphanumeric(req.body.description) &&
+  if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -93,7 +117,7 @@ exports.friendRequests = function(req, res){
 exports.acceptRequests = function(req, res){
   var requestorId = req.body.user;
   var acceptorId = req.params.uid;
-  if (!isObjectId(req.body.user) &&
+  if (!isObjectId(req.body.user) ||
       !isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -176,7 +200,7 @@ exports.declinedRequests = function(req, res){
   //        { $pull: {friendRequests: {_id: req.body.user}}}, function(err, num, raw){
   //          res.send(200);
   //        });
-  if (!isObjectId(req.body.user) &&
+  if (!isObjectId(req.body.user) ||
       !isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -206,7 +230,7 @@ exports.declinedRequests = function(req, res){
 };
 //make a friend request from user in body to user in the :uid
 exports.requestFriend = function(req, res){
-  if (!isObjectId(req.params.uid) &&
+  if (!isObjectId(req.params.uid) ||
       !isObjectId(req.body.friend)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -286,7 +310,7 @@ exports.listFriends = function(req, res){
   req.params.page = req.params.page || 1;
   var skip = perPage * (req.params.page - 1);
 
-  if (!validator.isNumeric(req.params.page) &&
+  if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -319,7 +343,7 @@ exports.listUsers = function(req, res){
   //TODO, show users with pending friend requests
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
-  if (!validator.isNumeric(req.params.page) &&
+  if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});

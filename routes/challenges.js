@@ -28,7 +28,7 @@ exports.read = function(req, res){
 //get/read all the users participating in a challenge
 exports.readUsers = function(req, res){
   req.params.page = req.params.page || 1;
-  if (!isObjectId(req.params.cid) &&
+  if (!isObjectId(req.params.cid) ||
       !validator.isNumeric(req.params.page)){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
@@ -82,7 +82,7 @@ exports.readUsers = function(req, res){
 //hide a challenge from the user archive
 exports.hideChallenge = function(req, res){
   //check the user sent everything first
-  if (!isObjectId(req.params.cid) &&
+  if (!isObjectId(req.params.cid) ||
       !isObjectId(req.body.user)){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
@@ -112,7 +112,7 @@ exports.hideChallenge = function(req, res){
 //decline an invite to a challenge
 exports.declineChallenge = function(req, res){
   //check the user sent everything first
-  if (!isObjectId(req.params.cid) &&
+  if (!isObjectId(req.params.cid) ||
       !isObjectId(req.body.user)){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
@@ -142,7 +142,7 @@ exports.declineChallenge = function(req, res){
 //accept an invite to a challenge
 exports.acceptChallenge = function(req, res){
   //check the user sent everything first
-  if (!isObjectId(req.params.cid) &&
+  if (!isObjectId(req.params.cid) ||
       !isObjectId(req.body.user)){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
@@ -172,7 +172,7 @@ exports.acceptChallenge = function(req, res){
 //all archived challenges applicable to me
 exports.archivedChallenges = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
-  if (!isObjectId(req.params.cid) &&
+  if (!isObjectId(req.params.uid) ||
       !validator.isNumeric(req.params.page)){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
@@ -229,7 +229,7 @@ exports.archivedChallenges = function(req, res){
 exports.myChallenges = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
-  if (!isObjectId(req.params.cid) &&
+  if (!isObjectId(req.params.uid) ||
       !validator.isNumeric(req.params.page)){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
@@ -276,8 +276,8 @@ exports.myChallenges = function(req, res){
 };
 //make a new challenge
 exports.create = function(req, res){
-  if (!validator.isAlphanumeric(req.body.title) &&
-      !validator.isAlphanumeric(req.body.description) &&
+  if (!validator.isAscii(req.body.title) ||
+      !validator.isAscii(req.body.description) ||
       !isObjectId(req.body.owner)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});

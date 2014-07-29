@@ -120,7 +120,7 @@ exports.readAll = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   //find all the submissions for a specific challenge
-  if (!validator.isNumeric(req.params.page) &&
+  if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.cid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -149,7 +149,7 @@ exports.readAll = function(req, res){
 //Submit submission for specific challenge
 exports.create = function(req, res){
   //see if the owner already has submitted a challenge here
-  if (!isObjectId(req.params.cid) &&
+  if (!isObjectId(req.params.cid) ||
       !isObjectId(req.body.owner)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});

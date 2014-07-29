@@ -4,3 +4,4 @@
 - [x] Go through test cases that are missing and addon
 - [x] Add commenting on a specific submission
 - [ ] Integrate APN
+- [ ] Better way to perform testing without REST interface

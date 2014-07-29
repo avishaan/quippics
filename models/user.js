@@ -5,6 +5,7 @@ var SALT_WORK_FACTOR = 6;
 var fs = require('fs');
 var gm = require('gm');
 var im = gm.subClass({ imageMagick: true});
+var agent = require('../apn/apn.js');
 /*
 |-------------------------------------------------------------
 | User Schema
@@ -16,6 +17,9 @@ var userSchema = new mongoose.Schema({
   username: {type: String, unique: true},
   firstName: {type: String},
   lastName: {type: String},
+  deviceToken: {type: String}, //unique token set with each login
+  allowNotifications: {type: Boolean, default: true}, //whether or not to send the user notifications
+  tokenTimestamp: {type: Date}, //date of last registration
   email: {type: String},
   friends: [
     {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
@@ -163,6 +167,79 @@ userSchema.methods.checkPassword = function(testPassword, cb){
       }
     } else {
       return cb(err, null);
+    }
+  });
+};
+
+/**
+ * Send user(s) notifications about an event
+ * @param {object} options The options for the notifications
+ * @config {array} array of userid(s) Array of string userids
+ * @config {object} payload of message, passed directly to agent
+ * @param {function} cb
+ * @config {object} err Passed Error
+ */
+userSchema.statics.sendNotifications = function(options, cb){
+  if (!options.users || !options.payload){
+    return cb({
+      clientMsg: "Malformed request",
+    });
+  }
+  var alert = options.payload.alert;
+  var body = options.payload.body;
+
+  User.find({_id: {$in: options.users}})
+  .select('allowNotifications deviceToken')
+  .lean()
+  .exec(function(err, users){
+    if (!err && users.length){
+      users.forEach(function(user, index){
+        if (user.allowNotifications && user.deviceToken){
+          //if the user wants notifications and has deviceToken
+          agent.createMessage()
+          .device(user.deviceToken)
+          .alert(alert)
+          .set(body)
+          .send(function(err){
+          });
+          //we don't care about the '.send' callback as we listen for errors on agent
+          return cb(null);
+        }
+      });
+    } else if (!err){
+      return cb(null);
+    } else {
+      return cb(err);
+    }
+  });
+};
+//find user by token and unsubscribe
+userSchema.statics.stopNotifications = function(options, cb){
+  if (!options.device || !options.timestamp){
+    return cb({
+      clientMsg: "Malformed request",
+    });
+  }
+  User
+  .findOne({deviceToken: options.device.toString()})
+  .select('allowNotifications tokenTimestamp')
+  .exec(function(err, user){
+    if (!err && user){
+      //compare the timestamps
+      if (user.tokenTimestamp < options.timestamp ){
+        //user registered and THEN an unsub came in, stop notifications
+        user.allowNotifications = false;
+        user.save(); //it's not important, assume a save
+        return cb();
+      }
+    } else if (!err && !user){
+      //found no user, ignore. maybe the user was deleted
+      return cb();
+    } else {
+      return cb({
+        clientMsg: "Couldn't find user",
+        err: err
+      });
     }
   });
 };
