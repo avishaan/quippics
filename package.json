@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "supervisor --ignore tests,docs,README.md  --debug app.js",
-    "cover": "istanbul cover app.js",
+    "cover": "./node_modules/istanbul/lib/cli.js cover app.js",
     "test": "./node_modules/jasmine-node/bin/jasmine-node --autotest tests/runner_spec.js --growl --color --watch ./tests/specs --captureExceptions"
   },
   "dependencies": {
