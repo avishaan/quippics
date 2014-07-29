@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "test": "jasmine-node --autotest tests/runner_spec.js --growl --color --watch ./tests/specs --captureExceptions",
+    "test": "node ./node_modules/jasmine-node/lib/jasmine-node/cli.js --autotest tests/runner_spec.js --growl --color --watch ./tests/specs --captureExceptions",
+    "coverlocal": "./node_modules/istanbul/lib/cli.js cover app.js",
     "cover": "istanbul cover app.js"
   },
   "dependencies": {
@@ -30,6 +31,7 @@
     "node": "0.10.26"
   },
   "devDependencies": {
-    "jasmine-node": "^1.14.5"
+    "jasmine-node": "^1.14.5",
+    "istanbul": "^0.3.0"
   }
 }
