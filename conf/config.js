@@ -3,6 +3,7 @@ var npmInfo = require('../package.json');
 module.exports = function(){
   console.log("Node Env Variable: " + process.env.NODE_ENV);
 
+  // istanbul ignore next: don't look at the env variables
   switch(process.env.NODE_ENV){
     case null:
     case undefined:

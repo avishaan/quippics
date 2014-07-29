@@ -4,6 +4,7 @@ var path = require('path');
 var config = require('../conf/config.js');
 
 //set environment based options
+// istanbul ignore next
 if (config.env === 'prod'){
   var agent = module.exports = new apnagent.Agent();
   var feedback = new apnagent.Feedback();
@@ -41,14 +42,16 @@ agent
 
 agent.
   connect(function(err){
+  // istanbul ignore if
   // handle any auth problems
   if (err && err.name === 'GatewayAuthorizationError'){
     console.log('Authentication Error: %s', err.message);
     process.exit(1);
   }
+  // istanbul ignore if
   else if (err) {
     //handle other errors
-    throw err;
+    console.log("error: ", err, new Error().stack);
   } else {
     // it worked, don't be so surprised...
     var env = agent.enabled('sandbox') ? 'sandbox' : 'production';
@@ -63,6 +66,7 @@ agent.on('mock:message', function (raw) {
   console.log(JSON.stringify(raw.payload, null, 2));
 });
 
+// istanbul ignore next
 agent.on('message:error', function(err, msg){
   if (err){
     if (err.name === 'GatewayNotificationError'){
@@ -82,12 +86,13 @@ agent.on('message:error', function(err, msg){
 });
 
 feedback.connect(function (err) {
+  // istanbul ignore if
   if (err && 'FeedbackAuthorizationError' === err.name) {
     console.log('Feedback Gateway Error %s: %s', err.name, err.message);
     console.log("check certs");
+    // istanbul ignore if
   } else if (err) {
     console.log('Feedback Gateway Error %s: %s', err.name, err.message);
-    throw err;
   } else {
     console.log('apngent Feedback gateway connected');
   }
@@ -96,6 +101,7 @@ feedback.connect(function (err) {
 feedback.use(function(device, timestamp, next){
   console.log("Device: %s at time: %s wants to unsub", device.toString(), timestamp);
   User.stopNotifications({device: device, timestamp: timestamp}, function(err){
+    // istanbul ignore if
     if (err){
       console.warn("error: ", err, "stack: ", new Error().stack);
     }
