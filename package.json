@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node app.js",
-    "test": "node ./node_modules/jasmine-node/lib/jasmine-node/cli.js --autotest tests/runner_spec.js --growl --color --watch ./tests/specs --captureExceptions",
-    "cover": "istanbul cover app.js"
+    "start": "supervisor --ignore tests,docs,README.md  --debug app.js",
+    "cover": "istanbul cover app.js",
+    "test": "node ./node_modules/jasmine-node/lib/jasmine-node/cli.js --autotest tests/runner_spec.js --growl --color --watch ./tests/specs --captureExceptions"
   },
   "dependencies": {
     "express": "3.3.5",
