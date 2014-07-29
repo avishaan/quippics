@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "test": "jasmine-node --autotest tests/runner_spec.js --growl --color --watch ./tests/specs --captureExceptions",
+    "test": "jasmine-node --autotest tests/runner_spec.js --growl --color --watch ./tests/specs --captureExceptions"
   },
   "dependencies": {
     "express": "3.3.5",
