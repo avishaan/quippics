@@ -53,7 +53,7 @@ response.body: [ {
 ```
 
 ####Read one of the comments for a specific submission
-#####_Status: Developed, Not Tested
+#####_Status: Developed, Tested
 GET /v1/challenges/:cid/submissions/:sid/comments/:comid
 
 Example Response
