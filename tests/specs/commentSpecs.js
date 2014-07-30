@@ -179,7 +179,20 @@ exports.spec = function(domain, callback){
         expect(comments[0].commenter.thumbnail).toBeDefined();
         expect(comments[0].date).toBeDefined();
 
-        cb(null);
+        //test getting a specific comment (we have a list at this point)
+        frisby
+        .create("Get a specific comment")
+        .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/comments/' + comments[0]._id)
+        .expectStatus(200)
+        .afterJSON(function(comment){
+          expect(comment.comment).toBeDefined();
+          expect(comment.commenter).toBeDefined();
+          expect(comment._id).toBeDefined();
+          expect(comment.modelType).toBeDefined();
+          expect(comment.date).toBeDefined();
+          cb(null);
+        })
+        .toss();
       })
       .toss();
     },
