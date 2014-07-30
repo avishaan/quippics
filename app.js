@@ -113,6 +113,7 @@ app.put('/api/v1/users/:uid', apiAuth(), users.update); //update an existing use
 //comment routes
 app.post('/api/v1/challenges/:cid/submissions/:sid/comments', apiAuth(), comments.create); //post a comment to a submission
 app.get('/api/v1/challenges/:cid/submissions/:sid/comments/page/:page', apiAuth(), comments.readAll); //get all of the comments
+app.get('/api/v1/challenges/:cid/submissions/:sid/comments/:comid', apiAuth(), comments.readOne); //get one of the comments
 //challenges routes
 app.get('/api/v1/challenges/:cid/users/page/:page', apiAuth(), challenges.readUsers); //read all the users in a specific challenge
 app.get('/api/v1/challenges/:cid', apiAuth(), challenges.read); //get/read a specific challenge
