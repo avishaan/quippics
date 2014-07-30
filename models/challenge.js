@@ -56,6 +56,7 @@ challengeSchema.post('new', function(){
       }
     }
   }, function(err){
+    // istanbul ignore if: no error for notifications
     if (err){
       console.error("Error! ", err, new Error().stack);
     }
