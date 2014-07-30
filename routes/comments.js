@@ -92,7 +92,7 @@ exports.readOne = function(req, res){
         if (submission.comments.id(req.params.comid)){
           return res.send(200, submission.comments.id(req.params.comid));
         } else {
-          return res.send(404, {clientMsg: "Could not find submission"});
+          return res.send(404, {clientMsg: "Could not find comment"});
         }
       } else {
         return res.send(500, err);
