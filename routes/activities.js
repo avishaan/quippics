@@ -7,6 +7,7 @@ var perPage = 24; //submissions per page
 
 //read activities from a user's friends
 exports.friendActivities = function(req, res){
+  // istanbul ignore if: not testing bad input
   if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
      ){
@@ -22,9 +23,10 @@ exports.friendActivities = function(req, res){
     .exec(function(err, user){
       if (!err && user){
         cb(null, user);
+        // istanbul ignore else: db error
       } else if (!user) {
         cb({clientMsg: "Could not find user"});
-      } else{
+      } else {
         cb(err);
       }
     });
@@ -60,6 +62,7 @@ exports.friendActivities = function(req, res){
     .exec(function(err, activities){
       if (!err && activities.length){
         cb(null, activities);
+        // istanbul ignore else: db error
       } else if(!err){
         cb({clientMsg: "Could not find activities for user's friends"});
       } else {
@@ -78,6 +81,7 @@ exports.friendActivities = function(req, res){
 //read activities from a user
 exports.myActivities = function(req, res){
   //find the activities related to a user (where the subject or object match the user)
+  // istanbul ignore if: not testing bad input
   if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
      ){
@@ -112,6 +116,7 @@ exports.myActivities = function(req, res){
   .exec(function(err, activities){
     if (!err && activities.length){
       return res.send(200, activities);
+      // istanbul ignore else: db error
     } else if(!err){
       return res.send(404, {clientMsg: "No Activities Found for this user"});
     } else {
