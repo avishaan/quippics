@@ -45,6 +45,7 @@ userSchema.path('username').validate(function(value, done){
   var userInQuestion = this;
   User.findOne({username: new RegExp('^'+value+'$', "i")})
     .exec(function(err, user){
+      // istanbul ignore else: db query error
       if (!err){
         if (user){
           //if there is a user, then it should fail validation only if it is not the same as the user in question
@@ -59,7 +60,8 @@ userSchema.path('username').validate(function(value, done){
         }
       } else {
         //there was a db query error, throw an error
-        throw err;
+        console.log("Error: ", err, new Error().stack);
+        return done(true);
       }
     });
 }, 'Username already exists');
@@ -97,6 +99,7 @@ userSchema.methods.addImage = function(req, next){
       function(err, stdout, stderr, command){
         that.thumbnail.contentType = uploadedImage.type;
         that.thumbnail.data = fs.readFileSync(thumbPath);
+        // istanbul ignore else: happens with file read error
         if (!err){
           next(null);
         } else {
@@ -114,10 +117,12 @@ userSchema.methods.authenticate = function(cb){
   //first find the user
   User.findOne({username: new RegExp('^'+authUser.username+'$', "i")}) //use regex for case insensitive
     .exec(function(err, user){
+      // istanbul ignore else: db error
       if(!err){
         if (user){
          // //since we found a user, let's go ahead and check their password
          user.checkPassword(authUser.password, function(err, user){
+           // istanbul ignore else: db error
            if(!err){
              if(user){
                return cb(null, user);
@@ -146,6 +151,7 @@ userSchema.methods.authenticate = function(cb){
 userSchema.methods.hashPassword = function(cb){
   var user = this;
   return bcrypt.hash(user.password, SALT_WORK_FACTOR, function(err, hash){
+    // istanbul ignore else: bcrypt error
     if(!err){
       //salt is always included in the hash and so doesn't need to be stored
       user.password = hash;
@@ -159,6 +165,7 @@ userSchema.methods.hashPassword = function(cb){
 userSchema.methods.checkPassword = function(testPassword, cb){
   var user = this;
   return bcrypt.compare(testPassword, user.password, function(err, isMatch){
+    // istanbul ignore else: bcrypt error
     if (!err){
       if (isMatch){
         return cb(null, user);
@@ -192,6 +199,7 @@ userSchema.statics.sendNotifications = function(options, cb){
   .select('allowNotifications deviceToken')
   .lean()
   .exec(function(err, users){
+    // istanbul ignore else: db error
     if (!err && users.length){
       users.forEach(function(user, index){
         if (user.allowNotifications && user.deviceToken){
@@ -224,6 +232,7 @@ userSchema.statics.stopNotifications = function(options, cb){
   .findOne({deviceToken: options.device.toString()})
   .select('allowNotifications tokenTimestamp')
   .exec(function(err, user){
+    // istanbul ignore else: query error
     if (!err && user){
       //compare the timestamps
       if (user.tokenTimestamp < options.timestamp ){
@@ -242,154 +251,6 @@ userSchema.statics.stopNotifications = function(options, cb){
       });
     }
   });
-};
-/**
- * Add a DewDrop supporter to a user. Keep in mind often times you will support a user that doesn't
- * exist yet in which case you will need to create him right then
- * @param {object} users The user details for receiver and supporter
- * @config {object} supporter The details of the supporter
- * @config {object} receiver The details of the person receiving the support
- * @param {function} cb
- * @config {object} err Passed Error
- * @config {object} user returned mongoose user object
- */
-userSchema.statics.supportUser = function(users, cb){
-
-  async.series([
-    function(cb){
-      //TODO, make sure we check the properties also
-      if (users.supporter && users.receiver){ //everything needed was passed in
-        return cb(null);
-      } else {
-        return cb({"clientMsg": "You didn't pass me the information for the users!"})
-      }
-    },
-    function(cb){
-      //does the supporter exist in the database?
-      User.findUser(users.supporter, function(err, supporter){
-        if (!err){
-          if (supporter){
-            users.supporter = supporter;
-            return cb(null);
-          } else {
-            //if not, go ahead and create the supporter
-            return User.createUser(users.supporter, function(err, supporter){
-              if (!err){
-                if (supporter){
-                  //assign our user.supporter as the passed back supporter for ease of use
-                  users.supporter = supporter;
-                  return cb(null);
-                } else {
-                  return cb({"clientMsg": "Supporter creation came back blank for some reason"});
-                }
-              } else {
-                return cb(err);
-              }
-            });
-          }
-        } else {
-          return cb(err);
-        }
-      });
-
-    },
-    function(cb){
-      //does the receiver exist in the database?
-      User.findUser(users.receiver, function(err, receiver){
-        if (!err){
-          if (receiver){
-            users.receiver = receiver;
-            return cb(null);
-          } else {
-            //if not, go ahead and create the receiver
-            return User.createUser(users.receiver, function(err, receiver){
-              if (!err){
-                if (receiver){
-                  //assign our user.receiver as the passed back receiver for ease of use
-                  users.receiver = receiver;
-                  return cb(null);
-                } else {
-                  return cb({"clientMsg": "receiver creation came back blank for some reason"});
-                }
-              } else {
-                return cb(err);
-              }
-            });
-          }
-        } else {
-          return cb(err);
-        }
-      });
-
-    }
-  ], function(err){
-    if (err){
-      cb(err, null);
-    }
-    //now that both exist, go ahead and add the supporter to the supporter array of the receiver doc
-    users.receiver.supporters.push(users.supporter.id);
-    users.receiver.save(function(err, receiver){//save that change
-      cb(null, receiver);
-      //return appropriate information
-    });
-
-  });
-
-};
-
-userSchema.statics.createUser = function(user, cb){
-  var newUser = {};
-  newUser[user.network] = user.id; //follow format of {"facebook": 2};
-  User.create(newUser, function(err, user){
-    if (!err){
-      if (user){
-        return cb(null, user);
-      } else {
-        return cb({"clientMsg": "Could not save"}, null);
-      }
-    } else {
-      return cb(err, null);
-    }
-  })
-};
-
-/**
- * Find a DewDrop user by passing in their social network id and social network type
- * @param {object} user The user details
-   * @config {string} network The network type
-   * @config {string} userid The user's network specific id
- * @param {function} cb
-   * @config {string} err Passed Error
-   * @config {object} user returned mongoose user object
- */
-userSchema.statics.findUser = function(user, cb){
-
-  //make sure everything we need to find a user is passed in.
-  if (!user.id && !user.network){
-    return cb({"clientMsg": "You left either the id or network type blank. Please update and try again"})
-  }
-  //lower case network type for consistency
-  user.network = user.network.toLowerCase();
-
-  //make sure the network type is one of the following
-  if (user.network !== ("facebook" || "twitter")){
-    return cb({"clientMsg": "You did not pass in a valid network type (facebook/twitter)"});
-  }
-  //find our user based on their social network type and social network id
-  return User.findOne({})
-    .or([{'facebook':user.id},{'twitter':user.id}]) //the userid should make a match with either facebook or twitter
-    .exec(function(err, user){
-      if (!err) {
-        if (user){
-          cb (null, user);
-        } else {
-          return cb(null, null);
-        }
-      } else {
-        return cb(err, null);
-      }
-
-    });
 };
 
 var User = mongoose.model('User', userSchema);
