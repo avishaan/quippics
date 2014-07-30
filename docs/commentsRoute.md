@@ -53,5 +53,15 @@ response.body: [ {
 ```
 
 ####Read one of the comments for a specific submission
-#####_Status: Not Developed, Not Tested
+#####_Status: Developed, Not Tested
 GET /v1/challenges/:cid/submissions/:sid/comments/:comid
+
+Example Response
+```
+response.body: {
+  comment: 'This is a comment by nerdy',
+  commenter: '53d8749e481552d072bc979d',
+  _id: '53d8749e481552d072bc97a9',
+  modelType: 'Comment',
+  date: '2014-07-30T04:29:18.450Z' }
+```
