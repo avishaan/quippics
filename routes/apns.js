@@ -4,6 +4,7 @@ var isObjectId = require('valid-objectid').isValid;
 var agent = require('../apn/apn.js');
 
 //test/debug apn
+// istanbul ignore next
 exports.debugPush = function(req, res){
   agent.createMessage()
   .device(req.body.uuid)
@@ -17,6 +18,7 @@ exports.debugPush = function(req, res){
   });
 };
 //test/debug apn for challenge
+// istanbul ignore next
 exports.debugChallenge = function(req, res){
   agent.createMessage()
   .device(req.body.uuid)
@@ -38,6 +40,7 @@ exports.debugChallenge = function(req, res){
   });
 };
 //test/debug apn for submission
+// istanbul ignore next
 exports.debugSubmission = function(req, res){
   agent.createMessage()
   .device(req.body.uuid)
