@@ -56,7 +56,7 @@ exports.spec = function(domain, callback){
     },
     function(cb){
       describe("Users", function(){
-        it("should allow a user such as nerdy to register with a picture", function(){
+        it("should allow a user such as nerdy to register with a picture", function(done){
           superagent
           .post(domain + "/register")
           .type('form')
@@ -68,6 +68,7 @@ exports.spec = function(domain, callback){
             expect(res.status).toEqual(200);
             user2._id = res.body._id;
             cb(null);
+            done();
           });
         });
       });
