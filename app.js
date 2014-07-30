@@ -5,7 +5,6 @@
 
 var express = require('express');
 var logentries = require('node-logentries');
-var routes = require('./routes');
 var users = require('./routes/users');
 var challenges = require('./routes/challenges');
 var submissions = require('./routes/submissions');
@@ -86,7 +85,6 @@ function apiAuth(){
 //  app.use(express.errorHandler());
 //}
 //
-app.get('/', routes.index);
 app.post('/api/v1/mirror', util.mirror); //route will mirror back to you whatever it sees, useful for debugging
 app.get('/users', users.list);
 app.get('/api/v1/server', function(req, res){
