@@ -6,7 +6,7 @@
     "start": "supervisor --ignore tests,docs,README.md  --debug app.js",
     "debug": "supervisor --ignore tests,docs,README.md  --debug-brk app.js",
     "cover": "./node_modules/istanbul/lib/cli.js cover app.js",
-    "test": "./node_modules/jasmine-node/bin/jasmine-node --autotest tests/runner_spec.js --growl --color --watch ./tests/specs --captureExceptions"
+    "test": "./node_modules/jasmine-node/bin/jasmine-node --autotest --config NODE_ENV local tests/runner_spec.js --growl --color --watch ./tests/specs --captureExceptions"
   },
   "dependencies": {
     "express": "3.3.5",
