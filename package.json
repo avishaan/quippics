@@ -8,8 +8,8 @@
     "debugbrkstart": "supervisor --ignore tests,docs,README.md  --debug-brk app.js",
     "cover": "./node_modules/istanbul/lib/cli.js cover app.js",
     "test": "./node_modules/jasmine-node/bin/jasmine-node --autotest --config NODE_ENV local tests/runner_spec.js --growl --color --watch ./tests/specs --captureExceptions",
-    "debugtest": "node --debug=5859 node_modules/jasmine-node/lib/jasmine-node/cli.js --autotest --config NODE_ENV local tests/runner_spec.js --growl --color --watch ./tests/specs --captureExceptions",
-    "debugbrktest": "node --debug-brk=5859 node_modules/jasmine-node/lib/jasmine-node/cli.js --autotest --config NODE_ENV local tests/runner_spec.js --growl --color --watch ./tests/specs --captureExceptions"
+    "debugtest": "node --debug=5859 node_modules/jasmine-node/lib/jasmine-node/cli.js --verbose --config NODE_ENV local tests/runner_spec.js",
+    "debugbrktest": "node --debug-brk=5859 node_modules/jasmine-node/lib/jasmine-node/cli.js --verbose --config NODE_ENV local tests/runner_spec.js"
   },
   "dependencies": {
     "express": "3.3.5",
