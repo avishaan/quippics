@@ -187,6 +187,8 @@ userSchema.methods.checkPassword = function(testPassword, cb){
  * @config {object} err Passed Error
  */
 userSchema.statics.sendNotifications = function(options, cb){
+  //TODO, why the hell do we need this when it is present above, I added this during testing and without this some testing fails
+  var agent = require('../apn/apn.js');
   if (!options.users || !options.payload){
     return cb({
       clientMsg: "Malformed request",
