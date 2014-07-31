@@ -185,7 +185,7 @@ exports.spec = function(domain, callback){
             done();
           });
         });
-        it("Check notifications", function(done){
+        it("Should not be sent to declined invitees", function(done){
            // expect(mock.payload).toHaveBeenCalled();
            // console.log('called: ', mock.payload.callCount);
           console.log("HERE");
