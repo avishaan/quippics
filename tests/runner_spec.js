@@ -11,6 +11,7 @@ var submissionSpec = require('./specs/submissionSpecs.js');
 var ballotSpec = require('./specs/ballotSpecs.js');
 var activitySpec = require('./specs/activitySpecs.js');
 var commentSpec = require('./specs/commentSpecs.js');
+var notificationSpec = require('./specs/notificationSpecs.js');
 //var superSpec = require('./specs/superTest.js');
 var async = require('async');
 
@@ -23,6 +24,7 @@ async.series([
     });
   },
   function(cb){
+    console.log("Calling Interaction Specs");
     interactionSpec.spec(domain, function(){
       cb(null);
     });
@@ -54,6 +56,12 @@ async.series([
   function(cb){
     console.log("Calling Comment Specs");
     commentSpec.spec(domain, function(){
+      cb(null);
+    });
+  },
+  function(cb){
+    console.log("Calling Notification Specs");
+    notificationSpec.spec(domain, function(){
       cb(null);
     });
   }
