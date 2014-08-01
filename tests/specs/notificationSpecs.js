@@ -5,6 +5,7 @@ var db = require('../../dbs/db.js');
 var agent = require('../../apn/apn.js');
 var User = require('../../models/user.js');
 var Challenge = require('../../models/challenge.js');
+var Submission = require('../../models/submission.js');
 
 
 var user1 = {
@@ -165,7 +166,7 @@ exports.spec = function(domain, callback){
           runs(function(){
             Challenge.create(challenge1, function(err, challenge){
               expect(challenge).toBeDefined();
-              challenge1._id = challenge.id;
+              challenge1 = challenge;
             });
 
           });
@@ -184,62 +185,96 @@ exports.spec = function(domain, callback){
             done();
           });
         });
-        it("Should not be sent to declined invitees", function(done){
-           // expect(mock.payload).toHaveBeenCalled();
-           // console.log('called: ', mock.payload.callCount);
-          console.log("HERE");
-        });
-      });
-    },
-    function(cb){
-      //have nerdy submit into the challenge
-      describe("A Submission", function(){
-        it("can be submitted by a User (Nerdy) into challenge 1", function(done){
-          superagent
-          .post(domain + "/challenges/" + challenge1._id + "/submissions")
-          .type('form')
-          .attach("image", "./tests/specs/images/onepixel.png")
-          .field("owner", user2._id)
-          .end(function(err, res){
-            var submission = res.body;
-            //make sure something was returned in the response body
-            expect(submission).toBeDefined();
-            //make sure the id in the response body was returned
-            expect(submission._id).toBeDefined();
-            //expect 200 response
-            expect(res.status).toEqual(200);
-            submission1._id = submission._id;
-            //console.log("here is the returned superagent submission");
-            //console.log(submission);
-            cb(null);
+        it("Should be sent to everyone in challenge upon new submission", function(done){
+          spyOn(agent.queue, 'drain').andCallThrough(); //once messages are done processing
+          spyOn(agent, 'send').andCallThrough();
+
+          //setup our submission 
+          submission1 = {
+            owner: user1._id,
+            challenge: challenge1.id
+          };
+
+          runs(function(){
+            //create the submission
+            Submission.create(submission1, function(err, submission){
+              submission1 = submission;
+              //put submission1 onto the challenge
+              challenge1.submissions = [submission1.id];
+              challenge1.save(function(err, challenge){
+                expect(challenge).toBeDefined();
+                challenge1 = challenge;
+              });
+            });
+          });
+
+          waitsFor(function(){
+            //this keeps looping around, may want to add tested devices to a list
+            //keep going until drain has been called so we know all the messages have processed
+            return agent.queue.drain.callCount === 1;
+          }, "Expect queue drain to finish and be called", 1000);
+
+          runs(function(){
+            console.log("createMessages", agent.send.callCount);
+            //make sure the correct number of messages were sent
+            expect(agent.send.callCount).toEqual(2);
+            //console.log("first call", agent.send.mostRecentCall.args);
             done();
           });
         });
-      });
-    },
-    function(cb){
-      //have popular submit into a challenge
-      describe("A Submission", function(){
-        it("can be submitted by a User (Popular) into challenge 1", function(done){
-          superagent
-          .post(domain + "/challenges/" + challenge1._id + "/submissions")
-          .type('form')
-          .attach("image", "./tests/specs/images/onepixel.png")
-          .field("owner", user1._id)
-          .end(function(err, res){
-            var submission = res.body;
-            //make sure something was returned in the response body
-            expect(submission).toBeDefined();
-            //make sure the id in the response body was returned
-            expect(submission._id).toBeDefined();
-            //expect 200 response
-            expect(res.status).toEqual(200);
-            submission2._id = submission._id;
-            //console.log("here is the returned superagent submission");
-            //console.log(submission);
-            cb(null);
+        it("Should not send notifications to declined users", function(done){
+          spyOn(agent.queue, 'drain').andCallThrough(); //once messages are done processing
+          spyOn(agent, 'send').andCallThrough();
+
+          runs(function(){
+            //change one of the participants to a 'declined' participant
+            challenge1.participants = [
+              {
+              user: user2._id,
+              inviteStatus: 'declined'
+            },{
+              user: user3._id,
+              inviteStatus: 'invited'
+            }];
+            //save this
+            challenge1.save(function(err, challenge){
+              expect(challenge).toBeDefined();
+              //now make another submission so we can make sure only one invite is sent
+              submission2 = {
+                owner: user1._id,
+                challenge: challenge1.id
+              };
+              Submission.create(submission2, function(err, submission){
+                expect(submission).toBeDefined();
+                submission2 = submission;
+                //put submission2 into the challenge
+                challenge1.submissions.push(submission2.id);
+                challenge1.save(function(err, challenge){
+                  expect(challenge).toBeDefined();
+                  challenge1 = challenge;
+                });
+              });
+
+            });
+          });
+
+          waitsFor(function(){
+            //this keeps looping around, may want to add tested devices to a list
+            //keep going until drain has been called so we know all the messages have processed
+            return agent.queue.drain.callCount === 1;
+          }, "Expect queue drain to finish and be called", 1000);
+
+          runs(function(){
+            console.log("createMessages", agent.send.callCount);
+            //make sure the correct number of messages were sent
+            expect(agent.send.callCount).toEqual(1);
+            //console.log("first call", agent.send.mostRecentCall.args);
             done();
           });
+        });
+        it("Should not send notifications to declined users", function(done){
+          done();
+          cb(null);
         });
       });
     }

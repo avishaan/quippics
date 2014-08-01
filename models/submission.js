@@ -51,16 +51,21 @@ submissionSchema.post('save', function(){
 
 //do the following after save on new instance
 submissionSchema.post('new', function(){
+  var submission = this;
   //lookup challenge for submission
-  this
-  .populate({
-    path: 'challenge',
-    select: 'participants title',
-    match: {"participants.inviteStatus": {$in: ['invited', 'accepted']}} //check inviteStatus
-  }, function(err, submission){
+  Challenge.aggregate(
+    {$project: {participants: 1}},
+    {$match: {_id: this.challenge}},
+    {$unwind: "$participants"},
+    {$match: {'participants.inviteStatus': {$in: ['invited', 'accepted']}}},
+    {$project: {
+      inviteStatus: '$participants.inviteStatus',
+      user: '$participants.user'
+    }}
+  ).exec(function(err, participants){
     //we have all users that have either accepted or invited to challenge, notify!
     //put returned participants into an array of userids
-    var users = _.pluck(submission.challenge.participants, 'user');
+    var users = _.pluck(participants, 'user');
     User.sendNotifications({
       users: users,
       payload: {
@@ -79,13 +84,13 @@ submissionSchema.post('new', function(){
         console.error("Error! ", err, new Error().stack);
       }
     });
-    submission.challenge.participants.forEach(function(user, index){
+    //send notification to each user who is still subscribing to notifications
+    participants.forEach(function(user, index){
       //send notification if they have not explicitly declined the challenge invite
       console.log('Placeholder to send invite request to: ', user._id, 'invite status: ', user.inviteStatus);
       console.log('Type', 'submission', 'Id', submission._id, 'Title', submission.challenge.title);
     });
   });
-  //send notification to each user who is still subscribing to notifications
 });
 
 //find challenge of a submission //TODO, we already store this, why the hell are we looking for it!?
