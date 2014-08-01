@@ -15,6 +15,13 @@ function(err, results){
   console.log(results);
 });
 
+Challenge.aggregate([
+  {$project: {participants: 1}},
+  {$match: {_id: ObjectId("53db22048b4b826fd45d5cc7")}},
+  {$unwind: "$participants"},
+  {$match: {'participants.inviteStatus': {$in: ['invited', 'accepted']}}}
+], p);
+
 Challenge.aggregate(
 [
   {$match: {privacy: 'private'}},
