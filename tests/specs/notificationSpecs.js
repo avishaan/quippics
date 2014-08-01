@@ -177,7 +177,6 @@ exports.spec = function(domain, callback){
           }, "Expect queue drain to finish and be called", 1000);
 
           runs(function(){
-            //make sure the drain was called once
             console.log("createMessages", agent.send.callCount);
             //make sure the correct number of messages were sent
             expect(agent.send.callCount).toEqual(2);
