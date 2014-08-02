@@ -13,7 +13,7 @@ var user1 = {
   username: 'popular123',
   password: '123',
   email: 'popular123@gmail.com',
-  uuid: 'a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95',
+  uuid: '1591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95',
   tokenTimestamp: Date.now()
 };
 
@@ -21,14 +21,14 @@ var user2 = {
   username: 'nerd314',
   password: '314',
   email: 'nerd314@gmail.com',
-  uuid: 'a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be76',
+  uuid: '2591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be76',
   tokenTimestamp: Date.now()
 };
 var user3 = {
   username: 'user3',
   password: 'password',
   email: 'user3@gmail.com',
-  uuid: 'a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be77',
+  uuid: '3591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be77',
   tokenTimestamp: Date.now()
 };
 var challenge1 = {};
