@@ -272,6 +272,58 @@ exports.spec = function(domain, callback){
             done();
           });
         });
+        it("Send to owner, not to submitter when only submitter is invited", function(done){
+          spyOn(agent.queue, 'drain').andCallThrough(); //once messages are done processing
+          spyOn(agent, 'send').andCallThrough();
+          spyOn(User, 'sendNotifications').andCallThrough();
+
+          runs(function(){
+            //change one of the participants to a 'declined' participant
+            challenge1.participants = [
+              {
+              user: user2._id,
+              inviteStatus: 'invited'
+            },{
+              user: user3._id,
+              inviteStatus: 'declined'
+            }];
+            //save this
+            challenge1.save(function(err, challenge){
+              expect(challenge).toBeDefined();
+              //now make another submission so we can make sure only correct invites are sent
+              Submission.create({
+                owner: user2._id,
+                challenge: challenge1.id
+              }, function(err, submission){
+                expect(submission).toBeDefined();
+                //put submission2 into the challenge
+                challenge1.submissions.push(submission2.id);
+                challenge1.save(function(err, challenge){
+                  expect(challenge).toBeDefined();
+                  challenge1 = challenge;
+                });
+              });
+
+            });
+          });
+
+          waitsFor(function(){
+            //this keeps looping around, may want to add tested devices to a list
+            //keep going until drain has been called so we know all the messages have processed
+            return agent.queue.drain.callCount === 1;
+          }, "Expect queue drain to finish and be called", 1000);
+
+          runs(function(){
+            console.log("createMessages", agent.send.callCount);
+            console.log("sendNotifications: ", User.sendNotifications.callCount);
+            //make sure the correct number of messages were sent
+            expect(agent.send.callCount).toEqual(1);
+            //make sure the message was sent to the correct user
+            expect(User.sendNotifications.mostRecentCall.args[0].users).toEqual([user1._id]);
+            //console.log("first call", agent.send.mostRecentCall.args);
+            done();
+          });
+        });
         it("Should not send notifications to declined users", function(done){
           done();
           cb(null);
