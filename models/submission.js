@@ -5,6 +5,7 @@ var Challenge = require('../models/challenge.js');
 var User = require('../models/user.js');
 var Ballot = require('../models/ballot.js');
 var Comment = require("../models/comment.js");
+var async = require('async');
 
 var submissionSchema = new mongoose.Schema({
   createdOn: { type: Date, default: Date.now },
@@ -52,43 +53,60 @@ submissionSchema.post('save', function(){
 //do the following after save on new instance
 submissionSchema.post('new', function(){
   var submission = this;
-  //lookup challenge for submission
-  Challenge.aggregate(
-    {$project: {participants: 1}},
-    {$match: {_id: this.challenge}},
-    {$unwind: "$participants"},
-    {$match: {'participants.inviteStatus': {$in: ['invited', 'accepted']}}},
-    {$project: {
-      inviteStatus: '$participants.inviteStatus',
-      user: '$participants.user'
-    }}
-  ).exec(function(err, participants){
-    //we have all users that have either accepted or invited to challenge, notify!
-    //put returned participants into an array of userids
-    var users = _.pluck(participants, 'user');
-    User.sendNotifications({
-      users: users,
-      payload: {
-        alert: {
-          'body': 'A new submission was made!',
-          'action-loc-key': 'look at submission'
-        },
-        body: {
-          'type': 'submission',
-          '_id': submission._id,
-          'title': submission.challenge.title
-        }
-      }
-    }, function(err){
+  //populate the challenge info from the submission
+  //TODO add error handling
+  submission.populate({
+    path: 'challenge',
+    select: 'owner title'
+  }, function(err, submission){
+    //lookup challenge for submission
+    if (err){
+
+    }
+    Challenge.aggregate(
+      {$project: {participants: 1}},
+      {$match: {_id: submission.challenge._id}},
+      {$unwind: "$participants"},
+      {$match: {'participants.inviteStatus': {$in: ['invited', 'accepted']}}},
+      {$project: {
+        inviteStatus: '$participants.inviteStatus',
+        user: '$participants.user'
+      }}
+    ).exec(function(err, participants){
       if (err){
-        console.error("Error! ", err, new Error().stack);
+
       }
-    });
-    //send notification to each user who is still subscribing to notifications
-    participants.forEach(function(user, index){
-      //send notification if they have not explicitly declined the challenge invite
-      console.log('Placeholder to send invite request to: ', user._id, 'invite status: ', user.inviteStatus);
-      console.log('Type', 'submission', 'Id', submission._id, 'Title', submission.challenge.title);
+      //we have all users that have either accepted or invited to challenge, notify!
+      //put returned participants into an array of userids converted to string
+      var users = _.map(participants, function(user){return user.user.toString();});
+      //add the owner of the challenge to the list
+      users.push(submission.challenge.owner.toString());
+      //remove the submitter of the challenge from the list
+      users = _.difference(users, submission.owner.toString());
+      User.sendNotifications({
+        users: users,
+        payload: {
+          alert: {
+            'body': 'A new submission was made!',
+            'action-loc-key': 'look at submission'
+          },
+          body: {
+            'type': 'submission',
+            '_id': submission._id,
+            'title': submission.challenge.title
+          }
+        }
+      }, function(err){
+        if (err){
+          console.error("Error! ", err, new Error().stack);
+        }
+      });
+      //send notification to each user who is still subscribing to notifications
+      users.forEach(function(user, index){
+        //send notification if they have not explicitly declined the challenge invite
+        console.log('Placeholder to send invite request to: ', user, 'invite status: ', 'invited/accepted');
+        console.log('Type', 'submission', 'Id', submission._id, 'Title', submission.challenge.title);
+      });
     });
   });
 });
