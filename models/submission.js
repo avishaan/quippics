@@ -83,6 +83,8 @@ submissionSchema.post('new', function(){
       users.push(submission.challenge.owner.toString());
       //remove the submitter of the challenge from the list
       users = _.difference(users, submission.owner.toString());
+      //we need to convert the strings back to objectids
+      users = _.map(users, function(user){return mongoose.Types.ObjectId(user);});
       User.sendNotifications({
         users: users,
         payload: {
