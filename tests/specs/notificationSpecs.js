@@ -13,7 +13,8 @@ var user1 = {
   username: 'popular123',
   password: '123',
   email: 'popular123@gmail.com',
-  uuid: '1591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95',
+  uuid: '1a91bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95',
+  uuid2: '1b91bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95',
   tokenTimestamp: Date.now()
 };
 
@@ -21,14 +22,14 @@ var user2 = {
   username: 'nerd314',
   password: '314',
   email: 'nerd314@gmail.com',
-  uuid: '2591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be76',
+  uuid: '2a91bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be76',
   tokenTimestamp: Date.now()
 };
 var user3 = {
   username: 'user3',
   password: 'password',
   email: 'user3@gmail.com',
-  uuid: '3591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be77',
+  uuid: '3a91bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be77',
   tokenTimestamp: Date.now()
 };
 var challenge1 = {};
@@ -97,46 +98,101 @@ exports.spec = function(domain, callback){
       });
     },
     function(cb){
-      frisby
-      .create("Register user1 device")
-      .post(domain + '/users/' + user1._id + '/device', {
-        uuid: user1.uuid,
-        tokenTimestamp: user1.tokenTimestamp
-      })
-      .expectStatus(200)
-      .afterJSON(function(res){
-        expect(res.clientMsg).toBeDefined();
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
-      frisby
-      .create("Register user2 device")
-      .post(domain + '/users/' + user2._id + '/device', {
-        uuid: user2.uuid,
-        tokenTimestamp: user2.tokenTimestamp
-      })
-      .expectStatus(200)
-      .afterJSON(function(res){
-        expect(res.clientMsg).toBeDefined();
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
-      frisby
-      .create("Register user3 device")
-      .post(domain + '/users/' + user3._id + '/device', {
-        uuid: user3.uuid,
-        tokenTimestamp: user3.tokenTimestamp
-      })
-      .expectStatus(200)
-      .afterJSON(function(res){
-        expect(res.clientMsg).toBeDefined();
-        cb(null);
-      })
-      .toss();
+      describe("Users devices", function(){
+        it("should be added for user1 device1", function(done){
+          superagent
+          .post(domain + '/users/' + user1._id + '/device')
+          .send({
+            uuid: user1.uuid,
+            tokenTimestamp: user1.tokenTimestamp
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body.clientMsg).toBeDefined();
+            //now lets make sure the db is updated
+            User.findOne({_id: user1._id})
+            .exec(function(err, user){
+              expect(user.devices.length).toEqual(1);
+              done();
+            });
+          });
+        });
+        it("should be added for user2 device1", function(done){
+          superagent
+          .post(domain + '/users/' + user2._id + '/device')
+          .send({
+            uuid: user2.uuid,
+            tokenTimestamp: user2.tokenTimestamp
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body.clientMsg).toBeDefined();
+            //now lets make sure the db is updated
+            User.findOne({_id: user2._id})
+            .exec(function(err, user){
+              expect(user.devices.length).toEqual(1);
+              done();
+            });
+          });
+        });
+        it("should be added for user3 device1", function(done){
+          superagent
+          .post(domain + '/users/' + user3._id + '/device')
+          .send({
+            uuid: user3.uuid,
+            tokenTimestamp: user3.tokenTimestamp
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body.clientMsg).toBeDefined();
+            //now lets make sure the db is updated
+            User.findOne({_id: user3._id})
+            .exec(function(err, user){
+              expect(user.devices.length).toEqual(1);
+              done();
+            });
+          });
+        });
+        it("should be added for user1 device2", function(done){
+          superagent
+          .post(domain + '/users/' + user1._id + '/device')
+          .send({
+            uuid: user1.uuid2,
+            tokenTimestamp: user1.tokenTimestamp
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body.clientMsg).toBeDefined();
+            //now lets make sure the db is updated
+            User.findOne({_id: user1._id})
+            .exec(function(err, user){
+              expect(user.devices.length).toEqual(2);
+              done();
+            });
+          });
+        });
+        it("timestamp should be updated for user1 device1", function(done){
+          superagent
+          .post(domain + '/users/' + user1._id + '/device')
+          .send({
+            uuid: user1.uuid,
+            tokenTimestamp: Date.now()+1000
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body.clientMsg).toBeDefined();
+            //now lets make sure the db is updated
+            User.findOne({_id: user1._id})
+            .exec(function(err, user){
+              expect(user.devices.length).toEqual(2);
+              //now the timestamps shouldn't be equal
+              expect(user.devices[0].timestamp).not.toEqual(user.devices[1].timestamp);
+              done();
+              cb(null);
+            });
+          });
+        });
+      });
     },
     function(cb){
       describe("Notifications", function(){
