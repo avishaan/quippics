@@ -1,5 +1,6 @@
 var frisby = require('frisby');
 var async = require('async');
+var _ = require('underscore');
 var superagent = require('superagent');
 var db = require('../../dbs/db.js');
 var agent = require('../../apn/apn.js');
@@ -265,7 +266,7 @@ exports.spec = function(domain, callback){
           }, "Expect queue drain to finish and be called", 1000);
 
           runs(function(){
-            console.log("createMessages", agent.send.callCount);
+            console.log("reateMessages", agent.send.callCount);
             //make sure the correct number of messages were sent
             expect(agent.send.callCount).toEqual(1);
             //console.log("first call", agent.send.mostRecentCall.args);
@@ -320,6 +321,60 @@ exports.spec = function(domain, callback){
             expect(agent.send.callCount).toEqual(1);
             //make sure the message was sent to the correct user
             expect(User.sendNotifications.mostRecentCall.args[0].users).toEqual([user1._id]);
+            //console.log("first call", agent.send.mostRecentCall.args);
+            done();
+          });
+        });
+        it("Owner should be notified of a new submission even though he is not in participants", function(done){
+          spyOn(agent.queue, 'drain').andCallThrough(); //once messages are done processing
+          spyOn(agent, 'send').andCallThrough();
+          spyOn(User, 'sendNotifications').andCallThrough();
+
+          runs(function(){
+            //change one of the participants to a 'declined' participant
+            challenge1.participants = [
+              {
+              user: user2._id,
+              inviteStatus: 'invited'
+            },{
+              user: user3._id,
+              inviteStatus: 'invited'
+            }];
+            //save this
+            challenge1.save(function(err, challenge){
+              expect(challenge).toBeDefined();
+              //now make another submission so we can make sure only correct invites are sent
+              Submission.create({
+                owner: user2._id,
+                challenge: challenge1.id
+              }, function(err, submission){
+                expect(submission).toBeDefined();
+                //put submission2 into the challenge
+                challenge1.submissions.push(submission2.id);
+                challenge1.save(function(err, challenge){
+                  expect(challenge).toBeDefined();
+                  challenge1 = challenge;
+                });
+              });
+
+            });
+          });
+
+          waitsFor(function(){
+            //this keeps looping around, may want to add tested devices to a list
+            //keep going until drain has been called so we know all the messages have processed
+            return agent.queue.drain.callCount === 1;
+          }, "Expect queue drain to finish and be called", 1000);
+
+          runs(function(){
+            console.log("createMessages", agent.send.callCount);
+            console.log("sendNotifications: ", User.sendNotifications.callCount);
+            //make sure the correct number of messages were sent
+            expect(agent.send.callCount).toEqual(2);
+            //make sure the message was sent to the correct user
+            //make sure owner and user3 were notified
+            var intersection = _.intersection(User.sendNotifications.mostRecentCall.args[0].users, [user1._id, user3._id]);
+            expect(intersection.length).toEqual(2);
             //console.log("first call", agent.send.mostRecentCall.args);
             done();
           });
