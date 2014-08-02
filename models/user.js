@@ -17,6 +17,10 @@ var userSchema = new mongoose.Schema({
   username: {type: String, unique: true},
   firstName: {type: String},
   lastName: {type: String},
+  devices: [{
+    uuid: String,
+    timestamp: Date
+  }],
   deviceToken: {type: String}, //unique token set with each login
   allowNotifications: {type: Boolean, default: true}, //whether or not to send the user notifications
   tokenTimestamp: {type: Date}, //date of last registration
