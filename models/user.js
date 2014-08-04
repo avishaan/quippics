@@ -227,29 +227,41 @@ userSchema.statics.sendNotifications = function(options, cb){
     }
   });
 };
-//find user by token and unsubscribe
-userSchema.statics.stopNotifications = function(options, cb){
+//find user that has the device token and remove the device
+userSchema.statics.unsubDevice = function(options, cb){
   if (!options.device || !options.timestamp){
     return cb({
       clientMsg: "Malformed request",
     });
   }
+  //find the user associated with the uuid
   User
-  .findOne({deviceToken: options.device.toString()})
-  .select('allowNotifications tokenTimestamp')
+  .findOne({'devices.uuid': options.device.toString()})
+  .select('devices')
   .exec(function(err, user){
-    // istanbul ignore else: query error
-    if (!err && user){
-      //compare the timestamps
-      if (user.tokenTimestamp < options.timestamp ){
-        //user registered and THEN an unsub came in, stop notifications
-        user.allowNotifications = false;
-        user.save(); //it's not important, assume a save
-        return cb();
-      }
-    } else if (!err && !user){
-      //found no user, ignore. maybe the user was deleted
-      return cb();
+    debugger;
+    if (!err && user && user.devices.length){
+      user.devices.forEach(function(device, index){
+        //find location of matching uuid
+        if (device.uuid === options.device.toString()){
+          //once you find the user, check the unsub timestamp
+           if (device.timestamp < options.timestamp){
+             //if the time of the unsub is greater than in devices, unsub
+             user.devices.splice(index, 1);
+           }
+        }
+      });
+      //go ahead and save
+      user.save(function(err, user){
+        if (!err){
+          cb();
+        } else {
+          return cb({
+            clientMsg: "couldn't perform save",
+            err: err
+          });
+        }
+      });
     } else {
       return cb({
         clientMsg: "Couldn't find user",
@@ -258,7 +270,6 @@ userSchema.statics.stopNotifications = function(options, cb){
     }
   });
 };
-
 var User = mongoose.model('User', userSchema);
 
 module.exports = User;
