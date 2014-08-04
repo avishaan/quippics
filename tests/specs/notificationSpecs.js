@@ -7,6 +7,7 @@ var agent = require('../../apn/apn.js');
 var User = require('../../models/user.js');
 var Challenge = require('../../models/challenge.js');
 var Submission = require('../../models/submission.js');
+var Device = require('apnagent').Device;
 
 
 var user1 = {
@@ -294,6 +295,8 @@ exports.spec = function(domain, callback){
           runs(function(){
             //make sure the correct number of messages were sent
             expect(agent.send.callCount).toEqual(1);
+            //the correct device should have been sent a notification
+            expect(agent.send.mostRecentCall.args[0].meta.device.token).toEqual(new Device(user3.uuid).toString());
             //console.log("first call", agent.send.mostRecentCall.args);
             done();
           });
@@ -302,7 +305,6 @@ exports.spec = function(domain, callback){
           spyOn(agent.queue, 'drain').andCallThrough(); //once messages are done processing
           spyOn(agent, 'send').andCallThrough();
           spyOn(User, 'sendNotifications').andCallThrough();
-          debugger;
 
           runs(function(){
             //change one of the participants to a 'declined' participant
@@ -350,6 +352,14 @@ exports.spec = function(domain, callback){
             expect(User.sendNotifications.mostRecentCall.args[0].payload.body.type).toEqual('submission');
             expect(User.sendNotifications.mostRecentCall.args[0].payload.body._id).toBeDefined();
             expect(User.sendNotifications.mostRecentCall.args[0].payload.body.title).toBeDefined();
+            expect(agent.send.mostRecentCall.args[0].aps.body).toBeDefined();
+            expect(agent.send.mostRecentCall.args[0].aps["action-loc-key"]).toBeDefined();
+            expect(agent.send.mostRecentCall.args[0].payload.type).toEqual('submission');
+            expect(agent.send.mostRecentCall.args[0].payload._id).toBeDefined();
+            expect(agent.send.mostRecentCall.args[0].payload.title).toBeDefined();
+            //make sure the correct device was sent to
+            expect(agent.send.mostRecentCall.args[0].meta.device.token).toEqual(new Device(user1.uuid).toString());
+            debugger;
             //console.log("first call", agent.send.mostRecentCall.args);
             done();
           });
@@ -439,6 +449,7 @@ exports.spec = function(domain, callback){
             //now lets make sure the db is updated
             User.findOne({_id: user1._id})
             .exec(function(err, user){
+              //we should still have only 2 timestamps, not three
               expect(user.devices.length).toEqual(2);
               //now the timestamps shouldn't be equal
               expect(user.devices[0].timestamp).not.toEqual(user.devices[1].timestamp);
@@ -450,7 +461,6 @@ exports.spec = function(domain, callback){
           //user1 now has two devices
           //test case where user1 is the only other person in the challenge
           //that user should get two notifications, one for each device
-          
           spyOn(agent.queue, 'drain').andCallThrough(); //once messages are done processing
           spyOn(agent, 'send').andCallThrough();
           spyOn(User, 'sendNotifications').andCallThrough();
@@ -500,8 +510,34 @@ exports.spec = function(domain, callback){
             //make sure owner and user3 were notified
             var intersection = _.intersection(calledUsers, [user1._id]);
             expect(intersection.length).toEqual(1);
+            //make sure both devices were send the messages
+
+            var calledTokens = [agent.send.calls[0].args[0].meta.device.token, agent.send.calls[1].args[0].meta.device.token];
+            var intendedTokens = [new Device(user1.uuid).toString(), new Device(user1.uuid2).toString()];
+            expect(_.intersection(calledTokens, intendedTokens).length).toEqual(2);
             //console.log("first call", agent.send.mostRecentCall.args);
             done();
+          });
+        });
+        xit("should handle an unsub from apple", function(done){
+          superagent
+          .post(domain + '/users/' + user1._id + '/device')
+          .send({
+            uuid: user1.uuid,
+            tokenTimestamp: Date.now()+1000
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body.clientMsg).toBeDefined();
+            //now lets make sure the db is updated
+            User.findOne({_id: user1._id})
+            .exec(function(err, user){
+              //we should still have only 2 timestamps, not three
+              expect(user.devices.length).toEqual(2);
+              //now the timestamps shouldn't be equal
+              expect(user.devices[0].timestamp).not.toEqual(user.devices[1].timestamp);
+              done();
+            });
           });
         });
         it("Should not send notifications to declined users", function(done){
