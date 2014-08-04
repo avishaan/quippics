@@ -524,7 +524,7 @@ exports.spec = function(domain, callback){
           spyOn(feedback, 'unsub').andCallThrough();
           spyOn(feedback.queue, 'drain').andCallThrough();
 
-          //unsub user1 device 1
+          //unsub user1 device 2
           runs(function(){
             feedback.unsub(user1.uuid2);
           });
@@ -541,8 +541,26 @@ exports.spec = function(domain, callback){
             .exec(function(err, user){
               //make sure he only has one device now
               expect(user.devices.length).toEqual(1);
-              //make sure we still have device 2 in user's devices
+              //make sure we still have device 1 in user's devices
               expect(user.devices[0].uuid).toEqual(new Device(user1.uuid).toString());
+              done();
+            });
+          });
+        });
+        it("should stop notifications for logged out user", function(done){
+          superagent
+          .del(domain + '/users')
+          .send({
+            id: user1._id,
+            uuid: user1.uuid,
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body.clientMsg).toBeDefined();
+            //now lets make sure the db is updated
+            User.findOne({_id: user1._id})
+            .exec(function(err, user){
+              expect(user.devices.length).toEqual(0);
               done();
             });
           });
