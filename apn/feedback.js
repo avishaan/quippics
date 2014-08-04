@@ -47,8 +47,7 @@ feedback.connect(function (err) {
 
 feedback.use(function(device, timestamp, next){
   console.log("Device: %s at time: %s wants to unsub", device.toString(), timestamp);
-  User.stopNotifications({device: device, timestamp: timestamp}, function(err){
-    // istanbul ignore if
+  User.unsubDevice({device: device, timestamp: timestamp}, function(err){
     if (err){
       console.warn("error: ", err, "stack: ", new Error().stack);
     }
