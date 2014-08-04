@@ -8,6 +8,7 @@ var User = require('../../models/user.js');
 var Challenge = require('../../models/challenge.js');
 var Submission = require('../../models/submission.js');
 var Device = require('apnagent').Device;
+var feedback = require('../../apn/feedback.js');
 
 
 var user1 = {
@@ -359,7 +360,6 @@ exports.spec = function(domain, callback){
             expect(agent.send.mostRecentCall.args[0].payload.title).toBeDefined();
             //make sure the correct device was sent to
             expect(agent.send.mostRecentCall.args[0].meta.device.token).toEqual(new Device(user1.uuid).toString());
-            debugger;
             //console.log("first call", agent.send.mostRecentCall.args);
             done();
           });
@@ -519,23 +519,30 @@ exports.spec = function(domain, callback){
             done();
           });
         });
-        xit("should handle an unsub from apple", function(done){
-          superagent
-          .post(domain + '/users/' + user1._id + '/device')
-          .send({
-            uuid: user1.uuid,
-            tokenTimestamp: Date.now()+1000
-          })
-          .end(function(err, res){
-            expect(res.status).toEqual(200);
-            expect(res.body.clientMsg).toBeDefined();
-            //now lets make sure the db is updated
+        it("should handle an unsub from apple", function(done){
+          spyOn(User, 'unsubDevice').andCallThrough();
+          spyOn(feedback, 'unsub').andCallThrough();
+          spyOn(feedback.queue, 'drain').andCallThrough();
+
+          //unsub user1 device 1
+          runs(function(){
+            feedback.unsub(user1.uuid);
+          });
+
+          waitsFor(function(){
+            return feedback.queue.drain.wasCalled;
+          }, "Wait for unsub use to finish and be called", 1500);
+
+          runs(function(){
+            //make sure the unsub function was called
+            expect(User.unsubDevice.wasCalled).toBe(true);
+            //find the user
             User.findOne({_id: user1._id})
             .exec(function(err, user){
-              //we should still have only 2 timestamps, not three
-              expect(user.devices.length).toEqual(2);
-              //now the timestamps shouldn't be equal
-              expect(user.devices[0].timestamp).not.toEqual(user.devices[1].timestamp);
+              //make sure he only has one device now
+              expect(user.devices.length).toEqual(1);
+              //make sure we still have device 2 in user's devices
+              expect(user.devices[0].uuid).toEqual(new Device(user1.uuid2).toString());
               done();
             });
           });
