@@ -165,6 +165,7 @@ exports.spec = function(domain, callback){
         it("Should be sent to all challenge invitees", function(done){
           spyOn(agent.queue, 'drain').andCallThrough(); //once messages are done processing
           spyOn(agent, 'send').andCallThrough();
+          spyOn(User, 'sendNotifications').andCallThrough();
           //setup our challenge
           challenge1 = {
             title: 'Challenge1 Title',
@@ -203,6 +204,11 @@ exports.spec = function(domain, callback){
           runs(function(){
             //make sure the correct number of messages were sent
             expect(agent.send.callCount).toEqual(2);
+            expect(User.sendNotifications.mostRecentCall.args[0].payload.alert.body).toBeDefined();
+            expect(User.sendNotifications.mostRecentCall.args[0].payload.alert["action-loc-key"]).toBeDefined();
+            expect(User.sendNotifications.mostRecentCall.args[0].payload.body.type).toEqual('challenge');
+            expect(User.sendNotifications.mostRecentCall.args[0].payload.body._id).toBeDefined();
+            expect(User.sendNotifications.mostRecentCall.args[0].payload.body.title).toBeDefined();
             //console.log("first call", agent.send.mostRecentCall.args);
             done();
           });
@@ -339,6 +345,11 @@ exports.spec = function(domain, callback){
             expect(agent.send.callCount).toEqual(1);
             //make sure the message was sent to the correct user
             expect(User.sendNotifications.mostRecentCall.args[0].users.toString()).toEqual(user1._id);
+            expect(User.sendNotifications.mostRecentCall.args[0].payload.alert.body).toBeDefined();
+            expect(User.sendNotifications.mostRecentCall.args[0].payload.alert["action-loc-key"]).toBeDefined();
+            expect(User.sendNotifications.mostRecentCall.args[0].payload.body.type).toEqual('submission');
+            expect(User.sendNotifications.mostRecentCall.args[0].payload.body._id).toBeDefined();
+            expect(User.sendNotifications.mostRecentCall.args[0].payload.body.title).toBeDefined();
             //console.log("first call", agent.send.mostRecentCall.args);
             done();
           });
