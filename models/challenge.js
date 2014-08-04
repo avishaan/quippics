@@ -61,10 +61,6 @@ challengeSchema.post('new', function(){
       console.error("Error! ", err, new Error().stack);
     }
   });
-  this.invites.forEach(function(user, index){
-    console.log("Placeholder to send invite request to: ", user);
-    console.log("Type", "challenge", "Id", this._id, "Title", this.title);
-  }, this);
 });
 
 //find the top submission in a challenge

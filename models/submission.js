@@ -104,12 +104,6 @@ submissionSchema.post('new', function(){
           console.error("Error! ", err, new Error().stack);
         }
       });
-      //send notification to each user who is still subscribing to notifications
-      users.forEach(function(user, index){
-        //send notification if they have not explicitly declined the challenge invite
-        console.log('Placeholder to send invite request to: ', user, 'invite status: ', 'invited/accepted');
-        console.log('Type', 'submission', 'Id', submission._id, 'Title', submission.challenge.title);
-      });
     });
   });
 });
