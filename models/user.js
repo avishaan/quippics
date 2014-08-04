@@ -200,25 +200,25 @@ userSchema.statics.sendNotifications = function(options, cb){
   }
   var alert = options.payload.alert;
   var body = options.payload.body;
-
-  User.find({_id: {$in: options.users}})
-  .select('allowNotifications deviceToken')
-  .lean()
-  .exec(function(err, users){
-    // istanbul ignore else: db error
-    if (!err && users.length){
-      users.forEach(function(user, index){
-        if (user.allowNotifications && user.deviceToken){
-          //if the user wants notifications and has deviceToken
-          agent.createMessage()
-          .device(user.deviceToken)
-          .alert(alert)
-          .set(body)
-          .send(function(err){
-          });
-          //we don't care about the '.send' callback as we listen for errors on agent
-          return cb(null);
-        }
+  User.aggregate([
+    {$match: {_id: {$in: options.users}}},
+    {$unwind: "$devices"},
+    {$project: {
+      uuid: '$devices.uuid',
+      timestamp: '$devices.timestamp',
+      _id: 0
+    }}
+  ], function(err, devices){
+    if (!err && devices.length){
+      devices.forEach(function(device, index){
+        agent.createMessage()
+        .device(device.uuid)
+        .alert(alert)
+        .set(body)
+        .send(function(err){
+        });
+        //we don't care about the '.send' callback as we listen for errors on agent
+        return cb(null);
       });
     } else if (!err){
       return cb(null);
