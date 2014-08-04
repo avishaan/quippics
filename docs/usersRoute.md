@@ -76,7 +76,7 @@ response:
 ```
 
 ####Register the user's device
-#####_Status: Developed, Not Tested
+#####_Status: Developed, Tested
 POST /v1/users/:uid/device
 
 - Expecting value in seconds from UTC epoch
@@ -97,7 +97,7 @@ response: {
 ```
 
 ####Logout user and return if success
-#####_Status: Not Developed, Not Tested
+#####_Status: Developed, Tested
 DELETE /v1/users
 
 - Must wait for ok response before finishing logout of user
