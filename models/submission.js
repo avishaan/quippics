@@ -78,7 +78,6 @@ submissionSchema.post('new', function(){
       }
       //we have all users that have either accepted or invited to challenge, notify!
       //put returned participants into an array of userids converted to string
-      debugger;
       var users = _.map(participants, function(user){return user.user.toString();});
       //add the owner of the challenge to the list
       users.push(submission.challenge.owner.toString());
