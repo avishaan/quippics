@@ -153,44 +153,10 @@ exports.spec = function(domain, callback){
             });
           });
         });
-        it("should be added for user1 device2", function(done){
-          superagent
-          .post(domain + '/users/' + user1._id + '/device')
-          .send({
-            uuid: user1.uuid2,
-            tokenTimestamp: user1.tokenTimestamp
-          })
-          .end(function(err, res){
-            expect(res.status).toEqual(200);
-            expect(res.body.clientMsg).toBeDefined();
-            //now lets make sure the db is updated
-            User.findOne({_id: user1._id})
-            .exec(function(err, user){
-              expect(user.devices.length).toEqual(2);
-              done();
-            });
-          });
-        });
-        it("timestamp should be updated for user1 device1", function(done){
-          superagent
-          .post(domain + '/users/' + user1._id + '/device')
-          .send({
-            uuid: user1.uuid,
-            tokenTimestamp: Date.now()+1000
-          })
-          .end(function(err, res){
-            expect(res.status).toEqual(200);
-            expect(res.body.clientMsg).toBeDefined();
-            //now lets make sure the db is updated
-            User.findOne({_id: user1._id})
-            .exec(function(err, user){
-              expect(user.devices.length).toEqual(2);
-              //now the timestamps shouldn't be equal
-              expect(user.devices[0].timestamp).not.toEqual(user.devices[1].timestamp);
-              done();
-              cb(null);
-            });
-          });
+        it("goes to the next test", function(done){
+          //this is so we have one place to progress out of the async calls
+          done();
+          cb(null);
         });
       });
     },
@@ -235,7 +201,6 @@ exports.spec = function(domain, callback){
           }, "Expect queue drain to finish and be called", 1000);
 
           runs(function(){
-            console.log("createMessages", agent.send.callCount);
             //make sure the correct number of messages were sent
             expect(agent.send.callCount).toEqual(2);
             //console.log("first call", agent.send.mostRecentCall.args);
@@ -272,7 +237,6 @@ exports.spec = function(domain, callback){
           }, "Expect queue drain to finish and be called", 1000);
 
           runs(function(){
-            console.log("createMessages", agent.send.callCount);
             //make sure the correct number of messages were sent
             expect(agent.send.callCount).toEqual(2);
             //console.log("first call", agent.send.mostRecentCall.args);
@@ -322,7 +286,6 @@ exports.spec = function(domain, callback){
           }, "Expect queue drain to finish and be called", 1000);
 
           runs(function(){
-            console.log("reateMessages", agent.send.callCount);
             //make sure the correct number of messages were sent
             expect(agent.send.callCount).toEqual(1);
             //console.log("first call", agent.send.mostRecentCall.args);
@@ -333,6 +296,7 @@ exports.spec = function(domain, callback){
           spyOn(agent.queue, 'drain').andCallThrough(); //once messages are done processing
           spyOn(agent, 'send').andCallThrough();
           spyOn(User, 'sendNotifications').andCallThrough();
+          debugger;
 
           runs(function(){
             //change one of the participants to a 'declined' participant
@@ -371,12 +335,10 @@ exports.spec = function(domain, callback){
           }, "Expect queue drain to finish and be called", 1000);
 
           runs(function(){
-            console.log("createMessages", agent.send.callCount);
-            console.log("sendNotifications: ", User.sendNotifications.callCount);
             //make sure the correct number of messages were sent
             expect(agent.send.callCount).toEqual(1);
             //make sure the message was sent to the correct user
-            expect(User.sendNotifications.mostRecentCall.args[0].users).toEqual([user1._id]);
+            expect(User.sendNotifications.mostRecentCall.args[0].users.toString()).toEqual(user1._id);
             //console.log("first call", agent.send.mostRecentCall.args);
             done();
           });
@@ -423,14 +385,110 @@ exports.spec = function(domain, callback){
           }, "Expect queue drain to finish and be called", 1000);
 
           runs(function(){
-            console.log("createMessages", agent.send.callCount);
-            console.log("sendNotifications: ", User.sendNotifications.callCount);
             //make sure the correct number of messages were sent
             expect(agent.send.callCount).toEqual(2);
             //make sure the message was sent to the correct user
+            //convert the users in the arguments to strings for comparison
+            var calledUsers = _.map(User.sendNotifications.mostRecentCall.args[0].users, function(user){return user.toString();});
             //make sure owner and user3 were notified
-            var intersection = _.intersection(User.sendNotifications.mostRecentCall.args[0].users, [user1._id, user3._id]);
+            var intersection = _.intersection(calledUsers, [user1._id, user3._id]);
             expect(intersection.length).toEqual(2);
+            //console.log("first call", agent.send.mostRecentCall.args);
+            done();
+          });
+        });
+        it("should be added for user1 device2", function(done){
+          superagent
+          .post(domain + '/users/' + user1._id + '/device')
+          .send({
+            uuid: user1.uuid2,
+            tokenTimestamp: user1.tokenTimestamp
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body.clientMsg).toBeDefined();
+            //now lets make sure the db is updated
+            User.findOne({_id: user1._id})
+            .exec(function(err, user){
+              expect(user.devices.length).toEqual(2);
+              done();
+            });
+          });
+        });
+        it("timestamp should be updated for user1 device1", function(done){
+          superagent
+          .post(domain + '/users/' + user1._id + '/device')
+          .send({
+            uuid: user1.uuid,
+            tokenTimestamp: Date.now()+1000
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body.clientMsg).toBeDefined();
+            //now lets make sure the db is updated
+            User.findOne({_id: user1._id})
+            .exec(function(err, user){
+              expect(user.devices.length).toEqual(2);
+              //now the timestamps shouldn't be equal
+              expect(user.devices[0].timestamp).not.toEqual(user.devices[1].timestamp);
+              done();
+            });
+          });
+        });
+        it("should send notifications to both of user1's devices", function(done){
+          //user1 now has two devices
+          //test case where user1 is the only other person in the challenge
+          //that user should get two notifications, one for each device
+          
+          spyOn(agent.queue, 'drain').andCallThrough(); //once messages are done processing
+          spyOn(agent, 'send').andCallThrough();
+          spyOn(User, 'sendNotifications').andCallThrough();
+
+          runs(function(){
+            //change one of the participants to a 'declined' participant
+            challenge1.participants = [
+              {
+              user: user2._id,
+              inviteStatus: 'declined'
+            },{
+              user: user3._id,
+              inviteStatus: 'invited'
+            }];
+            //save this
+            challenge1.save(function(err, challenge){
+              expect(challenge).toBeDefined();
+              //now make another submission so we can make sure only correct invites are sent
+              Submission.create({
+                owner: user3._id,
+                challenge: challenge1.id
+              }, function(err, submission){
+                expect(submission).toBeDefined();
+                //put submission2 into the challenge
+                challenge1.submissions.push(submission2.id);
+                challenge1.save(function(err, challenge){
+                  expect(challenge).toBeDefined();
+                  challenge1 = challenge;
+                });
+              });
+
+            });
+          });
+
+          waitsFor(function(){
+            //this keeps looping around, may want to add tested devices to a list
+            //keep going until drain has been called so we know all the messages have processed
+            return agent.queue.drain.callCount === 1;
+          }, "Expect queue drain to finish and be called", 1000);
+
+          runs(function(){
+            //make sure the correct number of messages were sent
+            expect(agent.send.callCount).toEqual(2);
+            //make sure the message was sent to the correct user
+            //convert the users in the arguments to strings for comparison
+            var calledUsers = _.map(User.sendNotifications.mostRecentCall.args[0].users, function(user){return user.toString();});
+            //make sure owner and user3 were notified
+            var intersection = _.intersection(calledUsers, [user1._id]);
+            expect(intersection.length).toEqual(1);
             //console.log("first call", agent.send.mostRecentCall.args);
             done();
           });
