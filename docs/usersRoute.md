@@ -96,6 +96,25 @@ response: {
 }
 ```
 
+####Logout user and return if success
+#####_Status: Not Developed, Not Tested
+DELETE /v1/users
+
+
+Example Request
+```
+request: {
+  id: '52f548514f8c88b137000113',
+  uuid: 'a591bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95'
+}
+```
+
+Example Response
+```
+response: {
+  _id: '52f548514f8c88b137000113'
+}
+```
 ####Authenticate user and return userid
 #####_Status: Developed, Tested
 POST /v1/users
