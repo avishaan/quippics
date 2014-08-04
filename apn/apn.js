@@ -2,6 +2,8 @@ var apnagent = require('apnagent');
 var User = require('../models/user.js');
 var path = require('path');
 var config = require('../conf/config.js');
+//TODO, this is the wrong place for this dependency
+var feedback = require('../apn/feedback.js');
 
 //set environment based options
 // istanbul ignore next
