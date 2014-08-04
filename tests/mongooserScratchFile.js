@@ -15,12 +15,32 @@ function(err, results){
   console.log(results);
 });
 
+User.aggregate([
+  {$match: {_id: {$in: [ObjectId( "53dcb70a52ed92f4ff2b73fe"), ObjectId("53dcb70a52ed92f4ff2b73ff")]}}},
+  {$unwind: "$devices"},
+  {$project: {
+    uuid: '$devices.uuid',
+    timestamp: '$devices.timestamp',
+    _id: 0
+  }}
+], p);
+
 Challenge.aggregate([
   {$project: {participants: 1}},
   {$match: {_id: ObjectId("53db22048b4b826fd45d5cc7")}},
   {$unwind: "$participants"},
   {$match: {'participants.inviteStatus': {$in: ['invited', 'accepted']}}}
 ], p);
+
+Challenge.aggregate(
+  {$project: {participants: 1}},
+  {$match: {_id: submission.challenge._id}},
+  {$unwind: "$participants"},
+  {$match: {'participants.inviteStatus': {$in: ['invited', 'accepted']}}},
+  {$project: {
+    inviteStatus: '$participants.inviteStatus',
+    user: '$participants.user'
+  }}
 
 Challenge.aggregate(
 [
