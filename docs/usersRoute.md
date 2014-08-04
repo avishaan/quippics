@@ -100,6 +100,7 @@ response: {
 #####_Status: Not Developed, Not Tested
 DELETE /v1/users
 
+- Must wait for ok response before finishing logout of user
 
 Example Request
 ```
