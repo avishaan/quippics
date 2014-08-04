@@ -26,6 +26,39 @@ exports.registerDevice = function(req, res){
   }
   //normalize token
   var token = new Device(req.body.uuid).toString();
+  //find user associated with the uid
+  User.findOne({_id: req.params.uid})
+  .select('devices')
+  .exec(function(err, user){
+    //TODO need to handle the errors
+    //check to see if that token already exists
+    if (!err && user){
+      if (_.findWhere(user.devices, {uuid: token})){
+        //since the token exists, go ahead find it, and update timestamp
+        user.devices.forEach(function(device){
+          if (device.uuid === token){
+            device.timestamp = req.body.tokenTimestamp;
+          }
+        });
+      } else {
+        user.devices.push({
+          uuid: token,
+          timestamp: req.body.tokenTimestamp
+        });
+      }
+      //go ahead and save the model
+      user.save(function(err, user){
+        if (!err){
+          //no error
+        } else {
+          //some sort of error
+        }
+      });
+    } else {
+      //handle me bro
+    }
+  });
+  //ORIGINAL
   //find user associated with the id and do the update
   User.update({_id: req.params.uid}, {deviceToken: token, tokenTimestamp: req.body.tokenTimestamp}, {}, function(err, numAffected, raw){
     //TODO, if another user has the same token, we need to remove it from that user
