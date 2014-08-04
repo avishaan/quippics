@@ -227,6 +227,47 @@ userSchema.statics.sendNotifications = function(options, cb){
     }
   });
 };
+//Remove device from user
+userSchema.statics.removeDevice = function(options, cb){
+  if (!options.id|| !options.uuid){
+    return cb({
+      clientMsg: "Malformed request",
+    });
+  }
+  //find user attempting the logout
+  User
+  .findOne({
+    _id: options.id,
+    'devices.uuid': options.uuid
+  })
+  .select('devices')
+  .exec(function(err, user){
+    if (!err && user && user.devices.length){
+      //go through the list of user devices and find matching device
+      user.devices.forEach(function(device, index){
+        //check device matching
+        if (options.uuid === device.uuid){
+          //remove from user devices list
+          user.devices.splice(index, 1);
+          user.save(function(err, user){
+            if (!err && user){
+              return cb();
+            } else {
+              return cb({clientMsg: "Couldn't remove device from user"});
+            }
+          });
+        }
+      });
+    } else {
+      //couldn't find the user for whatever reason
+      return cb({
+        clientMsg: "Couldn't Find User to Logout"
+      });
+    }
+  });
+  //go through the list of devices for that user
+  //when you find the matching device, go ahead and remove that device
+};
 //find user that has the device token and remove the device
 userSchema.statics.unsubDevice = function(options, cb){
   if (!options.device || !options.timestamp){
@@ -239,7 +280,6 @@ userSchema.statics.unsubDevice = function(options, cb){
   .findOne({'devices.uuid': options.device.toString()})
   .select('devices')
   .exec(function(err, user){
-    debugger;
     if (!err && user && user.devices.length){
       user.devices.forEach(function(device, index){
         //find location of matching uuid
@@ -254,7 +294,7 @@ userSchema.statics.unsubDevice = function(options, cb){
       //go ahead and save
       user.save(function(err, user){
         if (!err){
-          cb();
+          return cb();
         } else {
           return cb({
             clientMsg: "couldn't perform save",

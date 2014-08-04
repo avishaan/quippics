@@ -16,6 +16,22 @@ var _ = require('underscore');
 exports.list = function(req, res){
   res.send("respond with a resource");
 };
+//for logout, we are just removing notifications for that device
+exports.logout = function(req, res){
+  if (!validator.isLength(req.body.uuid, 1, 100) ||
+      !isObjectId(req.body.id)) {
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  //normalize the token
+  var uuid = new Device(req.body.uuid).toString();
+  User.removeDevice({id: req.body.id, uuid: uuid}, function(err){
+    if (!err){
+      return res.send(200, {clientMsg: "Successful Logout"});
+    } else {
+      return res.send(500, err);
+    }
+  });
+};
 exports.registerDevice = function(req, res){
   //expect a user param
   // istanbul ignore if: bad request
