@@ -526,7 +526,7 @@ exports.spec = function(domain, callback){
 
           //unsub user1 device 1
           runs(function(){
-            feedback.unsub(user1.uuid);
+            feedback.unsub(user1.uuid2);
           });
 
           waitsFor(function(){
@@ -542,7 +542,7 @@ exports.spec = function(domain, callback){
               //make sure he only has one device now
               expect(user.devices.length).toEqual(1);
               //make sure we still have device 2 in user's devices
-              expect(user.devices[0].uuid).toEqual(new Device(user1.uuid2).toString());
+              expect(user.devices[0].uuid).toEqual(new Device(user1.uuid).toString());
               done();
             });
           });
