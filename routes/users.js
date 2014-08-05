@@ -64,29 +64,17 @@ exports.registerDevice = function(req, res){
       }
       //go ahead and save the model
       user.save(function(err, user){
-        if (!err){
+        if (!err && user){
           //no error
+          return res.send(200, {clientMsg: "Sucessfully registered device"});
         } else {
           //some sort of error
+          return res.send(500, {clientMsg: "Could not update token/timestamp", err: err});
         }
       });
     } else {
       //handle me bro
-    }
-  });
-  //ORIGINAL
-  //find user associated with the id and do the update
-  User.update({_id: req.params.uid}, {deviceToken: token, tokenTimestamp: req.body.tokenTimestamp}, {}, function(err, numAffected, raw){
-    //TODO, if another user has the same token, we need to remove it from that user
-    if (!err && numAffected == 1){
-      return res.send(200, {
-        'clientMsg': "Successfully registered device"
-      });
-    // istanbul ignore else: db error
-    } else if (!err) {
-      return res.send(404, {clientMsg: "Could not update token/timestamp"});
-    } else {
-      return res.send(500, err);
+      return res.send(500, {clientMsg: "Could not update token/timestamp", err: err});
     }
   });
 };
