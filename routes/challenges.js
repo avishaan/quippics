@@ -204,10 +204,12 @@ exports.archivedChallenges = function(req, res){
     //.or([{'participants.user': req.params.uid}])
     //.where().ne({'participants.inviteStatus': 'declined'})
     .select('_id owner title createdOn submissions expiration invites participants')
-    .slice('submissions', 1) //only get one submission for each challenge
+    //.slice('submissions', 1) //only get one submission for each challenge
     .populate({
       path: 'submissions',
-      select: 'thumbnail'
+      select: 'thumbnail score rank',
+      match: {owner: req.params.uid},
+      options: {limit: 1} //we should only get one back as the user should only have one
     })
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
