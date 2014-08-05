@@ -10,6 +10,7 @@ mongoose.connection.on('connected', function(){
   console.log('Mongoose connected to ' + config.dbURI);
 });
 
+// istanbul ignore next: no test for con error
 mongoose.connection.on('error', function(err){
   console.log('Mongoose connection error: ' + err);
 });

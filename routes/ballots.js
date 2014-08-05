@@ -7,6 +7,7 @@ var isObjectId = require('valid-objectid').isValid;
 var fs = require('fs');
 
 //function for some debugging when necessary
+// istanbul ignore next: unofficial debug route
 exports.debug = function(req, res){
   console.log("debugger function for ballot entered");
   res.send(200);
@@ -14,6 +15,7 @@ exports.debug = function(req, res){
 
 //get the array of submission id's that the user has voted on
 exports.userVoted = function(req, res){
+  // istanbul ignore if: incorrect input
   if (!isObjectId(req.params.cid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -39,6 +41,7 @@ exports.userVoted = function(req, res){
           });
         });
         return res.send(200, votedSubmissions);
+        // istanbul ignore else: db error
       } else if (!err){
         return res.send(404, {clientMsg: "Could not find Challenge with that id"});
       } else {
@@ -49,6 +52,7 @@ exports.userVoted = function(req, res){
 //Submit vote for specific submission
 exports.create = function(req, res){
   //find the challenge
+  // istanbul ignore if: incorrect input
   if (!isObjectId(req.body.voter) ||
       !validator.isNumeric(req.body.score) ||
       !isObjectId(req.params.sid)
@@ -56,6 +60,7 @@ exports.create = function(req, res){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
   Submission.findOne({_id: req.params.sid}, function(err, submission){
+    // istanbul ignore else: db error
     if (!err){
       if (submission){
         //we found the submission, let's create the new ballot from the passed in parameters
@@ -70,7 +75,8 @@ exports.create = function(req, res){
           if (!err && submission){
             require("../models/activity.js").create(submission.ballots.id(newBallot.id));
             return res.send(200, submission);
-          } if (!err) {
+            // istanbul ignore else: db error
+          } else if (!err) {
             return res.send(500, {clientMsg: "Could not save submission"});
           } else {
             return res.send(500, err);

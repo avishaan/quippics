@@ -5,7 +5,6 @@
 
 var express = require('express');
 var logentries = require('node-logentries');
-var routes = require('./routes');
 var users = require('./routes/users');
 var challenges = require('./routes/challenges');
 var submissions = require('./routes/submissions');
@@ -86,7 +85,6 @@ function apiAuth(){
 //  app.use(express.errorHandler());
 //}
 //
-app.get('/', routes.index);
 app.post('/api/v1/mirror', util.mirror); //route will mirror back to you whatever it sees, useful for debugging
 app.get('/users', users.list);
 app.get('/api/v1/server', function(req, res){
@@ -108,11 +106,13 @@ app.get('/api/v1/users/:uid', apiAuth(), users.profile); //profile of specific u
 app.get('/api/v1/users/search/:search', apiAuth(), users.search); //search for a specific user
 app.post('/api/v1/register', users.register); //register new user
 app.post('/api/v1/users', apiAuth(), users.authenticate); //check password of user and return id
+app.del('/api/v1/users', apiAuth(), users.logout); //logout user
 app.post('/api/v1/users/:uid/device', apiAuth(), users.registerDevice); //register the user's device
 app.put('/api/v1/users/:uid', apiAuth(), users.update); //update an existing user
 //comment routes
 app.post('/api/v1/challenges/:cid/submissions/:sid/comments', apiAuth(), comments.create); //post a comment to a submission
 app.get('/api/v1/challenges/:cid/submissions/:sid/comments/page/:page', apiAuth(), comments.readAll); //get all of the comments
+app.get('/api/v1/challenges/:cid/submissions/:sid/comments/:comid', apiAuth(), comments.readOne); //get one of the comments
 //challenges routes
 app.get('/api/v1/challenges/:cid/users/page/:page', apiAuth(), challenges.readUsers); //read all the users in a specific challenge
 app.get('/api/v1/challenges/:cid', apiAuth(), challenges.read); //get/read a specific challenge

@@ -5,6 +5,7 @@ var Challenge = require('../models/challenge.js');
 var User = require('../models/user.js');
 var Ballot = require('../models/ballot.js');
 var Comment = require("../models/comment.js");
+var async = require('async');
 
 var submissionSchema = new mongoose.Schema({
   createdOn: { type: Date, default: Date.now },
@@ -51,41 +52,59 @@ submissionSchema.post('save', function(){
 
 //do the following after save on new instance
 submissionSchema.post('new', function(){
-  //lookup challenge for submission
-  this
-  .populate({
+  var submission = this;
+  //populate the challenge info from the submission
+  //TODO add error handling
+  submission.populate({
     path: 'challenge',
-    select: 'participants title',
-    match: {"participants.inviteStatus": {$in: ['invited', 'accepted']}} //check inviteStatus
+    select: 'owner title'
   }, function(err, submission){
-    //we have all users that have either accepted or invited to challenge, notify!
-    //put returned participants into an array of userids
-    var users = _.pluck(submission.challenge.participants, 'user');
-    User.sendNotifications({
-      users: users,
-      payload: {
-        alert: {
-          'body': 'A new submission was made!',
-          'action-loc-key': 'look at submission'
-        },
-        body: {
-          'type': 'submission',
-          '_id': submission._id,
-          'title': submission.challenge.title
-        }
-      }
-    }, function(err){
+    //lookup challenge for submission
+    if (err){
+
+    }
+    Challenge.aggregate(
+      {$project: {participants: 1}},
+      {$match: {_id: submission.challenge._id}},
+      {$unwind: "$participants"},
+      {$match: {'participants.inviteStatus': {$in: ['invited', 'accepted']}}},
+      {$project: {
+        inviteStatus: '$participants.inviteStatus',
+        user: '$participants.user'
+      }}
+    ).exec(function(err, participants){
       if (err){
-        console.error("Error! ", err, new Error().stack);
+
       }
-    });
-    submission.challenge.participants.forEach(function(user, index){
-      //send notification if they have not explicitly declined the challenge invite
-      console.log('Placeholder to send invite request to: ', user._id, 'invite status: ', user.inviteStatus);
-      console.log('Type', 'submission', 'Id', submission._id, 'Title', submission.challenge.title);
+      //we have all users that have either accepted or invited to challenge, notify!
+      //put returned participants into an array of userids converted to string
+      var users = _.map(participants, function(user){return user.user.toString();});
+      //add the owner of the challenge to the list
+      users.push(submission.challenge.owner.toString());
+      //remove the submitter of the challenge from the list
+      users = _.difference(users, submission.owner.toString());
+      //we need to convert the strings back to objectids
+      users = _.map(users, function(user){return mongoose.Types.ObjectId(user);});
+      User.sendNotifications({
+        users: users,
+        payload: {
+          alert: {
+            'body': 'A new submission was made!',
+            'action-loc-key': 'look at submission'
+          },
+          body: {
+            'type': 'submission',
+            '_id': submission._id,
+            'title': submission.challenge.title
+          }
+        }
+      }, function(err){
+        if (err){
+          console.error("Error! ", err, new Error().stack);
+        }
+      });
     });
   });
-  //send notification to each user who is still subscribing to notifications
 });
 
 //find challenge of a submission //TODO, we already store this, why the hell are we looking for it!?

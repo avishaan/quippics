@@ -13,6 +13,7 @@ exports.delete = function (req, res){
     function(cb){
       //Clear the users
       User.remove({}, function(err, users){
+        // istanbul ignore else: db error
         if (!err){
           cb(null, users);
         } else {
@@ -23,6 +24,7 @@ exports.delete = function (req, res){
     function(cb){
       //clear the challenges
       Challenge.remove({}, function(err, challenges){
+        // istanbul ignore else: db error
         if (!err){
           cb(null, challenges);
         } else {
@@ -33,6 +35,7 @@ exports.delete = function (req, res){
     function(cb){
       //clear the submissions
       Submission.remove({}, function(err, submissions){
+        // istanbul ignore else: db error
         if (!err){
           cb(null, submissions);
         } else {
@@ -43,6 +46,7 @@ exports.delete = function (req, res){
     function(cb){
       //clear the activities
       Activity.remove({}, function(err, activities){
+        // istanbul ignore else: db error
         if (!err){
           cb(null, activities);
         } else {
@@ -52,6 +56,7 @@ exports.delete = function (req, res){
     }
   ],
   function(err, results){
+    // istanbul ignore if: db error
     if (err){
       return res.send(500, err);
     } else {

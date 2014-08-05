@@ -8,12 +8,14 @@ var perPage = 24; //challenges per page
 
 //read specific challenge
 exports.read = function(req, res){
+  // istanbul ignore if: bad requests
   if (!isObjectId(req.params.cid)){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
   Challenge.findOne({_id: req.params.cid})
   .select('title owner _id description tags createdOn expiration')
   .exec(function(err, challenge){
+    // istanbul ignore else: db error
     if (!err) {
       if (challenge){
         return res.send(200, challenge);
@@ -28,6 +30,7 @@ exports.read = function(req, res){
 //get/read all the users participating in a challenge
 exports.readUsers = function(req, res){
   req.params.page = req.params.page || 1;
+  // istanbul ignore if: bad request
   if (!isObjectId(req.params.cid) ||
       !validator.isNumeric(req.params.page)){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -48,6 +51,7 @@ exports.readUsers = function(req, res){
       .exec(function(err, users){
         if (!err && users){
           cb(null, users);
+        // istanbul ignore else: db error
         } else if (!err){
           cb({clientMsg: 'No Users Present'});
         } else {
@@ -63,6 +67,7 @@ exports.readUsers = function(req, res){
       }, function(err, popUsers){
         if (!err && popUsers){
           cb(null, popUsers);
+        // istanbul ignore else: db error
         } else if (!err){
           cb({clientMsg: 'No Users Present'});
         } else {
@@ -82,6 +87,7 @@ exports.readUsers = function(req, res){
 //hide a challenge from the user archive
 exports.hideChallenge = function(req, res){
   //check the user sent everything first
+  // istanbul ignore if: bad request
   if (!isObjectId(req.params.cid) ||
       !isObjectId(req.body.user)){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -101,6 +107,7 @@ exports.hideChallenge = function(req, res){
     function(err, numAffected){
       if (!err && numAffected == 1){
         return res.send(200, {clientMsg: "Challenge Hidden"});
+      // istanbul ignore else: db error
       } else if (!err){
         console.log('numAffected: ', numAffected, 'user', req.body.user);
         return res.send(500, {clientMsg: "Couldn't Hide Challenge, try later"});
@@ -112,6 +119,7 @@ exports.hideChallenge = function(req, res){
 //decline an invite to a challenge
 exports.declineChallenge = function(req, res){
   //check the user sent everything first
+  // istanbul ignore if: bad request
   if (!isObjectId(req.params.cid) ||
       !isObjectId(req.body.user)){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -131,6 +139,7 @@ exports.declineChallenge = function(req, res){
     function(err, numAffected){
       if (!err && numAffected == 1){
         return res.send(200, {clientMsg: "Challenge Declined"});
+      // istanbul ignore else: db error
       } else if (!err){
         console.log('numAffected: ', numAffected, 'user', req.body.user);
         return res.send(500, {clientMsg: "Couldn't Decline Challenge, try later"});
@@ -142,6 +151,7 @@ exports.declineChallenge = function(req, res){
 //accept an invite to a challenge
 exports.acceptChallenge = function(req, res){
   //check the user sent everything first
+  // istanbul ignore if: bad request
   if (!isObjectId(req.params.cid) ||
       !isObjectId(req.body.user)){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -161,6 +171,7 @@ exports.acceptChallenge = function(req, res){
     function(err, numAffected){
       if (!err && numAffected === 1){
         return res.send(200, {clientMsg: "Challenge Accepted"});
+      // istanbul ignore else: db error
       } else if (!err){
         console.log('numAffected: ', numAffected, 'user', req.body.user);
         return res.send(500, {clientMsg: "Couldn't Accept Challenge, try later"});
@@ -172,6 +183,7 @@ exports.acceptChallenge = function(req, res){
 //all archived challenges applicable to me
 exports.archivedChallenges = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
+  // istanbul ignore if: bad request
   if (!isObjectId(req.params.uid) ||
       !validator.isNumeric(req.params.page)){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -205,6 +217,7 @@ exports.archivedChallenges = function(req, res){
     .sort({expiration: 'ascending'})
     .lean()
     .exec(function(err, challenges){
+      // istanbul ignore else: db error
       if (!err){
         if (challenges && challenges.length){
           //temp field for number of users invited
@@ -229,6 +242,7 @@ exports.archivedChallenges = function(req, res){
 exports.myChallenges = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
+  // istanbul ignore if: bad request
   if (!isObjectId(req.params.uid) ||
       !validator.isNumeric(req.params.page)){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -245,13 +259,13 @@ exports.myChallenges = function(req, res){
     //})
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
-    //TODO fix this date offset, this was a temp patch
     .where('expiration').gt(Date.now())
     //only return participant status of user performing this query
     //.elemMatch('participants', { user: req.params.uid })
     .sort({expiration: 'ascending'})
     .lean()
     .exec(function(err, challenges){
+      // istanbul ignore else: db error
       if (!err){
         if (challenges && challenges.length){
           //temp field for number of users invited
@@ -276,6 +290,7 @@ exports.myChallenges = function(req, res){
 };
 //make a new challenge
 exports.create = function(req, res){
+  // istanbul ignore if: bad request
   if (!validator.isAscii(req.body.title) ||
       !validator.isAscii(req.body.description) ||
       !isObjectId(req.body.owner)
@@ -299,9 +314,10 @@ exports.create = function(req, res){
     });
   }
   newChallenge.save(function(err, challenge){
+    // istanbul ignore else: db error
     if (!err){
       if (challenge){
-      //assuming a good save, add a proper activity
+      //a good save means we should add an activity 
       require("../models/activity.js").create(challenge);
       return res.send(200, challenge);
       } else {

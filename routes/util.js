@@ -1,6 +1,7 @@
 //Mirror whatever was sent into the body
 var type = require("type-detect");
 
+// istanbul ignore next: not official function
 exports.mirror = function(req, res){
   var string = "<html><body>";
   res.set({

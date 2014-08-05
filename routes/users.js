@@ -12,11 +12,29 @@ var isObjectId = require('valid-objectid').isValid;
 var Device = require('apnagent').Device;
 var _ = require('underscore');
 
+// istanbul ignore next: this function doesn't do anything
 exports.list = function(req, res){
   res.send("respond with a resource");
 };
+//for logout, we are just removing notifications for that device
+exports.logout = function(req, res){
+  if (!validator.isLength(req.body.uuid, 1, 100) ||
+      !isObjectId(req.body.id)) {
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  //normalize the token
+  var uuid = new Device(req.body.uuid).toString();
+  User.removeDevice({id: req.body.id, uuid: uuid}, function(err){
+    if (!err){
+      return res.send(200, {clientMsg: "Successful Logout"});
+    } else {
+      return res.send(500, err);
+    }
+  });
+};
 exports.registerDevice = function(req, res){
   //expect a user param
+  // istanbul ignore if: bad request
   if (!validator.isLength(req.body.uuid, 1, 100) ||
       !isObjectId(req.params.uid) ||
         !validator.isNumeric(req.body.tokenTimestamp)){
@@ -24,17 +42,60 @@ exports.registerDevice = function(req, res){
   }
   //normalize token
   var token = new Device(req.body.uuid).toString();
-  //find user associated with the id and do the update
-  User.update({_id: req.params.uid}, {deviceToken: token, tokenTimestamp: req.body.tokenTimestamp}, {}, function(err, numAffected, raw){
+  async.series([
+  function(cb){
+    //remove any existing instance of the token
+    User.removeTokens({uuid: token}, function(err, numUpdate){
+      //we don't care whether or not we can remove token as it may not exist yet
+      if (!err){
+        cb(null);
+      } else {
+        cb(err);
+      }
+    });
+  },
+  function(cb){
+    //find user associated with the uid
+    User.findOne({_id: req.params.uid})
+    .select('devices')
+    .exec(function(err, user){
+      //TODO need to handle the errors
+      //check to see if that token already exists
+      if (!err && user){
+        if (_.findWhere(user.devices, {uuid: token})){
+          //since the token exists, go ahead find it, and update timestamp
+          user.devices.forEach(function(device){
+            if (device.uuid === token){
+              device.timestamp = req.body.tokenTimestamp;
+            }
+          });
+        } else {
+          user.devices.push({
+            uuid: token,
+            timestamp: req.body.tokenTimestamp
+          });
+        }
+        //go ahead and save the model
+        user.save(function(err, user){
+          if (!err && user){
+            //no error
+            cb(null);
+          } else {
+            //some sort of error
+            cb({clientMsg: "Couldn't update user", err: err});
+          }
+        });
+      } else {
+        //handle me bro
+        cb({clientMsg: "Couldn't register device", err: err});
+      }
+    });
+  }
+  ],function(err, results){
     if (!err){
-      return res.send(200, {
-        'clientMsg': "Successfully registered device"
-      });
+      return res.send(200, {clientMsg: "Successfully registered device"});
     } else {
-      return res.send(500, {
-        clientMsg: "Could not update token/timestamp",
-        err: err
-      });
+      return res.send(500, err);
     }
   });
 };
@@ -46,6 +107,7 @@ exports.authenticate = function(req, res){
     password: req.body.password
   });
   user.authenticate(function(err, authUser){
+    // istanbul ignore else: internal error
     if (!err){
       if (authUser){
         return res.send(200, {
@@ -70,6 +132,7 @@ exports.search = function(req, res){
   User.find({username: search})
     .select('username thumbnail')
     .exec(function(err, users){
+      // istanbul ignore else: db err
       if (!err){
         if (users){
           return res.send(users);
@@ -86,6 +149,7 @@ exports.friendRequests = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   var skip = perPage * (req.params.page - 1);
+  // istanbul ignore if: bad request
   if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
      ){
@@ -102,6 +166,7 @@ exports.friendRequests = function(req, res){
       }
     })
     .exec(function(err, user){
+      // istanbul ignore else: db error
       if (!err){
         if (user) {
           return res.send(200, user); //return the list of friends and their usernames
@@ -117,6 +182,7 @@ exports.friendRequests = function(req, res){
 exports.acceptRequests = function(req, res){
   var requestorId = req.body.user;
   var acceptorId = req.params.uid;
+  // istanbul ignore if: bad request
   if (!isObjectId(req.body.user) ||
       !isObjectId(req.params.uid)
      ){
@@ -132,6 +198,7 @@ exports.acceptRequests = function(req, res){
     .select('friendRequests friends')
     .exec(function(err, acceptor){
       //load the information from the acceptor
+      // istanbul ignore else: db error
       if (!err){
         if (acceptor){
         //remove the requestor from the acceptors friendRequests array
@@ -141,6 +208,7 @@ exports.acceptRequests = function(req, res){
         acceptor.save(function(err, savedAcceptor){
           if (!err && savedAcceptor){
             cb(null, savedAcceptor);
+          // istanbul ignore else: db error
           } else if (!err && !savedAcceptor){
             cb({clientMsg: "Could not save updated friend in acceptor"});
           } else {
@@ -169,12 +237,14 @@ exports.acceptRequests = function(req, res){
           requestor.save(function(err, savedRequestor){
             if (!err && savedRequestor){
               cb(null, savedRequestor);
+              // istanbul ignore else: db error
             } else if(!err && !savedRequestor){
               cb({clientMsg: "Could not save updated friend in requestor"});
             } else {
               cb(err);
             }
           });
+        // istanbul ignore else: db error
         } else if(!err && !requestor){
           cb({clientMsg: "Could not find user requesting the acceptance of the request"});
         } else {
@@ -200,6 +270,7 @@ exports.declinedRequests = function(req, res){
   //        { $pull: {friendRequests: {_id: req.body.user}}}, function(err, num, raw){
   //          res.send(200);
   //        });
+  // istanbul ignore if: bad request
   if (!isObjectId(req.body.user) ||
       !isObjectId(req.params.uid)
      ){
@@ -215,12 +286,14 @@ exports.declinedRequests = function(req, res){
       decliner.save(function(err, user){
         if (!err && user){
           return res.send(200, {clientMsg: "Friend request declined"});
+        // istanbul ignore else: db error
         } else if (!err && !user){
           return res.send(500, {clientMsg: "Couldn't decline friend request, try again"});
         } else {
           return res.send(500, err);
         }
       });
+    // istanbul ignore else: db error
     } else if(!err){
       return res.send(404, {clientMsg: "Couldn't find user, check user id"})
     } else {
@@ -230,6 +303,7 @@ exports.declinedRequests = function(req, res){
 };
 //make a friend request from user in body to user in the :uid
 exports.requestFriend = function(req, res){
+  // istanbul ignore if: bad request
   if (!isObjectId(req.params.uid) ||
       !isObjectId(req.body.friend)
      ){
@@ -242,6 +316,7 @@ exports.requestFriend = function(req, res){
       .findOne({_id: req.body.friend})
       .select('_id requestedFriends')
       .exec(function(err, initiator){
+        // istanbul ignore else: db error
         if (!err && initiator) {
           //make sure this user hasn't tried this before, if so stop him
           //TODO below is super inefficient, consider using lean query
@@ -255,6 +330,7 @@ exports.requestFriend = function(req, res){
             initiator.save(function(err, user){
               if (!err && user){
               return cb(null);//go to next step in the series 
+              // istanbul ignore else: db error
               } else if (!err){
                 return cb({clientMsg: "Could not save friend request, try again later"});
               } else {
@@ -280,12 +356,14 @@ exports.requestFriend = function(req, res){
           acceptor.save(function(err, user){
             if (!err && user){
               return cb(null);
+            // istanbul ignore else: db error
             } else if (!err){
               return cb({clientMsg: "Could not save friend request, try again later"});
             } else {
               return cb(err);
             }
           });
+        // istanbul ignore else: db error
         } else if (!err){
           return cb({clientMsg: "Could not find user, check user and try again later"});
         } else {
@@ -310,6 +388,7 @@ exports.listFriends = function(req, res){
   req.params.page = req.params.page || 1;
   var skip = perPage * (req.params.page - 1);
 
+  // istanbul ignore if: bad request
   if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
      ){
@@ -326,6 +405,7 @@ exports.listFriends = function(req, res){
       }
     })
     .exec(function(err, user){
+      // istanbul ignore else: db error
       if (!err){
         if (user) {
           return res.send(200, user); //return the list of friends and their usernames
@@ -343,6 +423,7 @@ exports.listUsers = function(req, res){
   //TODO, show users with pending friend requests
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
+  // istanbul ignore if: bad request
   if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
      ){
@@ -355,6 +436,7 @@ exports.listUsers = function(req, res){
     .exec(function(err, users){
       if(!err && users.length){
         return res.send(200, users);
+      // istanbul ignore else: db error
       } else if (!err){
         return res.send(404, {clientMsg: "Could not find users"});
       } else {
@@ -364,6 +446,7 @@ exports.listUsers = function(req, res){
 };
 //get profile of a user
 exports.profile = function(req, res){
+  // istanbul ignore if: bad request
   if (!isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -371,6 +454,7 @@ exports.profile = function(req, res){
   User.findOne({_id: req.params.uid})
     .select('username email thumbnail rank')
     .exec(function(err, user){
+      // istanbul ignore else: db error
       if (!err){ //no error
         if (user){
           return res.send(200, user);
@@ -384,11 +468,13 @@ exports.profile = function(req, res){
 };
 //Update a user here
 exports.update = function(req, res){
+  // istanbul ignore if: bad request
   if (!isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
   User.findOne({_id: req.params.uid}, function(err, user){
+    // istanbul ignore else: db error
     if (!err){
       if (user){
         //get the information passed in from the body and set it to the properties of the model
@@ -398,6 +484,7 @@ exports.update = function(req, res){
         user.addImage(req, function(){
           //save the user the user to the database.
           user.save(function(err, updatedUser){
+            // istanbul ignore else: db error
             if (!err){
               return res.send(200, {
                 username: updatedUser.username,
@@ -422,12 +509,14 @@ exports.update = function(req, res){
 
 //Register a new user here
 exports.register = function(req, res){
+  //TODO add validation to the incoming body
   var user = new User({
     username: req.body.username,
     password: req.body.password,
     email: req.body.email
   });
   user.addImage(req, function(err){
+    // istanbul ignore else: db error
     if (!err){
       user.save(function(err, newUser){
         if (!err){

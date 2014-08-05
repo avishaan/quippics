@@ -56,7 +56,7 @@ exports.spec = function(domain, callback){
     },
     function(cb){
       describe("Users", function(){
-        it("should allow a user such as nerdy to register with a picture", function(){
+        it("should allow a user such as nerdy to register with a picture", function(done){
           superagent
           .post(domain + "/register")
           .type('form')
@@ -68,6 +68,7 @@ exports.spec = function(domain, callback){
             expect(res.status).toEqual(200);
             user2._id = res.body._id;
             cb(null);
+            done();
           });
         });
       });
@@ -178,7 +179,20 @@ exports.spec = function(domain, callback){
         expect(comments[0].commenter.thumbnail).toBeDefined();
         expect(comments[0].date).toBeDefined();
 
-        cb(null);
+        //test getting a specific comment (we have a list at this point)
+        frisby
+        .create("Get a specific comment")
+        .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/comments/' + comments[0]._id)
+        .expectStatus(200)
+        .afterJSON(function(comment){
+          expect(comment.comment).toBeDefined();
+          expect(comment.commenter).toBeDefined();
+          expect(comment._id).toBeDefined();
+          expect(comment.modelType).toBeDefined();
+          expect(comment.date).toBeDefined();
+          cb(null);
+        })
+        .toss();
       })
       .toss();
     },

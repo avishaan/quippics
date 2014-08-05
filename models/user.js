@@ -17,9 +17,11 @@ var userSchema = new mongoose.Schema({
   username: {type: String, unique: true},
   firstName: {type: String},
   lastName: {type: String},
-  deviceToken: {type: String}, //unique token set with each login
+  devices: [{
+    uuid: String,
+    timestamp: Date
+  }],
   allowNotifications: {type: Boolean, default: true}, //whether or not to send the user notifications
-  tokenTimestamp: {type: Date}, //date of last registration
   email: {type: String},
   friends: [
     {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
@@ -45,6 +47,7 @@ userSchema.path('username').validate(function(value, done){
   var userInQuestion = this;
   User.findOne({username: new RegExp('^'+value+'$', "i")})
     .exec(function(err, user){
+      // istanbul ignore else: db query error
       if (!err){
         if (user){
           //if there is a user, then it should fail validation only if it is not the same as the user in question
@@ -59,7 +62,8 @@ userSchema.path('username').validate(function(value, done){
         }
       } else {
         //there was a db query error, throw an error
-        throw err;
+        console.log("Error: ", err, new Error().stack);
+        return done(true);
       }
     });
 }, 'Username already exists');
@@ -97,6 +101,7 @@ userSchema.methods.addImage = function(req, next){
       function(err, stdout, stderr, command){
         that.thumbnail.contentType = uploadedImage.type;
         that.thumbnail.data = fs.readFileSync(thumbPath);
+        // istanbul ignore else: happens with file read error
         if (!err){
           next(null);
         } else {
@@ -114,10 +119,12 @@ userSchema.methods.authenticate = function(cb){
   //first find the user
   User.findOne({username: new RegExp('^'+authUser.username+'$', "i")}) //use regex for case insensitive
     .exec(function(err, user){
+      // istanbul ignore else: db error
       if(!err){
         if (user){
          // //since we found a user, let's go ahead and check their password
          user.checkPassword(authUser.password, function(err, user){
+           // istanbul ignore else: db error
            if(!err){
              if(user){
                return cb(null, user);
@@ -146,6 +153,7 @@ userSchema.methods.authenticate = function(cb){
 userSchema.methods.hashPassword = function(cb){
   var user = this;
   return bcrypt.hash(user.password, SALT_WORK_FACTOR, function(err, hash){
+    // istanbul ignore else: bcrypt error
     if(!err){
       //salt is always included in the hash and so doesn't need to be stored
       user.password = hash;
@@ -159,6 +167,7 @@ userSchema.methods.hashPassword = function(cb){
 userSchema.methods.checkPassword = function(testPassword, cb){
   var user = this;
   return bcrypt.compare(testPassword, user.password, function(err, isMatch){
+    // istanbul ignore else: bcrypt error
     if (!err){
       if (isMatch){
         return cb(null, user);
@@ -180,6 +189,8 @@ userSchema.methods.checkPassword = function(testPassword, cb){
  * @config {object} err Passed Error
  */
 userSchema.statics.sendNotifications = function(options, cb){
+  //TODO, why the hell do we need this when it is present above, I added this during testing and without this some testing fails
+  var agent = require('../apn/apn.js');
   if (!options.users || !options.payload){
     return cb({
       clientMsg: "Malformed request",
@@ -187,24 +198,25 @@ userSchema.statics.sendNotifications = function(options, cb){
   }
   var alert = options.payload.alert;
   var body = options.payload.body;
-
-  User.find({_id: {$in: options.users}})
-  .select('allowNotifications deviceToken')
-  .lean()
-  .exec(function(err, users){
-    if (!err && users.length){
-      users.forEach(function(user, index){
-        if (user.allowNotifications && user.deviceToken){
-          //if the user wants notifications and has deviceToken
-          agent.createMessage()
-          .device(user.deviceToken)
-          .alert(alert)
-          .set(body)
-          .send(function(err){
-          });
-          //we don't care about the '.send' callback as we listen for errors on agent
-          return cb(null);
-        }
+  User.aggregate([
+    {$match: {_id: {$in: options.users}}},
+    {$unwind: "$devices"},
+    {$project: {
+      uuid: '$devices.uuid',
+      timestamp: '$devices.timestamp',
+      _id: 0
+    }}
+  ], function(err, devices){
+    if (!err && devices.length){
+      devices.forEach(function(device, index){
+        agent.createMessage()
+        .device(device.uuid)
+        .alert(alert)
+        .set(body)
+        .send(function(err){
+        });
+        //we don't care about the '.send' callback as we listen for errors on agent
+        return cb(null);
       });
     } else if (!err){
       return cb(null);
@@ -213,28 +225,102 @@ userSchema.statics.sendNotifications = function(options, cb){
     }
   });
 };
-//find user by token and unsubscribe
-userSchema.statics.stopNotifications = function(options, cb){
+//remove duplicate tokens from other users, remove this token from all other users
+userSchema.statics.removeTokens = function(options, cb){
+  if (!options.uuid){
+    return cb({clientMsg: "Malformed request"});
+  }
+  //find any users that already have this token
+  User.update({
+    'devices.uuid': options.uuid
+  }, {
+    $pull: {devices: {uuid: options.uuid}}
+  },{
+    multi: true
+  },function(err, numUpdate){
+    if (!err){
+      return cb(null, numUpdate);
+    } else {
+      return cb(err);
+    }
+  });
+};
+
+//Remove device from user
+userSchema.statics.removeDevice = function(options, cb){
+  if (!options.id|| !options.uuid){
+    return cb({
+      clientMsg: "Malformed request",
+    });
+  }
+  //find user attempting the logout
+  User
+  .findOne({
+    _id: options.id,
+    'devices.uuid': options.uuid
+  })
+  .select('devices')
+  .exec(function(err, user){
+    if (!err && user && user.devices.length){
+      //go through the list of user devices and find matching device
+      user.devices.forEach(function(device, index){
+        //check device matching
+        if (options.uuid === device.uuid){
+          //remove from user devices list
+          user.devices.splice(index, 1);
+          user.save(function(err, user){
+            if (!err && user){
+              return cb();
+            } else {
+              return cb({clientMsg: "Couldn't remove device from user"});
+            }
+          });
+        }
+      });
+    } else {
+      //couldn't find the user for whatever reason
+      return cb({
+        clientMsg: "Couldn't Find User to Logout"
+      });
+    }
+  });
+  //go through the list of devices for that user
+  //when you find the matching device, go ahead and remove that device
+};
+//find user that has the device token and remove the device
+userSchema.statics.unsubDevice = function(options, cb){
   if (!options.device || !options.timestamp){
     return cb({
       clientMsg: "Malformed request",
     });
   }
+  //find the user associated with the uuid
   User
-  .findOne({deviceToken: options.device.toString()})
-  .select('allowNotifications tokenTimestamp')
+  .findOne({'devices.uuid': options.device.toString()})
+  .select('devices')
   .exec(function(err, user){
-    if (!err && user){
-      //compare the timestamps
-      if (user.tokenTimestamp < options.timestamp ){
-        //user registered and THEN an unsub came in, stop notifications
-        user.allowNotifications = false;
-        user.save(); //it's not important, assume a save
-        return cb();
-      }
-    } else if (!err && !user){
-      //found no user, ignore. maybe the user was deleted
-      return cb();
+    if (!err && user && user.devices.length){
+      user.devices.forEach(function(device, index){
+        //find location of matching uuid
+        if (device.uuid === options.device.toString()){
+          //once you find the user, check the unsub timestamp
+           if (device.timestamp < options.timestamp){
+             //if the time of the unsub is greater than in devices, unsub
+             user.devices.splice(index, 1);
+           }
+        }
+      });
+      //go ahead and save
+      user.save(function(err, user){
+        if (!err){
+          return cb();
+        } else {
+          return cb({
+            clientMsg: "couldn't perform save",
+            err: err
+          });
+        }
+      });
     } else {
       return cb({
         clientMsg: "Couldn't find user",
@@ -243,155 +329,6 @@ userSchema.statics.stopNotifications = function(options, cb){
     }
   });
 };
-/**
- * Add a DewDrop supporter to a user. Keep in mind often times you will support a user that doesn't
- * exist yet in which case you will need to create him right then
- * @param {object} users The user details for receiver and supporter
- * @config {object} supporter The details of the supporter
- * @config {object} receiver The details of the person receiving the support
- * @param {function} cb
- * @config {object} err Passed Error
- * @config {object} user returned mongoose user object
- */
-userSchema.statics.supportUser = function(users, cb){
-
-  async.series([
-    function(cb){
-      //TODO, make sure we check the properties also
-      if (users.supporter && users.receiver){ //everything needed was passed in
-        return cb(null);
-      } else {
-        return cb({"clientMsg": "You didn't pass me the information for the users!"})
-      }
-    },
-    function(cb){
-      //does the supporter exist in the database?
-      User.findUser(users.supporter, function(err, supporter){
-        if (!err){
-          if (supporter){
-            users.supporter = supporter;
-            return cb(null);
-          } else {
-            //if not, go ahead and create the supporter
-            return User.createUser(users.supporter, function(err, supporter){
-              if (!err){
-                if (supporter){
-                  //assign our user.supporter as the passed back supporter for ease of use
-                  users.supporter = supporter;
-                  return cb(null);
-                } else {
-                  return cb({"clientMsg": "Supporter creation came back blank for some reason"});
-                }
-              } else {
-                return cb(err);
-              }
-            });
-          }
-        } else {
-          return cb(err);
-        }
-      });
-
-    },
-    function(cb){
-      //does the receiver exist in the database?
-      User.findUser(users.receiver, function(err, receiver){
-        if (!err){
-          if (receiver){
-            users.receiver = receiver;
-            return cb(null);
-          } else {
-            //if not, go ahead and create the receiver
-            return User.createUser(users.receiver, function(err, receiver){
-              if (!err){
-                if (receiver){
-                  //assign our user.receiver as the passed back receiver for ease of use
-                  users.receiver = receiver;
-                  return cb(null);
-                } else {
-                  return cb({"clientMsg": "receiver creation came back blank for some reason"});
-                }
-              } else {
-                return cb(err);
-              }
-            });
-          }
-        } else {
-          return cb(err);
-        }
-      });
-
-    }
-  ], function(err){
-    if (err){
-      cb(err, null);
-    }
-    //now that both exist, go ahead and add the supporter to the supporter array of the receiver doc
-    users.receiver.supporters.push(users.supporter.id);
-    users.receiver.save(function(err, receiver){//save that change
-      cb(null, receiver);
-      //return appropriate information
-    });
-
-  });
-
-};
-
-userSchema.statics.createUser = function(user, cb){
-  var newUser = {};
-  newUser[user.network] = user.id; //follow format of {"facebook": 2};
-  User.create(newUser, function(err, user){
-    if (!err){
-      if (user){
-        return cb(null, user);
-      } else {
-        return cb({"clientMsg": "Could not save"}, null);
-      }
-    } else {
-      return cb(err, null);
-    }
-  })
-};
-
-/**
- * Find a DewDrop user by passing in their social network id and social network type
- * @param {object} user The user details
-   * @config {string} network The network type
-   * @config {string} userid The user's network specific id
- * @param {function} cb
-   * @config {string} err Passed Error
-   * @config {object} user returned mongoose user object
- */
-userSchema.statics.findUser = function(user, cb){
-
-  //make sure everything we need to find a user is passed in.
-  if (!user.id && !user.network){
-    return cb({"clientMsg": "You left either the id or network type blank. Please update and try again"})
-  }
-  //lower case network type for consistency
-  user.network = user.network.toLowerCase();
-
-  //make sure the network type is one of the following
-  if (user.network !== ("facebook" || "twitter")){
-    return cb({"clientMsg": "You did not pass in a valid network type (facebook/twitter)"});
-  }
-  //find our user based on their social network type and social network id
-  return User.findOne({})
-    .or([{'facebook':user.id},{'twitter':user.id}]) //the userid should make a match with either facebook or twitter
-    .exec(function(err, user){
-      if (!err) {
-        if (user){
-          cb (null, user);
-        } else {
-          return cb(null, null);
-        }
-      } else {
-        return cb(err, null);
-      }
-
-    });
-};
-
 var User = mongoose.model('User', userSchema);
 
 module.exports = User;

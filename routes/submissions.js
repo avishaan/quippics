@@ -8,6 +8,7 @@ var perPage = 24; //submission per page
 //read a specific submission
 exports.readOne = function(req, res){
   //find the submission
+  // istanbul ignore if: bad request
   if (!isObjectId(req.params.sid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -24,6 +25,7 @@ exports.readOne = function(req, res){
     select: 'username'
   })
   .exec(function(err, submission){
+    // istanbul ignore else: db error
     if (!err){ //no error
       if (submission){ //we found a submission by that id
         return res.send(200, submission);
@@ -36,6 +38,7 @@ exports.readOne = function(req, res){
   });
 };
 exports.readTop = function(req, res){
+  // istanbul ignore if: bad request
   if (!isObjectId(req.params.cid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -47,9 +50,11 @@ exports.readTop = function(req, res){
       select: '-ballots' //don't return the ballots, we don't need it
     })
     .exec(function(err, challenge){
+      // istanbul ignore else: db error
       if (!err){
         //TODO could use aggregation framework for this instead
         challenge.topSubmission(challenge, function(err, submission){ //return the top submission from the challenge
+          // istanbul ignore else: db error
           if (!err && submission){
             //find the submission again and populate the username this time
             Submission
@@ -60,10 +65,19 @@ exports.readTop = function(req, res){
                 select: 'username'
               })
               .exec(function(err, submission){
-                submission = submission.toJSON();
-                //make the username the owner value instead of the complex object
-                submission.owner = submission.owner.username;
-                return res.send(200, submission);
+                if (!err && submission){
+                  submission = submission.toJSON();
+                  //make the username the owner value instead of the complex object
+                  submission.owner = submission.owner.username;
+                  return res.send(200, submission);
+                // istanbul ignore else: db error
+                } else if(!err){
+                  //TODO check the validity of this route
+                  //this means there is no top submission
+                  return res.send(200, {});
+                } else {
+                  return res.send(500, err);
+                }
               });
           } else if (!submission){
             return res.send(404, {clientMsg: "Couldn't find any top challenges"});
@@ -79,6 +93,7 @@ exports.readTop = function(req, res){
 //read challenge of a specific user
 exports.userSubmission = function(req, res){
   //make sure we are looking at the right challenge, we only want to know for a specific challenge
+  // istanbul ignore if: bad request
   if (!isObjectId(req.params.cid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -108,6 +123,7 @@ exports.userSubmission = function(req, res){
             return res.send(404, {clientMsg: "This user doesn't have a submission here"});
           }
         });
+      // istanbul ignore else: db error
       } else if (!challenge){
         return res.send(404, {clientMsg: "This user doesn't have a submission here"});
       } else {
@@ -120,6 +136,7 @@ exports.readAll = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   //find all the submissions for a specific challenge
+  // istanbul ignore if: bad request
   if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.cid)
      ){
@@ -135,6 +152,7 @@ exports.readAll = function(req, res){
       select: '-image'
     })
     .exec(function(err, challenge){
+      // istanbul ignore else: db error
       if (!err){
         if (challenge && challenge.submissions.length){
           return res.send(200, challenge.submissions);
@@ -149,6 +167,7 @@ exports.readAll = function(req, res){
 //Submit submission for specific challenge
 exports.create = function(req, res){
   //see if the owner already has submitted a challenge here
+  // istanbul ignore if: bad request
   if (!isObjectId(req.params.cid) ||
       !isObjectId(req.body.owner)
      ){
@@ -165,11 +184,13 @@ exports.create = function(req, res){
       //if the length of the populated submissions array is one it means the user has already made a submission
       if (challenge.toJSON().submissions.length === 1){
         return res.send(409, {clientMsg: "You have already submitted. You can't submit again"});
-      } else { //user hasn't submitted, go ahead and let him make his submission
+      // istanbul ignore else: db error
+      } else if(!err) { //user hasn't submitted, go ahead and let him make his submission
         //find the challenge
         Challenge
           .findOne({_id: req.params.cid})
           .exec(function(err, challenge){
+            // istanbul ignore else: db error
             if (!err){
               if (challenge){
                 //we found the challenge, let's create the new submission from the passed in parameters
@@ -185,11 +206,13 @@ exports.create = function(req, res){
                   newSubmission.owner = req.body.owner;
                   //save the submission first, we need to get the id back from the save so we can store it in our list of submissions in the challenge model
                   newSubmission.save(function(err, submission){
+                    // istanbul ignore else: image error
                     if (!err){
                       //put the submission id in our array of submissions
                       challenge.submissions.push(submission._id);
                       //now we have to save the challenge
                       challenge.save(function(err, challenge){
+                        // istanbul ignore else: db error
                         if (!err){
                           //add a related submission activity
                           require('../models/activity.js').create(submission);
@@ -210,6 +233,8 @@ exports.create = function(req, res){
               return res.send(500, err);
             }
           });
+      } else {
+        return res.send(500, err);
       }
     });
 };

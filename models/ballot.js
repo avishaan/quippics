@@ -8,6 +8,7 @@ var ballotSchema = new mongoose.Schema({
 });
 
 ballotSchema.pre('save', function(next){ //right before saving a new ballot, make a new entry in the activity collection
+  // istanbul ignore else: ballot vote can't be changed
   if (this.isNew && this.isModified()){
     //TODO better way to use activity's
     //Activity.createBallot(this); //create activity entry for this
