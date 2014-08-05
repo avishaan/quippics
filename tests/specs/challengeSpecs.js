@@ -21,6 +21,10 @@ var user3 = {
 var challenge1 = {};
 var challenge2 = {};
 var challenge3 = {};
+
+var submission1 = {};
+var submission2 = {};
+
 exports.spec = function(domain, callback){
   jasmine.getEnv().defaultTimeoutInterval = 1000;
   async.series([
@@ -122,6 +126,58 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
+      //have user1 submit into the challenge
+      describe("A Submission", function(){
+        it("can be submitted by a User1 into challenge 1", function(done){
+          superagent
+          .post(domain + "/challenges/" + challenge1._id + "/submissions")
+          .type('form')
+          .attach("image", "./tests/specs/images/onepixel.png")
+          .field("owner", user1._id)
+          .end(function(err, res){
+            var submission = res.body;
+            //make sure something was returned in the response body
+            expect(submission).toBeDefined();
+            //make sure the id in the response body was returned
+            expect(submission._id).toBeDefined();
+            //expect 200 response
+            expect(res.status).toEqual(200);
+            submission1._id = submission._id;
+            //console.log("here is the returned superagent submission");
+            //console.log(submission);
+            cb(null);
+            done();
+          });
+        });
+      });
+    },
+    function(cb){
+      //have user2 submit into the challenge
+      describe("A Submission", function(){
+        it("can be submitted by a User2 into challenge 1", function(done){
+          superagent
+          .post(domain + "/challenges/" + challenge1._id + "/submissions")
+          .type('form')
+          .attach("image", "./tests/specs/images/onepixel.png")
+          .field("owner", user2._id)
+          .end(function(err, res){
+            var submission = res.body;
+            //make sure something was returned in the response body
+            expect(submission).toBeDefined();
+            //make sure the id in the response body was returned
+            expect(submission._id).toBeDefined();
+            //expect 200 response
+            expect(res.status).toEqual(200);
+            submission2._id = submission._id;
+            //console.log("here is the returned superagent submission");
+            //console.log(submission);
+            cb(null);
+            done();
+          });
+        });
+      });
+    },
+    function(cb){
       frisby
       .create("Get all the challenges for the nerdy user")
       .get(domain + '/users/' + user2._id + '/challenges/page/1')
@@ -130,6 +186,8 @@ exports.spec = function(domain, callback){
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
+        expect(challenges[0].submissions.length).toEqual(1);
+        expect(challenges[0].submissions[0].thumbnail).toBeDefined();
         expect(challenges[0].participants.length).toEqual(1);
         expect(challenges[0].participants[0].inviteStatus).toEqual('invited'); //right now everyone is only invited
         cb(null);

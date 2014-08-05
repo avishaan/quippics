@@ -251,12 +251,12 @@ exports.myChallenges = function(req, res){
     .find({'participants.inviteStatus': {$ne: 'declined'}}, {participants: {$elemMatch: {user: req.params.uid}}})
     .or([{owner: req.params.uid}, {'participants.user': req.params.uid}, {privacy: 'public'}])
     //.where().ne({'participants.inviteStatus': 'declined'})
-    .select('_id owner title createdOn expiration invites')
-    //.slice('submissions', 1) //only get one submission for each challenge
-    //.populate({
-    //  path: 'submissions',
-    //  select: 'thumbnail'
-    //})
+    .select('_id owner title submissions createdOn expiration invites')
+    .slice('submissions', 1) //only get one submission for each challenge
+    .populate({
+      path: 'submissions',
+      select: 'thumbnail'
+    })
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
     .where('expiration').gt(Date.now())
