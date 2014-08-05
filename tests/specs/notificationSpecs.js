@@ -565,6 +565,52 @@ exports.spec = function(domain, callback){
             });
           });
         });
+        it("Should not allow two users to have the same device id", function(done){
+          //register user3 with user2's device
+          superagent
+          .post(domain + '/users/' + user3._id + '/device')
+          .send({
+            uuid: user2.uuid,
+            tokenTimestamp: user2.tokenTimestamp
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            //after register do a search for that device and make sure only one user is returned
+            User
+            .find({'devices.uuid': new Device(user2.uuid).toString()})
+            .select('username')
+            .exec(function(err, users){
+              //expect only one user returned with that device uuid
+              expect(users.length).toEqual(1);
+              //expect the user returned to be user3
+              expect(users[0].username).toEqual(user3.username);
+              done();
+            });
+          });
+        });
+        it("user2 should be able to register with his id back", function(done){
+          //register user2 with user2's device
+          superagent
+          .post(domain + '/users/' + user2._id + '/device')
+          .send({
+            uuid: user2.uuid,
+            tokenTimestamp: user2.tokenTimestamp
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            //after register do a search for that device and make sure only one user is returned
+            User
+            .find({'devices.uuid': new Device(user2.uuid).toString()})
+            .select('username')
+            .exec(function(err, users){
+              //expect only one user returned with that device uuid
+              expect(users.length).toEqual(1);
+              //expect the user returned to be user2
+              expect(users[0].username).toEqual(user2.username);
+              done();
+            });
+          });
+        });
         it("Should not send notifications to declined users", function(done){
           done();
           cb(null);
