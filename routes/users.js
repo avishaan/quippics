@@ -42,39 +42,60 @@ exports.registerDevice = function(req, res){
   }
   //normalize token
   var token = new Device(req.body.uuid).toString();
-  //find user associated with the uid
-  User.findOne({_id: req.params.uid})
-  .select('devices')
-  .exec(function(err, user){
-    //TODO need to handle the errors
-    //check to see if that token already exists
-    if (!err && user){
-      if (_.findWhere(user.devices, {uuid: token})){
-        //since the token exists, go ahead find it, and update timestamp
-        user.devices.forEach(function(device){
-          if (device.uuid === token){
-            device.timestamp = req.body.tokenTimestamp;
+  async.series([
+  function(cb){
+    //remove any existing instance of the token
+    User.removeTokens({uuid: token}, function(err, numUpdate){
+      //we don't care whether or not we can remove token as it may not exist yet
+      if (!err){
+        cb(null);
+      } else {
+        cb(err);
+      }
+    });
+  },
+  function(cb){
+    //find user associated with the uid
+    User.findOne({_id: req.params.uid})
+    .select('devices')
+    .exec(function(err, user){
+      //TODO need to handle the errors
+      //check to see if that token already exists
+      if (!err && user){
+        if (_.findWhere(user.devices, {uuid: token})){
+          //since the token exists, go ahead find it, and update timestamp
+          user.devices.forEach(function(device){
+            if (device.uuid === token){
+              device.timestamp = req.body.tokenTimestamp;
+            }
+          });
+        } else {
+          user.devices.push({
+            uuid: token,
+            timestamp: req.body.tokenTimestamp
+          });
+        }
+        //go ahead and save the model
+        user.save(function(err, user){
+          if (!err && user){
+            //no error
+            cb(null);
+          } else {
+            //some sort of error
+            cb({clientMsg: "Couldn't update user", err: err});
           }
         });
       } else {
-        user.devices.push({
-          uuid: token,
-          timestamp: req.body.tokenTimestamp
-        });
+        //handle me bro
+        cb({clientMsg: "Couldn't register device", err: err});
       }
-      //go ahead and save the model
-      user.save(function(err, user){
-        if (!err && user){
-          //no error
-          return res.send(200, {clientMsg: "Sucessfully registered device"});
-        } else {
-          //some sort of error
-          return res.send(500, {clientMsg: "Could not update token/timestamp", err: err});
-        }
-      });
+    });
+  }
+  ],function(err, results){
+    if (!err){
+      return res.send(200, {clientMsg: "Successfully registered device"});
     } else {
-      //handle me bro
-      return res.send(500, {clientMsg: "Could not update token/timestamp", err: err});
+      return res.send(500, err);
     }
   });
 };

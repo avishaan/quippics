@@ -225,6 +225,27 @@ userSchema.statics.sendNotifications = function(options, cb){
     }
   });
 };
+//remove duplicate tokens from other users, remove this token from all other users
+userSchema.statics.removeTokens = function(options, cb){
+  if (!options.uuid){
+    return cb({clientMsg: "Malformed request"});
+  }
+  //find any users that already have this token
+  User.update({
+    'devices.uuid': options.uuid
+  }, {
+    $pull: {devices: {uuid: options.uuid}}
+  },{
+    multi: true
+  },function(err, numUpdate){
+    if (!err){
+      return cb(null, numUpdate);
+    } else {
+      return cb(err);
+    }
+  });
+};
+
 //Remove device from user
 userSchema.statics.removeDevice = function(options, cb){
   if (!options.id|| !options.uuid){
