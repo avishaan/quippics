@@ -188,6 +188,11 @@ exports.spec = function(domain, callback){
         expect(challenges.length).toEqual(1);
         expect(challenges[0].submissions.length).toEqual(1);
         expect(challenges[0].submissions[0].thumbnail).toBeDefined();
+        expect(challenges[0].expiration).toBeDefined();
+        expect(challenges[0].owner).toBeDefined();
+        expect(challenges[0].title).toBeDefined();
+        expect(challenges[0].unscored).toBeDefined();
+        expect(challenges[0].numParticipants).toBeDefined();
         expect(challenges[0].participants.length).toEqual(1);
         expect(challenges[0].participants[0].inviteStatus).toEqual('invited'); //right now everyone is only invited
         cb(null);
