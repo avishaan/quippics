@@ -107,7 +107,7 @@ response: {
 
 ####Get list of expired/archived challenges for a specific user
 #####_Status: Developed, Partially Tested
-GET '/v1/users/:uid/challenges/archive/page/:page'
+GET '/v1/users/:uid/challenges/archive/page/:page'  
 GET '/v1/users/:uid/submissions/archive/page/:page' **(depreciated)**
 
 Example Response
