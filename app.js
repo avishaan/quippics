@@ -117,6 +117,7 @@ app.get('/api/v1/challenges/:cid/submissions/:sid/comments/:comid', apiAuth(), c
 app.get('/api/v1/challenges/:cid/users/page/:page', apiAuth(), challenges.readUsers); //read all the users in a specific challenge
 app.get('/api/v1/challenges/:cid', apiAuth(), challenges.read); //get/read a specific challenge
 app.post('/api/v1/challenges', apiAuth(), challenges.create); //create a new challenge
+app.get('/api/v1/users/:uid/submissions/archive/page/:page', apiAuth(), challenges.archivedChallenges); //retrieve all challenges that are archived (typically just expired)
 app.get('/api/v1/users/:uid/challenges/archive/page/:page', apiAuth(), challenges.archivedChallenges); //retrieve all challenges that are archived (typically just expired)
 app.get('/api/v1/users/:uid/challenges/page/:page', apiAuth(), challenges.myChallenges); //retrieve all current challenges applicable to me
 app.post('/api/v1/challenges/:cid/accepts', apiAuth(), challenges.acceptChallenge); //accept a challenge
