@@ -80,6 +80,7 @@ response:
 POST /v1/users/:uid/device
 
 - Expecting value in seconds from UTC epoch
+- Device tokens remain unique, server will prevent two users from having same token
 
 Example Request
 ```
