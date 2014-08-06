@@ -101,7 +101,7 @@ userSchema.statics.resetPassword = function(uid, cb){
       var text = "Your password has been reset to: " + user.password + "\nPlease change your password upon login";
       //save the new password by saving the model
       return user.save(function(err, user){
-        if (!err){
+        if (!err && user){
           //send out an email
           console.log('email updated pw', user.password);
           transporter.sendMail({
@@ -113,16 +113,18 @@ userSchema.statics.resetPassword = function(uid, cb){
             if (!err){
               return cb(null);
             } else {
-              console.warn('mail err:' + err);
-              return cb(err);
+              console.warn('mail error: ',err, new Error().stack);
+              cb({clientMsg: "Could not reset password"});
             }
           });
         } else {
-          cb(err);
+          console.warn(err, new Error().stack);
+          cb({clientMsg: "Could not reset password"});
         }
       });
     } else {
-      cb(err);
+      console.warn(err, new Error().stack);
+      cb({clientMsg: "Could not reset password"});
     }
   });
 };
