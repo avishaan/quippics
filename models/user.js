@@ -87,9 +87,10 @@ userSchema.pre('save', function(next){
 });
 //assign tmp password and email
 userSchema.statics.resetPassword = function(uid, cb){
+  var transporter = require('../mail/transporter.js');
   //find the user by id
   User.findOne({_id: uid})
-  .select('password')
+  .select('password email')
   .exec(function(err, user){
     if (!err){
       //generate a new random password
@@ -99,7 +100,15 @@ userSchema.statics.resetPassword = function(uid, cb){
         if (!err){
           //send out an email
           console.log('email updated pw', user.password);
-          return cb(null);
+          transporter.sendMail({
+            from: 'test@quipics.com',
+            to: user.email,
+            subject: 'password reset',
+            text: 'password has been reset'
+          }, function(err){
+            console.log('mail err:' + err);
+            return cb(null);
+          });
         }
       });
     }

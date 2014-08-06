@@ -240,7 +240,7 @@ exports.spec = function(domain, callback){
       //user should be able to change their username
       user1.oldUsername = user1.username;
       user1.username = 'newUsername';
-      user1.email = 'newemail@gmail.com';
+      user1.email = 'sleepyfloydshaan@gmail.com';
 
       frisby.create('Have user1 change their username')
       .put(domain + '/users/' + user1._id, {
