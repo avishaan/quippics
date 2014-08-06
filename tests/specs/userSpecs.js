@@ -279,10 +279,14 @@ exports.spec = function(domain, callback){
     function(cb){
       describe("A lost user", function(){
         it("should be able to request their password reset", function(done){
-          spyOn(User, 'resetPassword').andCallThrough();
-          User.resetPassword(user1._id, function(err){
+          superagent
+          .post( 'http://' + user1.username + ':' + user1.password + '@localhost:8081/api/v1' + '/users/password')
+          .send({
+            userid: user1._id,
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
             expect(err).toBeFalsy();
-            expect(User.resetPassword.wasCalled).toEqual(true);
             done();
           });
         });
@@ -300,7 +304,7 @@ exports.spec = function(domain, callback){
         });
         it("should move to the next async", function(done){
           done();
-          cb(null);
+          //cb(null);
         });
       });
     }
