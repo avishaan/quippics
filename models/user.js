@@ -103,7 +103,6 @@ userSchema.statics.resetPassword = function(uid, cb){
       return user.save(function(err, user){
         if (!err && user){
           //send out an email
-          console.log('email updated pw', user.password);
           transporter.sendMail({
             from: 'test@quipics.com',
             to: user.email,
@@ -114,17 +113,17 @@ userSchema.statics.resetPassword = function(uid, cb){
               return cb(null);
             } else {
               console.warn('mail error: ',err, new Error().stack);
-              cb({clientMsg: "Could not reset password"});
+              return cb({clientMsg: "Could not reset password"});
             }
           });
         } else {
           console.warn(err, new Error().stack);
-          cb({clientMsg: "Could not reset password"});
+          return cb({clientMsg: "Could not reset password"});
         }
       });
     } else {
       console.warn(err, new Error().stack);
-      cb({clientMsg: "Could not reset password"});
+      return cb({clientMsg: "Could not reset password"});
     }
   });
 };
