@@ -106,9 +106,11 @@ response: {
 ```
 
 ####Get list of expired/archived challenges for a specific user
-#####_Status: Developed, Partially Tested
+#####_Status: Developed, Tested
 GET '/v1/users/:uid/challenges/archive/page/:page'  
 GET '/v1/users/:uid/submissions/archive/page/:page' **(depreciated)**
+
+- When user doesn't have a submission, no thumbnail nor submission will be returned
 
 Example Response
 ```
