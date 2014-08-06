@@ -29,7 +29,8 @@
     "validator": "^3.16.1",
     "valid-objectid": "0.0.1",
     "apnagent": "^1.1.1",
-    "nodemailer": "^1.1.1"
+    "nodemailer": "^1.1.1",
+    "password": "^0.1.0"
   },
   "engines": {
     "node": "0.10.26"
