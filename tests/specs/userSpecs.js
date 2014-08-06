@@ -222,7 +222,7 @@ exports.spec = function(domain, callback){
       .afterJSON(function(user3){
         //check that we can still log in with the updated user
         frisby.create('User should be able to login with new password')
-        .post( domain + '/users', {
+        .post( 'http://' + user1.username + ':' + user1.password + '@localhost:8081/api/v1' + '/users', {
           username: user1.username,
           password: user1.password
         })
@@ -250,7 +250,7 @@ exports.spec = function(domain, callback){
       .afterJSON(function(user3){
         //check that we can still log in with the updated user
         frisby.create('User should be able to login with new password')
-        .post( domain + '/users', {
+        .post( 'http://' + user1.username + ':' + user1.password + '@localhost:8081/api/v1' + '/users', {
           username: user1.username,
           password: user1.password
         })
