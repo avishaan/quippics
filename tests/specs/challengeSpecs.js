@@ -360,15 +360,51 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
+      //have user1 submit into the challenge
+      describe("A Submission", function(){
+        it("can be submitted by a User1 into challenge 3", function(done){
+          superagent
+          .post(domain + "/challenges/" + challenge3._id + "/submissions")
+          .type('form')
+          .attach("image", "./tests/specs/images/onepixel.png")
+          .field("owner", user1._id)
+          .end(function(err, res){
+            var submission = res.body;
+            //make sure something was returned in the response body
+            expect(submission).toBeDefined();
+            //make sure the id in the response body was returned
+            expect(submission._id).toBeDefined();
+            //expect 200 response
+            expect(res.status).toEqual(200);
+            submission1._id = submission._id;
+            //console.log("here is the returned superagent submission");
+            //console.log(submission);
+            cb(null);
+            done();
+          });
+        });
+      });
+    },
+    function(cb){
       //but the expired challenge should show up in the archive of challenge
       frisby
       .create("Get all archived challenges for a user in this case popular")
       .get(domain + '/users/' + user1._id + '/challenges/archive/page/1')
       .expectStatus(200)
-      //.inspectJSON()
+      .inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
+        //tests for archive challenge return here
+        expect(challenges[0].expiration).toBeDefined();
+        expect(challenges[0].numParticipants).toBeDefined();
+        expect(challenges[0].title).toBeDefined();
+        expect(challenges[0].submissions).toBeDefined();
+        expect(challenges[0].submissions.length).toEqual(1);
+        expect(challenges[0].submissions[0].thumbnail).toBeDefined();
+        expect(challenges[0].submissions[0].rank).toBeDefined();
+        expect(challenges[0].submissions[0].score).toBeDefined();
+
         cb(null);
       })
       .toss();
@@ -420,7 +456,6 @@ exports.spec = function(domain, callback){
       .create("Get all archived challenges for a user in this case user3")
       .get(domain + '/users/' + user3._id + '/challenges/archive/page/1')
       .expectStatus(404)
-      //.inspectJSON()
       .afterJSON(function(res){
         expect(res).toBeDefined();
         expect(res.clientMsg).toEqual("Couldn't find any challenges for this user");
@@ -434,7 +469,6 @@ exports.spec = function(domain, callback){
       .create("Get all archived challenges for a user in this case nerdy")
       .get(domain + '/users/' + user2._id + '/challenges/archive/page/1')
       .expectStatus(200)
-      //.inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
