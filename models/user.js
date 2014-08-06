@@ -85,6 +85,26 @@ userSchema.pre('save', function(next){
   }
   //generate a new thumbnail if the image has been changed
 });
+//assign tmp password and email
+userSchema.statics.resetPassword = function(uid, cb){
+  //find the user by id
+  User.findOne({_id: uid})
+  .select('password')
+  .exec(function(err, user){
+    if (!err){
+      //generate a new random password
+      user.password = 'temp';
+      //save the new password by saving the model
+      return user.save(function(err, user){
+        if (!err){
+          //send out an email
+          console.log('email updated pw', user.password);
+          return cb(null);
+        }
+      });
+    }
+  });
+};
 //add Image to the user model
 userSchema.methods.addImage = function(req, next){
   //TODO this needs to pass back errors to the next callback so we know if it's success or not
