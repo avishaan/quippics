@@ -44,6 +44,7 @@ PUT /v1/users/:uid
 
 - User can change their profile picture
 - User can change their password (tested)
+- User can change their username
 
 Example Request (multipart with images)
 ```

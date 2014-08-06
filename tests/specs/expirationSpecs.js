@@ -1,6 +1,7 @@
 var frisby = require("frisby");
 var _ = require("underscore");
 var async = require("async");
+var Challenge = require('../../models/challenge.js');
 
 var user1 = {
   username: 'popular123',
@@ -10,6 +11,16 @@ var user1 = {
 
 var user2 = {
   username: 'nerd314',
+  password: '314',
+  email: 'nerd314@gmail.com'
+};
+var user3 = {
+  username: 'user3',
+  password: '314',
+  email: 'nerd314@gmail.com'
+};
+var user4 = {
+  username: 'user4',
   password: '314',
   email: 'nerd314@gmail.com'
 };
@@ -57,18 +68,6 @@ exports.spec = function(domain, callback){
         .toss();
   },
     function(cb){
-      console.log("Start registering Nerd");
-      frisby.create("Register Nerd314")
-        .post(domain + "/api/register", user2)
-        .expectStatus(200)
-        .afterJSON(function(user){
-          console.log("Done registering Nerd");
-          user2.id = user._id;
-          cb(null);
-        })
-        .toss();
-  },
-    function(cb){
       console.log("Start registering Popular");
       frisby.create("Register Popular123")
         .post(domain + "/api/register", user1)
@@ -82,22 +81,89 @@ exports.spec = function(domain, callback){
         .toss();
     },
     function(cb){
-      //challenge: public, not expired, no invites, user1 is owner
-      frisby.create("Old ass Challenge")
-        .post(domain + "/api/challenges", {
-          title: 'Frisby Challenge 1',
-          privacy: 'public',
-          expiration: new Date(2013, 10, 15), //this will make it purposely expired so we can test the archive routes
-          owner: user1.id
-        })
+      console.log("Start registering Nerd");
+      frisby.create("Register Nerd314")
+        .post(domain + "/api/register", user2)
         .expectStatus(200)
-        .afterJSON(function(challenge){
-          //save the challenge id for future use
-          challenge1.id = challenge._id;
-          //our other specs check this, so we don't need to worry about it here
+        .afterJSON(function(user){
+          console.log("Done registering Nerd");
+          user2.id = user._id;
           cb(null);
         })
         .toss();
+  },
+    function(cb){
+      console.log("Start registering user3");
+      frisby.create("Register user3")
+        .post(domain + "/api/register", user3)
+        .expectStatus(200)
+        //.inspectJSON()
+        .afterJSON(function(user){
+          console.log("Done registering user3");
+          user3.id = user._id;
+          cb(null);
+        })
+        .toss();
+    },
+    function(cb){
+      console.log("Start registering user4");
+      frisby.create("Register user4")
+        .post(domain + "/api/register", user4)
+        .expectStatus(200)
+        //.inspectJSON()
+        .afterJSON(function(user){
+          console.log("Done registering user4");
+          user4.id = user._id;
+          cb(null);
+        })
+        .toss();
+    },
+    function(cb){
+      console.log("Start registering user5");
+      frisby.create("Register user5")
+        .post(domain + "/api/register", user5)
+        .expectStatus(200)
+        //.inspectJSON()
+        .afterJSON(function(user){
+          console.log("Done registering user5");
+          user5.id = user._id;
+          cb(null);
+        })
+        .toss();
+    },
+    function(cb){
+      //challenge: public, not expired, no invites, user1 is owner
+      describe("Test archives have the appropriate scope", function(){
+        it("Should have an old challenge to test with", function(done){
+          Challenge.create({
+            title: 'Frisby Challenge 1',
+            privacy: 'private',
+            expiration: new Date(2013, 10, 15),
+            owner: user1.id,
+            invites: [user2.id, user3.id, user4.id],
+            participants: [
+              {
+                user: user2.id,
+                inviteStatus: 'accepted'
+              },{
+                user: user3.id,
+                inviteStatus: 'invited'
+              },{
+                user: user4.id,
+                inviteStatus: 'declined'
+              },{
+                user: user5.id,
+                inviteStatus: 'accepted',
+                hidden: true
+              }
+            ]
+          }, function(err, challenge){
+            challenge1.id = challenge.id;
+            //done();
+          });
+        });
+        it("Should not let")
+      });
     },
     function(cb){
       frisby.create("Freshly expired challenge")
@@ -146,7 +212,7 @@ exports.spec = function(domain, callback){
                       .expectStatus(404)
                       .inspectJSON()
                       .afterJSON(function(challenges){
-                        expect(1).toEqual(1);
+                        expect(2).toEqual(1);
                         cb(null);
                       })
                       .toss();
