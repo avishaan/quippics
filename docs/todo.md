@@ -4,7 +4,7 @@
 - [x] Add commenting on a specific submission
 - [x] Integrate APN
 - [x] Better way to perform testing without REST interface
-- [ ] test data returned from archive challenges, specific to correct submission
+- [x] test data returned from archive challenges, specific to correct submission
 - [ ] test data returned from a specific submission
 
 

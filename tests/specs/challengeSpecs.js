@@ -361,13 +361,33 @@ exports.spec = function(domain, callback){
     },
     function(cb){
       //have user1 submit into the challenge
-      describe("A Submission", function(){
+      describe("Populate the expired challenge with submissions", function(){
         it("can be submitted by a User1 into challenge 3", function(done){
           superagent
           .post(domain + "/challenges/" + challenge3._id + "/submissions")
           .type('form')
           .attach("image", "./tests/specs/images/onepixel.png")
           .field("owner", user1._id)
+          .end(function(err, res){
+            var submission = res.body;
+            //make sure something was returned in the response body
+            expect(submission).toBeDefined();
+            //make sure the id in the response body was returned
+            expect(submission._id).toBeDefined();
+            //expect 200 response
+            expect(res.status).toEqual(200);
+            submission1._id = submission._id;
+            //console.log("here is the returned superagent submission");
+            //console.log(submission);
+            done();
+          });
+        });
+        it("can be submitted by a User2 into challenge 3", function(done){
+          superagent
+          .post(domain + "/challenges/" + challenge3._id + "/submissions")
+          .type('form')
+          .attach("image", "./tests/specs/images/onepixel.png")
+          .field("owner", user2._id)
           .end(function(err, res){
             var submission = res.body;
             //make sure something was returned in the response body
@@ -391,7 +411,6 @@ exports.spec = function(domain, callback){
       .create("Get all archived challenges for a user in this case popular")
       .get(domain + '/users/' + user1._id + '/challenges/archive/page/1')
       .expectStatus(200)
-      .inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
