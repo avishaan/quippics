@@ -94,9 +94,11 @@ userSchema.statics.resetPassword = function(uid, cb){
   .exec(function(err, user){
     if (!err && user){
       //generate a new random password
-      user.password = 'temp';
+      user.password = require('password')(2);
+      //the generator uses spaces, remove them
+      user.password = user.password.replace(/ /g, '');
       //set the email text
-      var text = "Your password has been reset to: " + user.password;
+      var text = "Your password has been reset to: " + user.password + "\nPlease change your password upon login";
       //save the new password by saving the model
       return user.save(function(err, user){
         if (!err){
