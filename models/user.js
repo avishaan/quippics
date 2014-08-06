@@ -6,6 +6,7 @@ var fs = require('fs');
 var gm = require('gm');
 var im = gm.subClass({ imageMagick: true});
 var agent = require('../apn/apn.js');
+var transporter = require('../mail/transporter.js');
 /*
 |-------------------------------------------------------------
 | User Schema
@@ -87,14 +88,15 @@ userSchema.pre('save', function(next){
 });
 //assign tmp password and email
 userSchema.statics.resetPassword = function(uid, cb){
-  var transporter = require('../mail/transporter.js');
   //find the user by id
   User.findOne({_id: uid})
   .select('password email')
   .exec(function(err, user){
-    if (!err){
+    if (!err && user){
       //generate a new random password
       user.password = 'temp';
+      //set the email text
+      var text = "Your password has been reset to: " + user.password;
       //save the new password by saving the model
       return user.save(function(err, user){
         if (!err){
@@ -103,14 +105,22 @@ userSchema.statics.resetPassword = function(uid, cb){
           transporter.sendMail({
             from: 'test@quipics.com',
             to: user.email,
-            subject: 'password reset',
-            text: 'password has been reset'
+            subject: 'Quipics Password Reset Email',
+            text: text
           }, function(err){
-            console.log('mail err:' + err);
-            return cb(null);
+            if (!err){
+              return cb(null);
+            } else {
+              console.warn('mail err:' + err);
+              return cb(err);
+            }
           });
+        } else {
+          cb(err);
         }
       });
+    } else {
+      cb(err);
     }
   });
 };
