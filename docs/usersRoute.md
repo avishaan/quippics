@@ -123,12 +123,10 @@ response: {
 #####_Status: Developed, Tested
 POST /v1/users/password
 
-- Triggering email rest of a different user causes 405 error (tested)
-
 Example Request
 ```
 request: {
-  userid: '52f548514f8c88b137000113'
+  email: 'email@email.com'
 }
 ```
 
