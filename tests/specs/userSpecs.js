@@ -278,6 +278,17 @@ exports.spec = function(domain, callback){
     },
     function(cb){
       describe("A lost user", function(){
+        it("should be able to request their own password, not another users", function(done){
+          superagent
+          .post( 'http://' + user2.username + ':' + user2.password + '@localhost:8081/api/v1' + '/users/password')
+          .send({
+            userid: user1._id,
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(405);
+            done();
+          });
+        });
         it("should be able to request their password reset", function(done){
           superagent
           .post( 'http://' + user1.username + ':' + user1.password + '@localhost:8081/api/v1' + '/users/password')
