@@ -90,6 +90,17 @@ Example Response
   "__v": 4,
   "_id": "535071535897f4b97500000f",
   "challenge": "535071535897f4b97500000b",
+  "comments": [
+      {
+        "_id": "535071565897f4b97500001f",
+        "comment": "Another Comment",
+        "commenter": {
+           "username": 'username',
+            "_id": '12323223'
+            },
+        "date": "2014-04-18T00:27:02.136Z"
+      }
+      ],
   owner: {
     username: 'jack1234',
     _id: '53c9978c8c5808246f6c0453'

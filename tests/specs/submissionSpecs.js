@@ -271,7 +271,7 @@ exports.spec = function(domain, callback){
         expect(submission.image).toBeDefined();
         expect(submission.owner.username).toBeDefined();
         expect(submission.owner._id).toBeDefined();
-        expect(submission.comments).toBeUndefined();
+        expect(submission.comments).toBeDefined();
         cb(null);
       })
       .toss();

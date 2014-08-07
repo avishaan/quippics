@@ -225,6 +225,25 @@ exports.spec = function(domain, callback){
         cb(null);
       })
       .toss();
+    },
+    function(cb){
+      //make sure the submission also has the comment fields
+      frisby
+      .create("Get a list comments from a submission")
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id)
+      .expectStatus(200)
+      .inspectJSON()
+      .afterJSON(function(submission){
+        expect(submission.comments.length).toBeDefined();
+        expect(submission.comments[0]._id).toBeDefined();
+        expect(submission.comments[0].comment).toBeDefined();
+        expect(submission.comments[0].date).toBeDefined();
+        expect(submission.comments[0].commenter).toBeDefined();
+        expect(submission.comments[0].commenter.username).toBeDefined();
+        expect(submission.comments[0].commenter._id).toBeDefined();
+        cb(null);
+      })
+      .toss();
     }
   ],
   function(err, results){
