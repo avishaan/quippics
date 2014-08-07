@@ -254,10 +254,10 @@ exports.myChallenges = function(req, res){
     .or([{owner: req.params.uid}, {'participants.user': req.params.uid}, {privacy: 'public'}])
     //.where().ne({'participants.inviteStatus': 'declined'})
     .select('_id owner title submissions createdOn expiration invites')
-    .slice('submissions', 1) //only get one submission for each challenge
+    //.slice('submissions', 1) //only get one submission for each challenge
     .populate({
       path: 'submissions',
-      select: 'thumbnail'
+      select: 'thumbnail owner ballots'
     })
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
@@ -265,21 +265,26 @@ exports.myChallenges = function(req, res){
     //only return participant status of user performing this query
     //.elemMatch('participants', { user: req.params.uid })
     .sort({expiration: 'ascending'})
-    .lean()
+    //.lean()
     .exec(function(err, challenges){
       // istanbul ignore else: db error
       if (!err){
         if (challenges && challenges.length){
+          //TODO, could use aggregate framework to do some of this
           //temp field for number of users invited
           challenges.forEach(function(values, index){
             challenges[index].numParticipants = challenges[index].invites.length;
-            if (challenges[index].participants){
+            if (challenges[index].participants && challenges[index].participants.length){
               challenges[index].inviteStatus = challenges[index].participants[0].inviteStatus;
             } else {
-              challenges[index].inviteStatus = 'owner';
+              //challenges[index].inviteStatus = 'owner';
+              challenges[index].set('inviteStatus', 'owner');
             }
-            //TODO calculate unscored submissions
-            challenges[index].unscored = 99;
+            //calculate/set unscored submissions
+            challenges[index].scored = req.params.uid;
+            //remove the participants for cleanup
+            //only return the first submission after our calculation so don't return a bunch of thumbnail to FE
+            challenges[index].submissions = challenges[index].submissions.slice(0,1);
           });
           return res.send(200, challenges);
         } else {
