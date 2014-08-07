@@ -232,7 +232,6 @@ exports.spec = function(domain, callback){
       .create("Get a list comments from a submission")
       .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id)
       .expectStatus(200)
-      .inspectJSON()
       .afterJSON(function(submission){
         expect(submission.comments.length).toBeDefined();
         expect(submission.comments[0]._id).toBeDefined();
