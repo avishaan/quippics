@@ -25,7 +25,7 @@ exports.userVoted = function(req, res){
     .select('submissions')//return only the submissions, we don't need the challenge info
     .populate({
       path: 'submissions',
-      select: 'ballots'
+      select: 'owner ballots'
     })
     //.select('submissions.ballots')
     .where('submissions')//where voter id equals the uid passed in
@@ -34,6 +34,12 @@ exports.userVoted = function(req, res){
         //todo, this is all async and should be a proper query
         var votedSubmissions = [];
         challenge.submissions.forEach(function(submission){
+          //if the submission owner is the passed in ballot, add to voted array to prevent voting
+          if (submission.owner.toString() === req.params.uid){
+            votedSubmissions.push(submission.id);
+            //since this is the user's submission and they can't vote return and don't bother looking at ballots
+            return;
+          }
           submission.ballots.forEach(function(ballot){
             if (ballot.voter.toString() === req.params.uid){
               votedSubmissions.push(submission.id);
