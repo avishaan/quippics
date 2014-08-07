@@ -274,10 +274,8 @@ exports.myChallenges = function(req, res){
           //temp field for number of users invited
           challenges.forEach(function(values, index){
             challenges[index].numParticipants = challenges[index].invites.length;
-            //challenges[index].set('numParticipants', challenges[index].invites.length);
             if (challenges[index].participants && challenges[index].participants.length){
               challenges[index].inviteStatus = challenges[index].participants[0].inviteStatus;
-              //challenges[index].set('inviteStatus', challenges[index].participants[0].inviteStatus);
             } else {
               //challenges[index].inviteStatus = 'owner';
               challenges[index].set('inviteStatus', 'owner');
