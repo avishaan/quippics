@@ -58,6 +58,8 @@ response.body:
 #####_Status: Developed, Tested
 GET '/v1/challenges/:cid/submissions/users/:uid/voted'
 
+- The user who is the owner of the submission is also returned to prevent user from voting on self (untested)
+
 Example Response
 ```
 response: 
