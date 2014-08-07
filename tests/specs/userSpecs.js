@@ -305,7 +305,7 @@ exports.spec = function(domain, callback){
         });
         it("should move to the next async", function(done){
           done();
-          //cb(null);
+          cb(null);
         });
       });
     }
