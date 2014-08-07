@@ -9,9 +9,9 @@ var challengeSchema = new mongoose.Schema({
   createdOn: { type:Date, default: Date.now },
   expiration: { type: Date },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  unscored: { type: Number, default: -1 },
-  inviteStatus: { type: String },
-  numParticipants: { type: Number },
+  unscored: { type: Number, default: -1 },  //we need this field before we set it
+  inviteStatus: { type: String }, //we need this field before we set it
+  numParticipants: { type: Number }, //we need this field before we set it
   invites: [
     { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
   ],
