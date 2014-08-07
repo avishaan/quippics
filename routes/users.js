@@ -32,6 +32,26 @@ exports.logout = function(req, res){
     }
   });
 };
+//function that handles a password reset request
+exports.resetPassword = function(req, res){
+  //make sure the correct data came in
+  if (!isObjectId(req.body.userid)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  //make sure the authenticated user matches the uid of the body request
+  if (req.user.id !== req.body.userid){
+    console.warn('user attempting password change for another user');
+    return res.send(405, {clientMsg: "You can't changed another user's password"});
+  }
+  //go ahead and call reset
+  User.resetPassword(req.body.userid, function(err){
+    if(!err){
+      return res.send(200, {clientMsg: "Password reset sent to email"});
+    } else {
+      return res.send(500, {clientMsg: "Couldn't send email, try again later", err:err});
+    }
+  });
+};
 exports.registerDevice = function(req, res){
   //expect a user param
   // istanbul ignore if: bad request

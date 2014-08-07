@@ -6,6 +6,7 @@ var fs = require('fs');
 var gm = require('gm');
 var im = gm.subClass({ imageMagick: true});
 var agent = require('../apn/apn.js');
+var transporter = require('../mail/transporter.js');
 /*
 |-------------------------------------------------------------
 | User Schema
@@ -85,6 +86,47 @@ userSchema.pre('save', function(next){
   }
   //generate a new thumbnail if the image has been changed
 });
+//assign tmp password and email
+userSchema.statics.resetPassword = function(uid, cb){
+  //find the user by id
+  User.findOne({_id: uid})
+  .select('password email')
+  .exec(function(err, user){
+    if (!err && user){
+      //generate a new random password
+      user.password = require('password')(2);
+      //the generator uses spaces, remove them
+      user.password = user.password.replace(/ /g, '');
+      //set the email text
+      var text = "Your password has been reset to: " + user.password + "\nPlease change your password upon login";
+      //save the new password by saving the model
+      return user.save(function(err, user){
+        if (!err && user){
+          //send out an email
+          transporter.sendMail({
+            from: 'test@quipics.com',
+            to: user.email,
+            subject: 'Quipics Password Reset Email',
+            text: text
+          }, function(err){
+            if (!err){
+              return cb(null);
+            } else {
+              console.warn('mail error: ',err, new Error().stack);
+              return cb({clientMsg: "Could not reset password"});
+            }
+          });
+        } else {
+          console.warn(err, new Error().stack);
+          return cb({clientMsg: "Could not reset password"});
+        }
+      });
+    } else {
+      console.warn(err, new Error().stack);
+      return cb({clientMsg: "Could not reset password"});
+    }
+  });
+};
 //add Image to the user model
 userSchema.methods.addImage = function(req, next){
   //TODO this needs to pass back errors to the next callback so we know if it's success or not

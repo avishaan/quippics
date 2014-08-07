@@ -1,6 +1,7 @@
 var frisby = require('frisby');
 var async = require('async');
 var superagent = require('superagent');
+var User = require('../../models/user.js');
 
 var user1 = {
   username: 'user1',
@@ -222,7 +223,7 @@ exports.spec = function(domain, callback){
       .afterJSON(function(user3){
         //check that we can still log in with the updated user
         frisby.create('User should be able to login with new password')
-        .post( domain + '/users', {
+        .post( 'http://' + user1.username + ':' + user1.password + '@localhost:8081/api/v1' + '/users', {
           username: user1.username,
           password: user1.password
         })
@@ -239,7 +240,7 @@ exports.spec = function(domain, callback){
       //user should be able to change their username
       user1.oldUsername = user1.username;
       user1.username = 'newUsername';
-      user1.email = 'newemail@gmail.com';
+      user1.email = 'sleepyfloydshaan@gmail.com';
 
       frisby.create('Have user1 change their username')
       .put(domain + '/users/' + user1._id, {
@@ -250,7 +251,7 @@ exports.spec = function(domain, callback){
       .afterJSON(function(user3){
         //check that we can still log in with the updated user
         frisby.create('User should be able to login with new password')
-        .post( domain + '/users', {
+        .post( 'http://' + user1.username + ':' + user1.password + '@localhost:8081/api/v1' + '/users', {
           username: user1.username,
           password: user1.password
         })
@@ -274,6 +275,49 @@ exports.spec = function(domain, callback){
         .toss();
       })
       .toss();
+    },
+    function(cb){
+      describe("A lost user", function(){
+        it("should be able to request their own password, not another users", function(done){
+          superagent
+          .post( 'http://' + user2.username + ':' + user2.password + '@localhost:8081/api/v1' + '/users/password')
+          .send({
+            userid: user1._id,
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(405);
+            done();
+          });
+        });
+        it("should be able to request their password reset", function(done){
+          superagent
+          .post( 'http://' + user1.username + ':' + user1.password + '@localhost:8081/api/v1' + '/users/password')
+          .send({
+            userid: user1._id,
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(err).toBeFalsy();
+            done();
+          });
+        });
+        it("should not let the user log in anymore", function(done){
+          superagent
+          .post( 'http://' + user1.username + ':' + user1.password + '@localhost:8081/api/v1' + '/users')
+          .send({
+            username: user1.username,
+            password: user1.password
+          })
+          .end(function(err, res){
+            expect(res.status).toEqual(401);
+            done();
+          });
+        });
+        it("should move to the next async", function(done){
+          done();
+          //cb(null);
+        });
+      });
     }
   ],
   function(err, results){
