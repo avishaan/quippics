@@ -89,11 +89,11 @@ userSchema.pre('save', function(next){
 //assign tmp password and email
 userSchema.statics.resetPassword = function(email, username, cb){
   //find the user by id
-  User.findOne({email: email})
-  .select('password email username')
+  User.findOne({username: username,email: email})
+  .select('password email')
   .exec(function(err, user){
     //make sure username matches that of email account
-    if (!err && user && (user.username === username)){
+    if (!err && user){
       //generate a new random password
       user.password = require('password')(2);
       //the generator uses spaces, remove them
