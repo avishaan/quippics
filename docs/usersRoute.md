@@ -123,9 +123,12 @@ response: {
 #####_Status: Developed, Tested
 POST /v1/users/password
 
+- For security, the user must provide email and username
+
 Example Request
 ```
 request: {
+  username: 'username'
   email: 'email@email.com'
 }
 ```

@@ -282,6 +282,7 @@ exports.spec = function(domain, callback){
           superagent
           .post( 'http://localhost:8081/api/v1' + '/users/password')
           .send({
+            username: user1.username,
             email: user1.email,
           })
           .end(function(err, res){
@@ -304,7 +305,7 @@ exports.spec = function(domain, callback){
         });
         it("should move to the next async", function(done){
           done();
-          cb(null);
+          //cb(null);
         });
       });
     }

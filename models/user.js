@@ -87,12 +87,13 @@ userSchema.pre('save', function(next){
   //generate a new thumbnail if the image has been changed
 });
 //assign tmp password and email
-userSchema.statics.resetPassword = function(email, cb){
+userSchema.statics.resetPassword = function(email, username, cb){
   //find the user by id
   User.findOne({email: email})
-  .select('password email')
+  .select('password email username')
   .exec(function(err, user){
-    if (!err && user){
+    //make sure username matches that of email account
+    if (!err && user && (user.username === username)){
       //generate a new random password
       user.password = require('password')(2);
       //the generator uses spaces, remove them
@@ -100,7 +101,7 @@ userSchema.statics.resetPassword = function(email, cb){
       //set the email text
       var text = "Your password has been reset to: " + user.password + "\nPlease change your password upon login";
       //save the new password by saving the model
-      return user.save(function(err, user){
+      user.save(function(err, user){
         if (!err && user){
           //send out an email
           transporter.sendMail({
@@ -112,17 +113,14 @@ userSchema.statics.resetPassword = function(email, cb){
             if (!err){
               return cb(null);
             } else {
-              console.warn('mail error: ',err, new Error().stack);
               return cb({clientMsg: "Could not reset password"});
             }
           });
         } else {
-          console.warn(err, new Error().stack);
           return cb({clientMsg: "Could not reset password"});
         }
       });
     } else {
-      console.warn(err, new Error().stack);
       return cb({clientMsg: "Could not find user with that email"});
     }
   });

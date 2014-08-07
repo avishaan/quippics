@@ -39,7 +39,7 @@ exports.resetPassword = function(req, res){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
   //go ahead and call reset
-  User.resetPassword(req.body.email, function(err){
+  User.resetPassword(req.body.email, req.body.username, function(err){
     if(!err){
       return res.send(200, {clientMsg: "Password reset sent to email"});
     } else {
