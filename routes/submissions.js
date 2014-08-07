@@ -15,7 +15,10 @@ exports.readOne = function(req, res){
   }
   Submission
   .findOne({_id: req.params.sid})
-  .select('-comments')
+  .populate({
+    path: 'comments.commenter',
+    select: 'username'
+  })
   .populate({
     path: 'challenge',
     select: 'title'
