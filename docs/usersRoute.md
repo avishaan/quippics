@@ -118,6 +118,27 @@ response: {
   _id: '52f548514f8c88b137000113'
 }
 ```
+
+####Send password reset email
+#####_Status: Developed, Tested
+POST /v1/users/password
+
+- Triggering email rest of a different user causes 405 error (tested)
+
+Example Request
+```
+request: {
+  userid: '52f548514f8c88b137000113'
+}
+```
+
+Example Response
+```
+response: {
+  clientMsg: 'Password reset sent to email'
+}
+
+```
 ####Authenticate user and return userid
 #####_Status: Developed, Tested
 POST /v1/users
