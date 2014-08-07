@@ -1,6 +1,7 @@
 var frisby = require('frisby');
 var async = require('async');
 var superagent = require('superagent');
+var _ = require('underscore');
 
 var user1 = {
   username: 'popular123',
@@ -182,8 +183,10 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       .afterJSON(function(array){
         //all tests here
-        expect(array.length).toEqual(1);
-        expect(array[0]).toEqual(submission2._id);
+        expect(array.length).toEqual(2);
+        //also, since he can't vote on himself and we use this array to control that,
+        //make sure his submissionid is there
+        expect(_.intersection(array, [submission2._id, submission1._id]).length).toEqual(2);
         cb(null);
       })
       .toss()
