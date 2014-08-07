@@ -285,6 +285,8 @@ exports.myChallenges = function(req, res){
             //remove the participants for cleanup
             //only return the first submission after our calculation so don't return a bunch of thumbnail to FE
             challenges[index].submissions = challenges[index].submissions.slice(0,1);
+            //dont return the participants to the front end
+            delete challenges[index]._doc.participants;
           });
           return res.send(200, challenges);
         } else {
