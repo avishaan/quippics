@@ -161,6 +161,19 @@ exports.spec = function(domain, callback){
     },
     //DO VOTING HERE
     function(cb){
+      //check how many unscored submissions are left *hint: all since no votes yet
+      frisby
+      .create("Have nerdy get list of challenges checking for unscored submissions")
+      .get(domain + '/users/' + user2._id + '/challenges/page/1')
+      .expectStatus(200)
+      .afterJSON(function(challenges){
+        expect(challenges).toBeDefined();
+        expect(challenges[0].unscored).toEqual(2);
+        //cb(null);
+      })
+      .toss();
+    },
+    function(cb){
       //vote on popular submission in the challenge
       frisby
       .create("Have nerdy vote on popular submission")
