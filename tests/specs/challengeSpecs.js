@@ -259,13 +259,14 @@ exports.spec = function(domain, callback){
       .create("Get all the challenges for the popular user")
       .get(domain + '/users/' + user1._id + '/challenges/page/1')
       .expectStatus(200)
+      //.inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(2);
         challenges.forEach(function(challenge, index){
           if (challenge.owner === user1._id){
             expect(challenge.inviteStatus).toEqual('owner');
-            expect(challenge.participants).toBeUndefined();
+            expect(challenge.participants.length).toEqual(0);
           } else {
             expect(challenge.participants.length).toEqual(1);
             expect(challenge.participants[0].inviteStatus).toEqual('invited');
@@ -315,7 +316,7 @@ exports.spec = function(domain, callback){
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
-        expect(challenges[0].participants).toBeUndefined();
+        expect(challenges[0].participants.length).toEqual(0);
         expect(challenges[0].inviteStatus).toEqual('owner'); //owner shows up as someone who is owner
         cb(null);
       })
@@ -353,7 +354,7 @@ exports.spec = function(domain, callback){
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
-        expect(challenges[0].participants).toBeUndefined();
+        expect(challenges[0].participants.length).toEqual(0);
         expect(challenges[0].inviteStatus).toEqual('owner'); //owner shows up as someone who is owner
         cb(null);
       })

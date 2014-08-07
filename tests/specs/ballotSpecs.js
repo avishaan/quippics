@@ -168,8 +168,11 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
-        expect(challenges[0].unscored).toEqual(2);
-        //cb(null);
+        //challenge1 has two submissions one is user2's own and one is user1's. therefore, he has one unscored since he can't score his own and has not scored others
+        expect(challenges[0].unscored).toEqual(1);
+        //even though the challenge has two submissions at this time, only one should actually be returned to FE
+        expect(challenges[0].submissions.length).toEqual(1);
+        cb(null);
       })
       .toss();
     },
@@ -184,6 +187,22 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       .afterJSON(function(res){
         expect(res).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //check how many unscored submissions are left *hint: he just voted on popular's submission
+      frisby
+      .create("Have nerdy get list of challenges checking for unscored submissions")
+      .get(domain + '/users/' + user2._id + '/challenges/page/1')
+      .expectStatus(200)
+      .afterJSON(function(challenges){
+        expect(challenges).toBeDefined();
+        //challenge1 has two submissions one is user2's own and one is user1's. He just voted above so he must have 0 unscored
+        expect(challenges[0].unscored).toEqual(0);
+        //even though the challenge has two submissions at this time, only one should actually be returned to FE
+        expect(challenges[0].submissions.length).toEqual(1);
         cb(null);
       })
       .toss();
