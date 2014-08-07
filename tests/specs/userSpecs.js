@@ -278,22 +278,11 @@ exports.spec = function(domain, callback){
     },
     function(cb){
       describe("A lost user", function(){
-        it("should be able to request their own password, not another users", function(done){
-          superagent
-          .post( 'http://' + user2.username + ':' + user2.password + '@localhost:8081/api/v1' + '/users/password')
-          .send({
-            userid: user1._id,
-          })
-          .end(function(err, res){
-            expect(res.status).toEqual(405);
-            done();
-          });
-        });
         it("should be able to request their password reset", function(done){
           superagent
-          .post( 'http://' + user1.username + ':' + user1.password + '@localhost:8081/api/v1' + '/users/password')
+          .post( 'http://localhost:8081/api/v1' + '/users/password')
           .send({
-            userid: user1._id,
+            email: user1.email,
           })
           .end(function(err, res){
             expect(res.status).toEqual(200);
@@ -301,7 +290,7 @@ exports.spec = function(domain, callback){
             done();
           });
         });
-        it("should not let the user log in anymore", function(done){
+        it("should not let the user log in with old credentials anymore", function(done){
           superagent
           .post( 'http://' + user1.username + ':' + user1.password + '@localhost:8081/api/v1' + '/users')
           .send({
@@ -315,7 +304,7 @@ exports.spec = function(domain, callback){
         });
         it("should move to the next async", function(done){
           done();
-          //cb(null);
+          cb(null);
         });
       });
     }
