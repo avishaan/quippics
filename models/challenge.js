@@ -9,6 +9,9 @@ var challengeSchema = new mongoose.Schema({
   createdOn: { type:Date, default: Date.now },
   expiration: { type: Date },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  unscored: { type: Number, default: -1 },
+  inviteStatus: { type: String },
+  numParticipants: { type: Number },
   invites: [
     { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
   ],
@@ -62,7 +65,26 @@ challengeSchema.post('new', function(){
     }
   });
 });
-
+//calculate the unscored submissions from a user's perspective
+challengeSchema.virtual('scored').set(function(uid){
+      //todo, this is all async and should be a proper query
+      var votedSubmissions = [];
+      this.submissions.forEach(function(submission){
+        //if the submission owner is the passed in ballot, add to voted array to prevent voting
+        if (submission.owner.toString() === uid){
+          votedSubmissions.push(submission.id);
+          //since this is the user's submission and they can't vote return and don't bother looking at ballots
+        } else {//since it's not the owner's submission, check to see if they voted in it
+          submission.ballots.forEach(function(ballot){
+            if (ballot.voter.toString() === uid){//if they voted, push to array so we know
+              votedSubmissions.push(submission.id);
+            }
+          });
+        }
+      });
+      //unscored is how many submissions there are minus the number you have voted for
+      this.unscored = this.submissions.length - votedSubmissions.length;
+});
 //find the top submission in a challenge
 challengeSchema.methods.topSubmission = function(challenge, cb){
   //find the top submission in the array of submission from the challenge
