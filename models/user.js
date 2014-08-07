@@ -87,9 +87,9 @@ userSchema.pre('save', function(next){
   //generate a new thumbnail if the image has been changed
 });
 //assign tmp password and email
-userSchema.statics.resetPassword = function(uid, cb){
+userSchema.statics.resetPassword = function(email, cb){
   //find the user by id
-  User.findOne({_id: uid})
+  User.findOne({email: email})
   .select('password email')
   .exec(function(err, user){
     if (!err && user){
@@ -123,7 +123,7 @@ userSchema.statics.resetPassword = function(uid, cb){
       });
     } else {
       console.warn(err, new Error().stack);
-      return cb({clientMsg: "Could not reset password"});
+      return cb({clientMsg: "Could not find user with that email"});
     }
   });
 };

@@ -35,16 +35,11 @@ exports.logout = function(req, res){
 //function that handles a password reset request
 exports.resetPassword = function(req, res){
   //make sure the correct data came in
-  if (!isObjectId(req.body.userid)){
+  if (!validator.isEmail(req.body.email)){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
-  //make sure the authenticated user matches the uid of the body request
-  if (req.user.id !== req.body.userid){
-    console.warn('user attempting password change for another user');
-    return res.send(405, {clientMsg: "You can't changed another user's password"});
-  }
   //go ahead and call reset
-  User.resetPassword(req.body.userid, function(err){
+  User.resetPassword(req.body.email, function(err){
     if(!err){
       return res.send(200, {clientMsg: "Password reset sent to email"});
     } else {
