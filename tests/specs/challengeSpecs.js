@@ -193,8 +193,7 @@ exports.spec = function(domain, callback){
         expect(challenges[0].title).toBeDefined();
         expect(challenges[0].unscored).toBeDefined();
         expect(challenges[0].numParticipants).toBeDefined();
-        expect(challenges[0].participants.length).toEqual(1);
-        expect(challenges[0].participants[0].inviteStatus).toEqual('invited'); //right now everyone is only invited
+        expect(challenges[0].inviteStatus).toEqual('invited'); //right now everyone is only invited
         cb(null);
       })
       .toss();
@@ -223,10 +222,9 @@ exports.spec = function(domain, callback){
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
-        expect(challenges[0].participants.length).toEqual(1);
         expect(challenges[0].numParticipants).toEqual(2);
         expect(challenges[0].unscored).toBeDefined();
-        expect(challenges[0].participants[0].inviteStatus).toEqual('accepted'); //right now everyone is only invited
+        expect(challenges[0].inviteStatus).toEqual('accepted'); //right now everyone is only invited
         cb(null);
       })
       .toss();
@@ -259,17 +257,16 @@ exports.spec = function(domain, callback){
       .create("Get all the challenges for the popular user")
       .get(domain + '/users/' + user1._id + '/challenges/page/1')
       .expectStatus(200)
-      //.inspectJSON()
+      .inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(2);
         challenges.forEach(function(challenge, index){
           if (challenge.owner === user1._id){
             expect(challenge.inviteStatus).toEqual('owner');
-            expect(challenge.participants.length).toEqual(0);
+            expect(challenge.participants).toBeUndefined();
           } else {
-            expect(challenge.participants.length).toEqual(1);
-            expect(challenge.participants[0].inviteStatus).toEqual('invited');
+            expect(challenge.inviteStatus).toEqual('invited');
           }
         });
         cb(null);
@@ -286,8 +283,7 @@ exports.spec = function(domain, callback){
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(2);
-        expect(challenges[0].participants.length).toEqual(1);
-        expect(challenges[0].participants[0].inviteStatus).toEqual('accepted'); //right now everyone is only invited
+        expect(challenges[0].inviteStatus).toEqual('accepted'); //right now everyone is only invited
         cb(null);
       })
       .toss();
@@ -316,7 +312,7 @@ exports.spec = function(domain, callback){
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
-        expect(challenges[0].participants.length).toEqual(0);
+        expect(challenges[0].participants).toBeUndefined();
         expect(challenges[0].inviteStatus).toEqual('owner'); //owner shows up as someone who is owner
         cb(null);
       })
@@ -354,7 +350,7 @@ exports.spec = function(domain, callback){
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
-        expect(challenges[0].participants.length).toEqual(0);
+        expect(challenges[0].participants).toBeUndefined();
         expect(challenges[0].inviteStatus).toEqual('owner'); //owner shows up as someone who is owner
         cb(null);
       })
