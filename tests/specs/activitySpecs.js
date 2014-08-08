@@ -250,12 +250,11 @@ exports.spec = function(domain, callback){
       frisby
       .create("Get all of friendly's FRIEND activities")
       .get(domain + '/users/' + user4._id + '/friends/activities/page/1')
-      .expectStatus(200)
-      .afterJSON(function(activities){
+      .expectStatus(500)
+      .after(function(){
         //even though friendly is friends what popular, he shouldn't be able to see
         //anything since he was not invited to a challenge
-        expect(activities.length).toEqual(0);
-        //cb(null);
+        cb(null);
       })
       .toss();
     },
@@ -322,6 +321,10 @@ exports.spec = function(domain, callback){
               expect(activity.references.submission._id).toBeDefined();
               expect(activity.references.submission.owner).toBeDefined();
               expect(activity.references.comment).toBeDefined();
+              expect(activity.references.challenge._id).toBeDefined();
+              expect(activity.references.challenge.expiration).toBeDefined();
+              expect(activity.references.challenge.owner).toBeDefined();
+              expect(activity.references.challenge.title).toBeDefined();
               break;
             }
             default:{
@@ -410,6 +413,10 @@ exports.spec = function(domain, callback){
               expect(activity.references.submission._id).toBeDefined();
               expect(activity.references.submission.owner).toBeDefined();
               expect(activity.references.comment).toBeDefined();
+              expect(activity.references.challenge._id).toBeDefined();
+              expect(activity.references.challenge.expiration).toBeDefined();
+              expect(activity.references.challenge.owner).toBeDefined();
+              expect(activity.references.challenge.title).toBeDefined();
               break;
             }
             default:{
