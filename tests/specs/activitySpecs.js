@@ -18,6 +18,11 @@ var user3 = {
   password: 'password',
   email: 'user3@gmail.com'
 };
+var user4 = {
+  username: 'friendly',
+  password: 'password',
+  email: 'user3@gmail.com'
+};
 var challenge1 = {};
 var challenge2 = {};
 var submission1 = {}; //not widely accepted submission
@@ -36,6 +41,21 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       .afterJSON(function(){
         console.log("Done deleting db");
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //create a user who is friendly, but never invited to challenges
+      frisby
+      .create("Create A user who is very friendly")
+      .post(domain + '/register', {
+        username: user4.username,
+        password: user4.password
+      })
+      .expectStatus(200)
+      .afterJSON(function(user){
+        user4._id = user._id;
         cb(null);
       })
       .toss();
@@ -108,8 +128,32 @@ exports.spec = function(domain, callback){
     },
     function(cb){
       frisby
+      .create('Popular can send a friend request to friendly')
+      .post(domain + '/users/' + user4._id + '/friendRequests', {
+        friend: user1._id
+      })
+      .expectStatus(200)
+      .after(function(res){
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
       .create('Nerdy will go ahead and accept populars friend request')
       .post(domain + '/users/' + user2._id + '/friends', {
+        user: user1._id
+      })
+      .expectStatus(200)
+      .after(function(res){
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create('Friendly will go ahead and accept populars friend request')
+      .post(domain + '/users/' + user4._id + '/friends', {
         user: user1._id
       })
       .expectStatus(200)
@@ -168,7 +212,6 @@ exports.spec = function(domain, callback){
         });
       });
     },
-    //DO VOTING HERE
     function(cb){
       //nerdy vote on popular submission in the challenge
       //popular and nerdy should see this in activity
@@ -200,6 +243,19 @@ exports.spec = function(domain, callback){
         expect(comment.commenter).toBeDefined();
         expect(comment.date).toBeDefined();
         cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create("Get all of friendly's FRIEND activities")
+      .get(domain + '/users/' + user4._id + '/friends/activities/page/1')
+      .expectStatus(200)
+      .afterJSON(function(activities){
+        //even though friendly is friends what popular, he shouldn't be able to see
+        //anything since he was not invited to a challenge
+        expect(activities.length).toEqual(0);
+        //cb(null);
       })
       .toss();
     },
