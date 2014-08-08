@@ -273,7 +273,7 @@ exports.myChallenges = function(req, res){
           //TODO, could use aggregate framework to do some of this
           //temp field for number of users invited
           challenges.forEach(function(challenge, index){
-            challenges[index].numParticipants = challenges[index].invites.length;
+            challenges[index].numParticipants = challenges[index].invites.length + 1;
             //go through each participant
             if (challenge.participants && challenge.participants.length){
               challenges[index].participants.forEach(function(participant, pindex){
