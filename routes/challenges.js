@@ -320,7 +320,7 @@ exports.create = function(req, res){
     participants: []
   });
   //add owner to the array as accepted for simplicity sake
-  newChallenge.participants.push({user: req.body.owner, inviteStatus: 'owner'});
+  newChallenge.participants.push({user: req.body.owner, inviteStatus: 'accepted'});
   //add each of the invited users onto the participants list as status=invited
   if (req.body.invites.length>0){
     req.body.invites.forEach(function(value, index, array){
