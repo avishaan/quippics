@@ -4,7 +4,7 @@ Routes here are related to viewing activities
 
 ####List activities for all of the user's friends
 #####_Status: Developed, Tested
-GET v1/activities/users/:uid/friends/page/:page (depreciated)
+GET v1/activities/users/:uid/friends/page/:page (depreciated)  
 GET v1/users/:uid/friends/activities/page/:page (preferred)
 
 Example Response for Ballots
