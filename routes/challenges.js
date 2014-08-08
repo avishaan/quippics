@@ -273,7 +273,7 @@ exports.myChallenges = function(req, res){
           //TODO, could use aggregate framework to do some of this
           //temp field for number of users invited
           challenges.forEach(function(challenge, index){
-            challenges[index].numParticipants = challenges[index].invites.length;
+            challenges[index].numParticipants = challenges[index].invites.length + 1;
             //go through each participant
             if (challenge.participants && challenge.participants.length){
               challenges[index].participants.forEach(function(participant, pindex){
@@ -320,7 +320,7 @@ exports.create = function(req, res){
     participants: []
   });
   //add owner to the array as accepted for simplicity sake
-  newChallenge.participants.push({user: req.body.owner, inviteStatus: 'owner'});
+  newChallenge.participants.push({user: req.body.owner, inviteStatus: 'accepted'});
   //add each of the invited users onto the participants list as status=invited
   if (req.body.invites.length>0){
     req.body.invites.forEach(function(value, index, array){
