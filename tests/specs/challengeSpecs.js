@@ -218,11 +218,10 @@ exports.spec = function(domain, callback){
       .create("Get all the challenges for the nerdy user")
       .get(domain + '/users/' + user2._id + '/challenges/page/1')
       .expectStatus(200)
-      //.inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
-        expect(challenges[0].numParticipants).toEqual(2);
+        expect(challenges[0].numParticipants).toEqual(3);
         expect(challenges[0].unscored).toBeDefined();
         expect(challenges[0].inviteStatus).toEqual('accepted'); //right now everyone is only invited
         cb(null);
@@ -257,7 +256,6 @@ exports.spec = function(domain, callback){
       .create("Get all the challenges for the popular user")
       .get(domain + '/users/' + user1._id + '/challenges/page/1')
       .expectStatus(200)
-      .inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(2);
