@@ -45,7 +45,7 @@ exports.create = function(req, res){
   }
   Submission
     .findOne({_id: req.params.sid})
-    .select('comments owner _id')
+    .select('comments owner _id challenge')
     .exec(function(err, submission){
       // istanbul ignore else: db error
       if (!err){
