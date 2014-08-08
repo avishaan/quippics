@@ -250,10 +250,10 @@ exports.myChallenges = function(req, res){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
   Challenge
-    .find({'participants.inviteStatus': {$ne: 'declined'}}, {participants: {$elemMatch: {user: req.params.uid}}})
+    .find({participants: {$elemMatch: {user: req.params.uid, inviteStatus: {$ne: 'declined'}}}})
     .or([{owner: req.params.uid}, {'participants.user': req.params.uid}, {privacy: 'public'}])
     //.where().ne({'participants.inviteStatus': 'declined'})
-    .select('_id owner title submissions createdOn expiration invites')
+    .select('_id owner title submissions createdOn expiration invites participants')
     //.slice('submissions', 1) //only get one submission for each challenge
     .populate({
       path: 'submissions',
@@ -272,13 +272,16 @@ exports.myChallenges = function(req, res){
         if (challenges && challenges.length){
           //TODO, could use aggregate framework to do some of this
           //temp field for number of users invited
-          challenges.forEach(function(values, index){
+          challenges.forEach(function(challenge, index){
             challenges[index].numParticipants = challenges[index].invites.length;
-            if (challenges[index].participants && challenges[index].participants.length){
-              challenges[index].inviteStatus = challenges[index].participants[0].inviteStatus;
-            } else {
-              //challenges[index].inviteStatus = 'owner';
-              challenges[index].set('inviteStatus', 'owner');
+            //go through each participant
+            if (challenge.participants && challenge.participants.length){
+              challenges[index].participants.forEach(function(participant, pindex){
+                //if it matches the id, use that as the invite status
+                if (participant.user.toString() === req.params.uid){
+                  challenges[index].inviteStatus = participant.inviteStatus;
+                }
+              });
             }
             //calculate/set unscored submissions
             challenges[index].scored = req.params.uid;
@@ -316,6 +319,8 @@ exports.create = function(req, res){
     expiration: req.body.expiration,
     participants: []
   });
+  //add owner to the array as accepted for simplicity sake
+  newChallenge.participants.push({user: req.body.owner, inviteStatus: 'owner'});
   //add each of the invited users onto the participants list as status=invited
   if (req.body.invites.length>0){
     req.body.invites.forEach(function(value, index, array){

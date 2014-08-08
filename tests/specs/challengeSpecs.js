@@ -252,7 +252,7 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      //popular should now have two challenges, both invited
+      //popular should now have two challenges, one as owner one invited
       frisby
       .create("Get all the challenges for the popular user")
       .get(domain + '/users/' + user1._id + '/challenges/page/1')
@@ -291,13 +291,29 @@ exports.spec = function(domain, callback){
     function(cb){
       //now have popular decline this challenge
       frisby
-      .create("Have popular decline the invitation")
+      .create("Have popular decline the challenge")
       .post(domain + '/challenges/' + challenge2._id + '/declines', {
         user: user1._id
       })
       .expectStatus(200)
       .afterJSON(function(res){
         expect(res.clientMsg).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //gh#43 is recreated by this issue
+      //popular (above) declining a challenge should have no effect on nerdy
+      frisby
+      .create("Get all the challenges for the nerdy user")
+      .get(domain + '/users/' + user2._id + '/challenges/page/1')
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(challenges){
+        expect(challenges).toBeDefined();
+        expect(challenges.length).toEqual(2);
+        expect(challenges[0].inviteStatus).toEqual('accepted'); //right now everyone is only invited
         cb(null);
       })
       .toss();
@@ -519,7 +535,7 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       .afterJSON(function(participants){
         expect(participants[0].user.username).toBeDefined();
-        expect(participants.length).toEqual(2);
+        expect(participants.length).toEqual(3);
         expect(participants[0].user.thumbnail).toBeDefined();
         expect(participants[0].user._id).toBeDefined();
         cb(null);
