@@ -252,7 +252,7 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      //popular should now have two challenges, both invited
+      //popular should now have two challenges, one as owner one invited
       frisby
       .create("Get all the challenges for the popular user")
       .get(domain + '/users/' + user1._id + '/challenges/page/1')
@@ -535,7 +535,7 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       .afterJSON(function(participants){
         expect(participants[0].user.username).toBeDefined();
-        expect(participants.length).toEqual(2);
+        expect(participants.length).toEqual(3);
         expect(participants[0].user.thumbnail).toBeDefined();
         expect(participants[0].user._id).toBeDefined();
         cb(null);
