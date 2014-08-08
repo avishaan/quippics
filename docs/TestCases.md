@@ -8,6 +8,8 @@ will be responsible for. Any trivial test cases should be avoided, focus on busi
 logic that is specific to the requirements documents.
 
 ####Activities
-#####User Activities
-1. User should see activities of his friends who are in challenges with him.
-
+#####Friend Activities
+1. User should see activities of his friends who are in challenges with him. (tested)
+2. User should NOT see activities of his friends who are in other challenges. (tested)
+3. User should see activities of his friends who are in challenges where user is the owner. (tested)
+4. User should NOT see activities of other users (not his friends) who are in his challenge. (tested)
