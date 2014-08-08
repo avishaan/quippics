@@ -43,6 +43,7 @@ exports.friendActivities = function(req, res){
         var challengeids = _.map(challenges, function(challenge){return challenge._id.toString();});
         cb(null, user, challengeids);
       } else {
+        //here there is either an error or no challenges in which case he will have no activities
         cb({clientMsg: "Couldn't find challenges", err: err});
       }
     });
