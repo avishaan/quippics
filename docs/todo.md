@@ -6,6 +6,7 @@
 - [x] Better way to perform testing without REST interface
 - [x] test data returned from archive challenges, specific to correct submission
 - [ ] test data returned from a specific submission
+- [ ] allow delete route only when env != prod
 
 
 - [ ] 
