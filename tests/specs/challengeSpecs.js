@@ -507,6 +507,32 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
+      //nerdy can hide his challenge so it doesn't appear in their archive
+      frisby
+      .create("Hide an archived challenge")
+      .post(domain + '/challenges/' + challenge3._id + '/hidden', {
+        user: user2._id
+      })
+      .expectStatus(200)
+      .afterJSON(function(res){
+        expect(res.clientMsg).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //now that the nerdy has hidden the expired challenge he is the owner of, he shouldn't see it
+      frisby
+      .create("Get all archived challenges for a user in this case nerdy")
+      .get(domain + '/users/' + user2._id + '/challenges/archive/page/1')
+      .expectStatus(404)
+      .afterJSON(function(res){
+        expect(res.clientMsg).toEqual("Couldn't find any challenges for this user");
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
       //get a specific challenge
       frisby
       .create("Get a specific challenge by id")
