@@ -1,8 +1,10 @@
 var Activity = require('../models/activity.js');
 var User = require('../models/user.js');
+var Challenge = require('../models/challenge.js');
 var async = require('async');
 var validator = require('validator');
 var isObjectId = require('valid-objectid').isValid;
+var _ = require('underscore');
 var perPage = 24; //submissions per page
 
 //read activities from a user's friends
@@ -31,10 +33,26 @@ exports.friendActivities = function(req, res){
       }
     });
   },
-  function(user,cb){
+  function(user, cb){ //get all of the user's challenges
+    Challenge
+    .find({'participants.user': req.params.uid})
+    .select('_id')
+    .lean()
+    .exec(function(err, challenges){
+      if (!err && challenges && challenges.length){
+        var challengeids = _.map(challenges, function(challenge){return challenge._id.toString();});
+        cb(null, user, challengeids);
+      } else {
+        //here there is either an error or no challenges in which case he will have no activities
+        cb({clientMsg: "Couldn't find challenges", err: err});
+      }
+    });
+  },
+  function(user, challengeids, cb){
     //get all the activities that match anyone in the user's friends
+    //but also only if they match the challenges
     Activity
-    .find()
+    .find({'references.challenge': {$in: challengeids}})
     .or([{subject: {$in: user.friends}}, {object: {$in: user.friends}}])
     .sort({date: 'descending'})
     .skip(perPage * (req.params.page - 1))

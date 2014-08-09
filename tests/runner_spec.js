@@ -10,6 +10,7 @@ var challengeSpec = require('./specs/challengeSpecs.js');
 var submissionSpec = require('./specs/submissionSpecs.js');
 var ballotSpec = require('./specs/ballotSpecs.js');
 var activitySpec = require('./specs/activitySpecs.js');
+var activityFilterSpec = require('./specs/activityFilterSpecs.js');
 var commentSpec = require('./specs/commentSpecs.js');
 var notificationSpec = require('./specs/notificationSpecs.js');
 //var superSpec = require('./specs/superTest.js');
@@ -44,6 +45,12 @@ async.series([
   function(cb){
     console.log("Calling Ballot Specs");
     ballotSpec.spec(domain, function(){
+      cb(null);
+    });
+  },
+  function(cb){
+    console.log("Calling Activity Filter Specs");
+    activityFilterSpec.spec(domain, function(){
       cb(null);
     });
   },

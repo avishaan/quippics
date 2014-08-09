@@ -104,6 +104,7 @@ activitySchema.statics.createComment = function(comment){
   //activity.reference = comment._id;
   activity.references.comment = comment._id;
   activity.references.submission = comment.__parent.id;
+  activity.references.challenge = comment.__parent.challenge.toString();
   activity.save();
 };
 

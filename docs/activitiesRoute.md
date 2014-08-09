@@ -4,7 +4,7 @@ Routes here are related to viewing activities
 
 ####List activities for all of the user's friends
 #####_Status: Developed, Tested
-GET v1/activities/users/:uid/friends/page/:page (depreciated)
+GET v1/activities/users/:uid/friends/page/:page (depreciated)  
 GET v1/users/:uid/friends/activities/page/:page (preferred)
 
 Example Response for Ballots
@@ -70,6 +70,12 @@ Example Response for Comments
           "_id": "536eab79486cbdb681000010",
           "owner": "536eab78486cbdb681000005"
       },
+      "challenge": {
+          "_id": "536eab78486cbdb68100000b",
+          "expiration": "2013-11-15T08:00:00.000Z",
+          "owner": "536eab78486cbdb681000005",
+          "title": "Frisby Challenge 1"
+      }
       "comment": "536eab7b486cbdb681000021",
       "challenge": null
   },
