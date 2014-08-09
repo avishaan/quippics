@@ -200,7 +200,7 @@ exports.archivedChallenges = function(req, res){
       inviteStatus: {$ne: 'declined'},
       hidden: false
     }}}])//where user matches userid and they didn't decline
-    .or([{owner: req.params.uid}]) //where the user is the owner
+    //.or([{owner: req.params.uid}]) //where the user is the owner
     //.or([{'participants.user': req.params.uid}])
     //.where().ne({'participants.inviteStatus': 'declined'})
     .select('_id owner title createdOn submissions expiration invites participants')
