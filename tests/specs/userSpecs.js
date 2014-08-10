@@ -145,13 +145,28 @@ exports.spec = function(domain, callback){
     },
     function(cb){
       //user should not be able to login with the wrong credentials
+      frisby.create('Login user1 with wrong username')
+      .post(domain + '/users', {
+        username: 'user111',
+        password: 'badpassword'
+      })
+      .expectStatus(401)
+      .afterJSON(function(res){
+        expect(res.clientMsg).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //user should not be able to login with the wrong credentials
       frisby.create('Login user1 with wrong password')
       .post(domain + '/users', {
         username: user1.username,
         password: 'badpassword'
       })
       .expectStatus(401)
-      .after(function(){
+      .afterJSON(function(res){
+        expect(res.clientMsg).toBeDefined();
         cb(null);
       })
       .toss();
