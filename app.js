@@ -140,6 +140,8 @@ app.get('/api/v1/activities/users/:uid/friends/page/:page', apiAuth(), activitie
 app.get('/api/v1/users/:uid/friends/activities/page/:page', apiAuth(), activities.friendActivities); //read all the activities of the friends of the user
 //misc routes
 app.delete('/api/v1/server', server.delete);
+//verification routes
+app.get('/loaderio-d416a27684a80a5cb39582907a2ed006', function(req, res){return res.send(200);});
 
 app.use(function(req, res){
   console.log("MISROUTE");
