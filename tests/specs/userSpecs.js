@@ -53,14 +53,13 @@ exports.spec = function(domain, callback){
     },
     function(cb){
       //user should be able to register without a picture and with a picture
-      frisby.create('Register User1')
+      frisby.create('Register new user with existing email')
       .post(domain + '/register', {
         username: 'sameemail',
         password: user1.password,
         email: user1.email
       })
-      .expectStatus(200)
-      //.inspectJSON()
+      .expectStatus(500)
       .afterJSON(function(res){
         cb(null);
       })
