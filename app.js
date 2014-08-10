@@ -141,7 +141,7 @@ app.get('/api/v1/users/:uid/friends/activities/page/:page', apiAuth(), activitie
 //misc routes
 app.delete('/api/v1/server', server.delete);
 //verification routes
-app.get('/loaderio-d416a27684a80a5cb39582907a2ed006', function(req, res){return res.send(200);});
+app.get('/loaderio-d416a27684a80a5cb39582907a2ed006.txt', function(req, res){return res.send(200, 'loaderio-d416a27684a80a5cb39582907a2ed006');});
 
 app.use(function(req, res){
   console.log("MISROUTE");
