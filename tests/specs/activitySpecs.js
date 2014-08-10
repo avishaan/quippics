@@ -21,7 +21,7 @@ var user3 = {
 var user4 = {
   username: 'friendly',
   password: 'password',
-  email: 'user3@gmail.com'
+  email: 'friendly@gmail.com'
 };
 var challenge1 = {};
 var challenge2 = {};
@@ -51,7 +51,8 @@ exports.spec = function(domain, callback){
       .create("Create A user who is very friendly")
       .post(domain + '/register', {
         username: user4.username,
-        password: user4.password
+        password: user4.password,
+        email: user4.email
       })
       .expectStatus(200)
       .afterJSON(function(user){
@@ -66,7 +67,8 @@ exports.spec = function(domain, callback){
       .create("Create A user who is very generic")
       .post(domain + '/register', {
         username: user3.username,
-        password: user3.password
+        password: user3.password,
+        email: user3.email
       })
       .expectStatus(200)
       .afterJSON(function(user){

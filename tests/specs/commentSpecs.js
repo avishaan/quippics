@@ -45,7 +45,8 @@ exports.spec = function(domain, callback){
       .create("Create A user who is very popular")
       .post(domain + '/register', {
         username: user1.username,
-        password: user1.password
+        password: user1.password,
+        email: user1.email
       })
       .expectStatus(200)
       .afterJSON(function(user){

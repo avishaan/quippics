@@ -52,7 +52,8 @@ exports.spec = function(domain, callback){
       .create("Create A user who is very generic")
       .post(domain + '/register', {
         username: user3.username,
-        password: user3.password
+        password: user3.password,
+        email: user3.email
       })
       .expectStatus(200)
       .afterJSON(function(user){
@@ -67,7 +68,8 @@ exports.spec = function(domain, callback){
       .create("Create A user who is very popular")
       .post(domain + '/register', {
         username: user1.username,
-        password: user1.password
+        password: user1.password,
+        email: user1.email
       })
       .expectStatus(200)
       .afterJSON(function(user){
@@ -81,7 +83,8 @@ exports.spec = function(domain, callback){
       .create("Create A user who is very nerdy")
       .post(domain + '/register', {
         username: user2.username,
-        password: user2.password
+        password: user2.password,
+        email: user2.email
       })
       .expectStatus(200)
       .afterJSON(function(user){
