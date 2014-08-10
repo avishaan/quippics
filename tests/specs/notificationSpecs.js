@@ -71,6 +71,7 @@ exports.spec = function(domain, callback){
           User.create({
             username: user1.username,
             password: user1.password,
+            email: user1.email
           }, function(err, user){
             user1._id = user.id;
             done();
