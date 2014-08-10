@@ -1,3 +1,10 @@
+//Nodetime configuration
+if(process.env.NODETIME_ACCOUNT_KEY) {
+  require('nodetime').profile({
+    accountKey: process.env.NODETIME_ACCOUNT_KEY,
+    appName: 'Quipics' // optional
+  });
+}
 
 /**
  * Module dependencies.
