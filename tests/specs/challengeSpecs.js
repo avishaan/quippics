@@ -21,6 +21,7 @@ var user3 = {
 var challenge1 = {};
 var challenge2 = {};
 var challenge3 = {};
+var challenge4 = {};
 
 var submission1 = {};
 var submission2 = {};
@@ -576,6 +577,45 @@ exports.spec = function(domain, callback){
         //this makes sure the pagination is working, with only a few
         //users we expect nothing to return
         expect(participants.length).toEqual(0);
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //setup our challenge
+      challenge4 = {
+        title: 'Slightly Expired Challenge',
+        description: 'Slightly Challenge3 Description',
+        tags: ['tag1', 'tag2', 'tag3'],
+        owner: user2._id,
+        privacy: 'private',
+        expiration: new Date(new Date(Date.now()).setHours(new Date(Date.now()).getHours()-23)),
+        invites: [user1._id, user3._id]
+      };
+      frisby
+      .create("Have nerdy create an expired challenge")
+      .post(domain + '/challenges', challenge4)
+      .expectStatus(200)
+      .afterJSON(function(challenge){
+        expect(challenge._id).toBeDefined();
+        challenge4._id = challenge._id;
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //expired challenge shouldn't show up at all in popular's myChallenges
+      frisby
+      .create("Get all the challenges for the nerdy user")
+      .get(domain + '/users/' + user2._id + '/challenges/page/1')
+      .expectStatus(200)
+      .inspectJSON()
+      .afterJSON(function(challenges){
+        expect(challenges.length).toEqual(3);
+        expect(challenges.some(function(challenge){
+          return challenge._id === challenge4._id;
+        })).toEqual(true);
+
         cb(null);
       })
       .toss();
