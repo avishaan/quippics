@@ -41,7 +41,8 @@ if (config.env === 'local'){
 }
 // dev/local environments
 if (config.env === 'dev' ||
-    config.env === 'local'){
+    config.env === 'local' ||
+    config.env === 'test'){
   app.use(express.logger('dev'));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   app.use(function(req, res, next){

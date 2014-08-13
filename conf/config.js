@@ -29,8 +29,10 @@ module.exports = function(){
       return {
         dbURI : process.env.MONGODB_URI,
         expressPort: process.env.PORT,
-        env: 'dev', //should be env/prod, can be changed to prod when we are comfy with prod environ
+        env: 'test', //should be env/prod, can be changed to prod when we are comfy with prod environ
         logentriesToken: process.env.LOGENTRIES_TOKEN,
+        nodetimeToken: process.env.NODETIME_ACCOUNT_KEY,
+        loaderioToken: process.env.LOADERIO_API_KEY,
         pfxPath: '/conf/cert/pfx-test.p12'
       };
     case "prod":
@@ -40,6 +42,8 @@ module.exports = function(){
         expressPort: process.env.PORT,
         env: 'dev', //should be env/prod, can be changed to prod when we are comfy with prod environ
         logentriesToken: process.env.LOGENTRIES_TOKEN,
+        nodetimeToken: process.env.NODETIME_ACCOUNT_KEY,
+        loaderioToken: process.env.LOADERIO_API_KEY,
         pfxPath: '/conf/cert/pfx-prod.p12'
       };
     default:
