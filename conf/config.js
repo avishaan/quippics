@@ -22,6 +22,7 @@ module.exports = function(){
         expressPort: process.env.PORT,
         env: 'dev', //should be env/prod
         logentriesToken: 'bb995abb-8007-4433-a2af-ea7deba119cf',
+        loaderioVerficationLink: process.env.LOADERIO_VERIFICATION_LINK,
         pfxPath: '/conf/cert/pfx-dev.p12'
       };
     case "test":
@@ -29,8 +30,11 @@ module.exports = function(){
       return {
         dbURI : process.env.MONGODB_URI,
         expressPort: process.env.PORT,
-        env: 'dev', //should be env/prod, can be changed to prod when we are comfy with prod environ
+        env: 'test', //should be env/prod, can be changed to prod when we are comfy with prod environ
         logentriesToken: process.env.LOGENTRIES_TOKEN,
+        nodetimeToken: process.env.NODETIME_ACCOUNT_KEY,
+        loaderioToken: process.env.LOADERIO_API_KEY,
+        loaderioVerficationLink: process.env.LOADERIO_VERIFICATION_LINK,
         pfxPath: '/conf/cert/pfx-test.p12'
       };
     case "prod":
@@ -40,6 +44,9 @@ module.exports = function(){
         expressPort: process.env.PORT,
         env: 'dev', //should be env/prod, can be changed to prod when we are comfy with prod environ
         logentriesToken: process.env.LOGENTRIES_TOKEN,
+        nodetimeToken: process.env.NODETIME_ACCOUNT_KEY,
+        loaderioToken: process.env.LOADERIO_API_KEY,
+        loaderioVerficationLink: process.env.LOADERIO_VERIFICATION_LINK,
         pfxPath: '/conf/cert/pfx-prod.p12'
       };
     default:

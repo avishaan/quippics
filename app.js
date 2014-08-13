@@ -41,7 +41,8 @@ if (config.env === 'local'){
 }
 // dev/local environments
 if (config.env === 'dev' ||
-    config.env === 'local'){
+    config.env === 'local' ||
+    config.env === 'test'){
   app.use(express.logger('dev'));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   app.use(function(req, res, next){
@@ -148,7 +149,10 @@ app.get('/api/v1/users/:uid/friends/activities/page/:page', apiAuth(), activitie
 //misc routes
 app.delete('/api/v1/server', server.delete);
 //verification routes
-app.get('/loaderio-d416a27684a80a5cb39582907a2ed006.txt', function(req, res){return res.send(200, 'loaderio-d416a27684a80a5cb39582907a2ed006');});
+//verify loaderio
+if (config.loaderioVerficationLink){
+  app.get('/' + config.loaderioVerficationLink + '.txt', function(req, res){return res.send(200, config.loaderioVerficationLink);});
+}
 
 app.use(function(req, res){
   console.log("MISROUTE");
