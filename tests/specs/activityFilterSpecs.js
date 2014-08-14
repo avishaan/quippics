@@ -391,7 +391,7 @@ exports.spec = function(domain, callback){
       //now have popular decline this challenge
       frisby
       .create("Have popular decline the challenge")
-      .post(domain + '/challenges/' + challenge2._id + '/declines', {
+      .post(domain + '/challenges/' + challenge3._id + '/declines', {
         user: user1._id
       })
       .expectStatus(200)
@@ -407,9 +407,35 @@ exports.spec = function(domain, callback){
       .get(domain + '/users/' + user1._id + '/friends/activities/page/1')
       .expectStatus(200)
       .afterJSON(function(activities){
+        //challenge3 should no longer exist in popular's list of activities
+        expect(activities.some(function(activity){
+          if (activity.references.challenge){
+            return activity.references.challenge.id === challenge3._id;
+          }
+        })).toEqual(false);
         //now popular shouldn't see that activity anymore
         expect(activities.length).toEqual(2);
         cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create("Nerdy should still see activities of his friend in challenges where someone(popular) may have declined")
+      .get(domain + '/users/' + user2._id + '/friends/activities/page/1')
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(activities){
+        //other challenge participants should see the challenge related activity even 
+        //if a user declined
+        expect(activities.some(function(activity){
+          console.log(activity.sentence);
+          if (activity.references.challenge){
+            return activity.references.challenge.id === challenge3._id;
+          }
+        })).toEqual(true);
+        expect(activities.length).toEqual(4);
+        //cb(null);
       })
       .toss();
     },
