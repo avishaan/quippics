@@ -261,7 +261,7 @@ exports.myChallenges = function(req, res){
     })
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
-    .where('expiration').gt(Date.now())
+    .where('expiration').gt(new Date(Date.now()).setHours(new Date(Date.now()).getHours()-24))
     //only return participant status of user performing this query
     //.elemMatch('participants', { user: req.params.uid })
     .sort({expiration: 'ascending'})
