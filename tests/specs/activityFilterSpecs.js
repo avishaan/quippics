@@ -25,6 +25,7 @@ var user4 = {
 };
 var challenge1 = {};
 var challenge2 = {};
+var challenge3 = {};
 var submission1 = {}; //not widely accepted submission
 var submission2 = {}; //great submission
 exports.spec = function(domain, callback){
@@ -346,6 +347,67 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       .afterJSON(function(activities){
         //popular can see the comment nerdy made for him
+        expect(activities.length).toEqual(2);
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //setup our challenge
+      challenge3 = {
+        title: 'Challenge3 Title',
+        description: 'Challenge3 Description',
+        tags: ['tag1', 'tag2', 'tag3'],
+        owner: user2._id,
+        privacy: 'private',
+        expiration: new Date(2015, 3, 14),
+        invites: [user1._id]
+      };
+      //popular should see this in activity
+      frisby
+      .create("Have nerdy create a challenge that pop is invited to")
+      .post(domain + '/challenges', challenge3)
+      .expectStatus(200)
+      .afterJSON(function(challenge){
+        expect(challenge._id).toBeDefined();
+        challenge3._id = challenge._id;
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create("Popular should see activities of his friend in challenges where he was just invited to")
+      .get(domain + '/users/' + user1._id + '/friends/activities/page/1')
+      .expectStatus(200)
+      .afterJSON(function(activities){
+        //popular can see the new challenge now
+        expect(activities.length).toEqual(3);
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //now have popular decline this challenge
+      frisby
+      .create("Have popular decline the challenge")
+      .post(domain + '/challenges/' + challenge2._id + '/declines', {
+        user: user1._id
+      })
+      .expectStatus(200)
+      .afterJSON(function(res){
+        expect(res.clientMsg).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create("Popular should not see activities of his friend in challenges where he was invited by declined")
+      .get(domain + '/users/' + user1._id + '/friends/activities/page/1')
+      .expectStatus(200)
+      .afterJSON(function(activities){
+        //now popular shouldn't see that activity anymore
         expect(activities.length).toEqual(2);
         cb(null);
       })
