@@ -183,7 +183,6 @@ exports.spec = function(domain, callback){
       .create("Get all the challenges for the nerdy user")
       .get(domain + '/users/' + user2._id + '/challenges/page/1')
       .expectStatus(200)
-      //.inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
@@ -278,7 +277,6 @@ exports.spec = function(domain, callback){
       .create("Get all the challenges for the nerdy user")
       .get(domain + '/users/' + user2._id + '/challenges/page/1')
       .expectStatus(200)
-      //.inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(2);
@@ -308,7 +306,6 @@ exports.spec = function(domain, callback){
       .create("Get all the challenges for the nerdy user")
       .get(domain + '/users/' + user2._id + '/challenges/page/1')
       .expectStatus(200)
-      //.inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(2);
@@ -323,7 +320,6 @@ exports.spec = function(domain, callback){
       .create("Get all the challenges for the popular user")
       .get(domain + '/users/' + user1._id + '/challenges/page/1')
       .expectStatus(200)
-      //.inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
@@ -361,7 +357,6 @@ exports.spec = function(domain, callback){
       .create("Get all the challenges for the popular user")
       .get(domain + '/users/' + user1._id + '/challenges/page/1')
       .expectStatus(200)
-      //.inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
@@ -460,7 +455,6 @@ exports.spec = function(domain, callback){
       .create("Get all archived challenges for a user in this case popular")
       .get(domain + '/users/' + user1._id + '/challenges/archive/page/1')
       .expectStatus(404)
-      //.inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges.clientMsg).toBeDefined();
         cb(null);
@@ -609,7 +603,6 @@ exports.spec = function(domain, callback){
       .create("Get all the challenges for the nerdy user")
       .get(domain + '/users/' + user2._id + '/challenges/page/1')
       .expectStatus(200)
-      .inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges.length).toEqual(3);
         expect(challenges.some(function(challenge){

@@ -32,6 +32,15 @@ Challenge.aggregate([
   {$match: {'participants.inviteStatus': {$in: ['invited', 'accepted']}}}
 ], p);
 
+Challenge.find({
+  participants: {
+    $elemMatch:{ //returns one challenge that matches the following exactly
+      user: ObjectId('53ed30726cb7710000990c28'),
+      inviteStatus: {$ne: 'declined'}
+    }
+  }
+}, '_id title', p); //get challenge where not declined
+
 Challenge.aggregate(
   {$project: {participants: 1}},
   {$match: {_id: submission.challenge._id}},
