@@ -361,7 +361,7 @@ exports.spec = function(domain, callback){
         owner: user2._id,
         privacy: 'private',
         expiration: new Date(2015, 3, 14),
-        invites: [user1._id]
+        invites: [user1._id, user3._id]
       };
       //popular should see this in activity
       frisby
@@ -403,7 +403,7 @@ exports.spec = function(domain, callback){
     },
     function(cb){
       frisby
-      .create("Popular should not see activities of his friend in challenges where he was invited by declined")
+      .create("Popular should not see activities of his friend in challenges where he was invited but declined")
       .get(domain + '/users/' + user1._id + '/friends/activities/page/1')
       .expectStatus(200)
       .afterJSON(function(activities){
@@ -419,12 +419,36 @@ exports.spec = function(domain, callback){
       })
       .toss();
     },
+    //nerdy needs to be friends with generic user3
     function(cb){
       frisby
-      .create("Nerdy should still see activities of his friend in challenges where someone(popular) may have declined")
-      .get(domain + '/users/' + user2._id + '/friends/activities/page/1')
+      .create('User3 can send a friend request to nerdy')
+      .post(domain + '/users/' + user2._id + '/friendRequests', {
+        friend: user3._id
+      })
       .expectStatus(200)
-      //.inspectJSON()
+      .after(function(res){
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create('Nerdy will go ahead and accept generics friend request')
+      .post(domain + '/users/' + user2._id + '/friends', {
+        user: user3._id
+      })
+      .expectStatus(200)
+      .after(function(res){
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create("Generic(user3) should still see activities of his friend in challenges where someone(popular) may have declined")
+      .get(domain + '/users/' + user3._id + '/friends/activities/page/1')
+      .expectStatus(200)
       .afterJSON(function(activities){
         //other challenge participants should see the challenge related activity even 
         //if a user declined
@@ -434,7 +458,7 @@ exports.spec = function(domain, callback){
             return activity.references.challenge.id === challenge3._id;
           }
         })).toEqual(true);
-        expect(activities.length).toEqual(4);
+        expect(activities.length).toEqual(1);
         //cb(null);
       })
       .toss();
