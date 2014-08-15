@@ -35,8 +35,14 @@ exports.friendActivities = function(req, res){
   },
   function(user, cb){ //get all of the user's challenges
     Challenge
-    .find({'participants.user': req.params.uid,
-           'participants.inviteStatus': {$ne: 'declined'}}) //get challenge where not declined
+    .find({
+      participants: {
+        $elemMatch:{ //returns one challenge that matches the following exactly
+          user: req.params.uid,
+          inviteStatus: {$ne: 'declined'}
+        }
+      }
+    }) //get challenge where not declined
     .select('_id')
     .lean()
     .exec(function(err, challenges){
