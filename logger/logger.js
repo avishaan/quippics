@@ -15,10 +15,10 @@ var logger = new (winston.Logger)({
     error: 6
   },
   colors: {
-    info: white,
-    warn: orange,
-    debug: yellow,
-    error: red
+    info: 'white',
+    warn: 'orange',
+    debug: 'yellow',
+    error: 'red'
   }
 });
 
