@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var _ = require('underscore');
 var User = require('../models/user.js');
+var logger = require('../logger/logger.js');
 
 var challengeSchema = new mongoose.Schema({
   title: { type: String },
@@ -61,7 +62,7 @@ challengeSchema.post('new', function(){
   }, function(err){
     // istanbul ignore if: no error for notifications
     if (err){
-      console.error("Error! ", err, new Error().stack);
+      logger.error("Error! ", {err: err, stack: new Error().stack});
     }
   });
 });

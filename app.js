@@ -37,13 +37,12 @@ var app = express();
 
 // local environment
 if (config.env === 'local'){
-
+  app.use(express.logger('dev'));
 }
 // dev/local environments
 if (config.env === 'dev' ||
     config.env === 'local' ||
     config.env === 'test'){
-  app.use(express.logger('dev'));
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   app.use(function(req, res, next){
     log.debug();
@@ -155,8 +154,7 @@ if (config.loaderioVerficationLink){
 }
 
 app.use(function(req, res){
-  console.log("MISROUTE");
-  res.send(404);
+  res.send(404, {clientMsg: 'This route is a misroute, check your route address for mistakes'});
 });
 
 http.createServer(app).listen(app.get('port'), function(){

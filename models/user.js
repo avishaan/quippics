@@ -7,6 +7,7 @@ var gm = require('gm');
 var im = gm.subClass({ imageMagick: true});
 var agent = require('../apn/apn.js');
 var transporter = require('../mail/transporter.js');
+var logger = require('../logger/logger.js');
 /*
 |-------------------------------------------------------------
 | User Schema
@@ -63,7 +64,7 @@ userSchema.path('username').validate(function(value, done){
         }
       } else {
         //there was a db query error, throw an error
-        console.log("Error: ", err, new Error().stack);
+        logger.error("Error! ", {err: err, stack: new Error().stack});
         return done(true);
       }
     });

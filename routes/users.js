@@ -11,6 +11,7 @@ var validator = require('validator');
 var isObjectId = require('valid-objectid').isValid;
 var Device = require('apnagent').Device;
 var _ = require('underscore');
+var logger = require('../logger/logger.js');
 
 // istanbul ignore next: this function doesn't do anything
 exports.list = function(req, res){
@@ -514,7 +515,7 @@ exports.update = function(req, res){
         return res.send(404);
       }
     } else { //some sort of error, let the client know
-      console.log("some error");
+      logger.error("Error! ", {err: err, stack: new Error().stack});
       return res.send(500, err);
     }
 

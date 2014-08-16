@@ -5,11 +5,12 @@ var Challenge = require('../models/challenge.js');
 var validator = require('validator');
 var isObjectId = require('valid-objectid').isValid;
 var fs = require('fs');
+var logger = require('../logger/logger.js');
 
 //function for some debugging when necessary
 // istanbul ignore next: unofficial debug route
 exports.debug = function(req, res){
-  console.log("debugger function for ballot entered");
+  logger.info("debugger function for ballot entered");
   res.send(200);
 };
 
