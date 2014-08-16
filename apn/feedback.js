@@ -2,6 +2,7 @@ var apnagent = require('apnagent');
 var config = require('../conf/config.js');
 var User = require('../models/user.js');
 var path = require('path');
+var logger = require('../logger/logger.js');
 
 
 //set environment based options
@@ -35,23 +36,23 @@ feedback.set('concurrency', 1); //low priority to the feedback api, need to serv
 feedback.connect(function (err) {
   // istanbul ignore if
   if (err && 'FeedbackAuthorizationError' === err.name) {
-    console.log('Feedback Gateway Error %s: %s', err.name, err.message);
-    console.log("check certs");
+    logger.error('Feedback Gateway Error %s: %s', err.name, err.message);
+    logger.error("check certs");
     // istanbul ignore if
   } else if (err) {
-    console.log('Feedback Gateway Error %s: %s', err.name, err.message);
+    logger.error('Feedback Gateway Error %s: %s', err.name, err.message);
   } else {
-    console.log('apngent Feedback gateway connected');
+    logger.info('apngent Feedback gateway connected');
   }
 });
 
 feedback.use(function(device, timestamp, next){
   //TODO, why the fuck do we need to require it here again, it will fail testscases if we dont
   var User = require('../models/user.js');
-  console.log("Device: %s at time: %s wants to unsub", device.toString(), timestamp);
+  logger.info("Device: %s at time: %s wants to unsub", device.toString(), timestamp);
   User.unsubDevice({device: device, timestamp: timestamp}, function(err){
     if (err){
-      console.warn("error: ", err, "stack: ", new Error().stack);
+      logger.error("Error! ", {err: err, stack: new Error().stack});
     }
   });
   next(); //we don't really need to wait for anything to finish as there is no error reporting

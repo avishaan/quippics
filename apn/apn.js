@@ -4,6 +4,7 @@ var path = require('path');
 var config = require('../conf/config.js');
 //TODO, this is the wrong place for this dependency
 var feedback = require('../apn/feedback.js');
+var logger = require('../logger/logger.js');
 
 //set environment based options
 // istanbul ignore next
@@ -26,42 +27,42 @@ agent.
   // istanbul ignore if
   // handle any auth problems
   if (err && err.name === 'GatewayAuthorizationError'){
-    console.log('Authentication Error: %s', err.message);
+    logger.error("Authentication Error:", {err: err});
     process.exit(1);
   }
   // istanbul ignore if
   else if (err) {
     //handle other errors
-    console.log("error: ", err, new Error().stack);
+    logger.error("Error! ", {err: err, stack: new Error().stack});
   } else {
     // it worked, don't be so surprised...
     var env = agent.enabled('sandbox') ? 'sandbox' : 'production';
-    console.log('apnagent [%s] gateway connected', env);
+    logger.info('apnagent [%s] gateway connected', env);
   }
 });
 
 agent.on('mock:message', function (raw) {
   var device = new apnagent.Device(raw.deviceToken);
-  console.log('mock:message');
-  console.log('==> %d - %s', raw.identifier, device.toString());
-  console.log(JSON.stringify(raw.payload, null, 2));
+  logger.info('mock:message');
+  logger.info('==> %d - %s', raw.identifier, device.toString());
+  logger.info(JSON.stringify(raw.payload, null, 2));
 });
 
 // istanbul ignore next
 agent.on('message:error', function(err, msg){
   if (err){
     if (err.name === 'GatewayNotificationError'){
-      console.log('message:error GatewayNotificationError: %s', err.message);
+      logger.error('message:error GatewayNotificationError: %s', err.message);
     } else if (err.code === 8){
       //err.code is what apple reports
-      //we need to flag this token as invalid and not send messages to it
-      console.log('    > %s', msg.device().toString());
+      //TODO we need to flag this token as invalid and not send messages to it
+      logger.error('    > %s', msg.device().toString());
     } else if (err.name === 'SerializationError'){
       //happens when apnagent has a problem encoding message for transfer
-      console.log('[message:error] SerializationError: %s', err.message);
+      logger.error('[message:error] SerializationError: %s', err.message);
     } else {
       //unlikely but could occur over a dead socket
-      console.log('[message:error] other error: %s, error#: %d', err.message, err.code);
+      logger.error('[message:error] other error: %s, error#: %d', err.message, err.code);
     }
   }
 });
