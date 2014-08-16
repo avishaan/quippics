@@ -5,6 +5,7 @@ var async = require('async');
 var validator = require('validator');
 var isObjectId = require('valid-objectid').isValid;
 var perPage = 24; //challenges per page
+var logger = require('../logger/logger.js');
 
 //read specific challenge
 exports.read = function(req, res){
@@ -109,9 +110,10 @@ exports.hideChallenge = function(req, res){
         return res.send(200, {clientMsg: "Challenge Hidden"});
       // istanbul ignore else: db error
       } else if (!err){
-        console.log('numAffected: ', numAffected, 'user', req.body.user);
+        logger.debug('numAffected: ', numAffected, 'user', req.body.user);
         return res.send(500, {clientMsg: "Couldn't Hide Challenge, try later"});
       } else {
+        logger.error("Error! ", {err: err, stack: new Error().stack});
         return res.send(500, err);
       }
   });
@@ -141,9 +143,10 @@ exports.declineChallenge = function(req, res){
         return res.send(200, {clientMsg: "Challenge Declined"});
       // istanbul ignore else: db error
       } else if (!err){
-        console.log('numAffected: ', numAffected, 'user', req.body.user);
+        logger.debug('numAffected: ', numAffected, 'user', req.body.user);
         return res.send(500, {clientMsg: "Couldn't Decline Challenge, try later"});
       } else {
+        logger.error("Error! ", {err: err, stack: new Error().stack});
         return res.send(500, err);
       }
   });
@@ -173,9 +176,10 @@ exports.acceptChallenge = function(req, res){
         return res.send(200, {clientMsg: "Challenge Accepted"});
       // istanbul ignore else: db error
       } else if (!err){
-        console.log('numAffected: ', numAffected, 'user', req.body.user);
+        logger.debug('numAffected: ', numAffected, 'user', req.body.user);
         return res.send(500, {clientMsg: "Couldn't Accept Challenge, try later"});
       } else {
+        logger.error("Error! ", {err: err, stack: new Error().stack});
         return res.send(500, err);
       }
   });
