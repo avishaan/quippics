@@ -6,6 +6,7 @@ var User = require('../models/user.js');
 var Ballot = require('../models/ballot.js');
 var Comment = require("../models/comment.js");
 var async = require('async');
+var logger = require('../logger/logger.js');
 
 var submissionSchema = new mongoose.Schema({
   createdOn: { type: Date, default: Date.now },
@@ -100,7 +101,7 @@ submissionSchema.post('new', function(){
         }
       }, function(err){
         if (err){
-          console.error("Error! ", err, new Error().stack);
+          logger.error("Error! ", {err: err, stack: new Error().stack});
         }
       });
     });
