@@ -305,6 +305,24 @@ exports.spec = function(domain, callback){
         cb(null);
       })
       .toss();
+    },
+    function(cb){
+      frisby
+      .create('Get list of users from nerdy perspective')
+      .get(domain + '/users/' + user2.id + '/users/page/1')
+      .expectStatus(200)
+      .afterJSON(function(users){
+        expect(users.length).toEqual(2); //remember there is an admin always watching 
+        expect(users[1]._id).toBeDefined();
+        expect(users[1].username).toBeDefined();
+        expect(users[1].thumbnail).toBeDefined();
+        expect(_.findWhere(users, {_id: user2.id})).toBeUndefined();//we dont want own user returned in user list
+        expect(users.some(function(user){
+          return user.friendStatus === 'friend';
+        })).toEqual(true);//expect one of the users to have a friend flag
+        cb(null);
+      })
+      .toss();
     }
   ],
   function(err, results){
