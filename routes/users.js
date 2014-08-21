@@ -445,26 +445,20 @@ exports.listUsers = function(req, res){
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
-  var skip = perPage * (req.params.page - 1)
-  User.aggregate([
-    {$match: {'_id': {'$ne': req.params.uid}}},
-    {$skip: skip},
-    {$limit: perPage},
-    {$project:{
-      'username': 1,
-      '_id': 1,
-      'thumbnail': 1
-    }}
-  ], function(err, users){
-    if(!err && users.length){
-      return res.send(200, users);
+  User.find({}, 'username _id thumbnail')
+    .ne('_id', req.params.uid) //don't return the user who is running the query
+    .skip(perPage * (req.params.page - 1))
+    .limit(perPage)
+    .exec(function(err, users){
+      if(!err && users.length){
+        return res.send(200, users);
       // istanbul ignore else: db error
-    } else if (!err){
-      return res.send(404, {clientMsg: "Could not find users"});
-    } else {
-      return res.send(500, err);
-    }
-  });
+      } else if (!err){
+        return res.send(404, {clientMsg: "Could not find users"});
+      } else {
+        return res.send(500, err);
+      }
+    });
 };
 //get profile of a user
 exports.profile = function(req, res){
