@@ -439,44 +439,30 @@ exports.listUsers = function(req, res){
   //TODO, show users with pending friend requests
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
-  async.series([
-    function(cb){
-      // istanbul ignore if: bad request
-      if (!validator.isNumeric(req.params.page) ||
-          !isObjectId(req.params.uid)
-         ){
-           return cb({clientMsg: "Malformed Request"});
-         }
-    },
-    function(cb){
-      var skip = perPage * (req.params.page - 1);
-      User.aggregate([
-        {$match: {'_id': {'$ne': req.params.uid}}},
-        {$skip: skip},
-        {$limit: perPage},
-        {$project:{
-          'username': 1,
-          '_id': 1,
-          'thumbnail': 1
-        }}
-      ], function(err, users){
-        if(!err && users.length){
-          cb(null, users);
-          // istanbul ignore else: db error
-        } else if (!err){
-          cb({clientMsg: "Could not find users"});
-        } else {
-          cb(err);
-        }
-      });
-    }
-  ],
-  function(err, users){
-    if (err){
-      return res.send(500, err);
-    } else {
-      //no error, send ok status to front end
+  // istanbul ignore if: bad request
+  if (!validator.isNumeric(req.params.page) ||
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  var skip = perPage * (req.params.page - 1)
+  User.aggregate([
+    {$match: {'_id': {'$ne': req.params.uid}}},
+    {$skip: skip},
+    {$limit: perPage},
+    {$project:{
+      'username': 1,
+      '_id': 1,
+      'thumbnail': 1
+    }}
+  ], function(err, users){
+    if(!err && users.length){
       return res.send(200, users);
+      // istanbul ignore else: db error
+    } else if (!err){
+      return res.send(404, {clientMsg: "Could not find users"});
+    } else {
+      return res.send(500, err);
     }
   });
 };
