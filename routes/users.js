@@ -445,20 +445,30 @@ exports.listUsers = function(req, res){
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
-  User.find({}, 'username _id thumbnail')
+  async.series([
+    function(cb){
+    User.find({}, 'username _id thumbnail')
     .ne('_id', req.params.uid) //don't return the user who is running the query
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
     .exec(function(err, users){
       if(!err && users.length){
-        return res.send(200, users);
-      // istanbul ignore else: db error
+        cb(null, users);
+        // istanbul ignore else: db error
       } else if (!err){
-        return res.send(404, {clientMsg: "Could not find users"});
+        cb({clientMsg: "Could not find users"});
       } else {
-        return res.send(500, err);
+        cb(err);
       }
     });
+  }
+  ], function(err, results){
+    if (err){
+      return res.send(500, err);
+    } else {
+      return res.send(200, results[0]);
+    }
+  });
 };
 //get profile of a user
 exports.profile = function(req, res){
