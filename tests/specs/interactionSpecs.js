@@ -115,7 +115,7 @@ exports.spec = function(domain, callback){
         expect(users[1].thumbnail).toBeDefined();
         expect(_.findWhere(users, {_id: user2.id})).toBeUndefined();//we dont want own user returned in user list
         expect(users.some(function(user){
-          return user.friendStatus === 'user';
+          return user.friendStatus === false;
         })).toEqual(true);//expect one of the users to have a friend flag
         cb(null);
       })
@@ -321,7 +321,7 @@ exports.spec = function(domain, callback){
         expect(users[1].thumbnail).toBeDefined();
         expect(_.findWhere(users, {_id: user2.id})).toBeUndefined();//we dont want own user returned in user list
         expect(users.some(function(user){
-          return user.friendStatus === 'friend';
+          return user.friendStatus === true;
         })).toEqual(true);//expect one of the users to have a friend flag
         cb(null);
       })
