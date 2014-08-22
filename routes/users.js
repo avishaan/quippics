@@ -439,26 +439,64 @@ exports.listUsers = function(req, res){
   //TODO, show users with pending friend requests
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
+  var friends; //keep this outside so we can access easily
   // istanbul ignore if: bad request
   if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
-  User.find({}, 'username _id thumbnail')
-    .ne('_id', req.params.uid) //don't return the user who is running the query
-    .skip(perPage * (req.params.page - 1))
-    .limit(perPage)
-    .exec(function(err, users){
-      if(!err && users.length){
-        return res.send(200, users);
-      // istanbul ignore else: db error
-      } else if (!err){
-        return res.send(404, {clientMsg: "Could not find users"});
-      } else {
-        return res.send(500, err);
-      }
-    });
+  async.series([
+    function(cb){
+      User.findOne({_id: req.params.uid})
+      .lean()
+      .select('friends')
+      .exec(function(err, user){
+        if (!err && user){
+          //set friends for next bit
+          friends = user.friends;
+          cb(null, user);
+        } else {
+          cb(err);
+        }
+      });
+    },
+    function(cb){
+      User.find({}, 'username _id thumbnail')
+      .ne('_id', req.params.uid) //don't return the user who is running the query
+      .skip(perPage * (req.params.page - 1))
+      .limit(perPage)
+      .lean()
+      .exec(function(err, users){
+        if(!err && users.length){
+          //convert friend array to strings
+          friends.forEach(function(friend, index){
+            friends[index] = friend.toString();
+          });
+          //find out if some friends were returned
+          users.forEach(function(user, index){
+            if (_.contains(friends, user._id.toString())){
+              users[index].friendStatus = true;
+            } else {
+              users[index].friendStatus = false;
+            }
+          });
+          cb(null, users);
+          // istanbul ignore else: db error
+        } else if (!err){
+          cb({clientMsg: "Could not find users"});
+        } else {
+          cb(err);
+        }
+      });
+    }
+  ], function(err, results){
+    if (err){
+      return res.send(500, err);
+    } else {
+      return res.send(200, results[1]);
+    }
+  });
 };
 //get profile of a user
 exports.profile = function(req, res){

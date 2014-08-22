@@ -114,6 +114,9 @@ exports.spec = function(domain, callback){
         expect(users[1].username).toBeDefined();
         expect(users[1].thumbnail).toBeDefined();
         expect(_.findWhere(users, {_id: user2.id})).toBeUndefined();//we dont want own user returned in user list
+        expect(users.some(function(user){
+          return user.friendStatus === false;
+        })).toEqual(true);//expect one of the users to have a friend flag
         cb(null);
       })
       .toss();
@@ -302,6 +305,24 @@ exports.spec = function(domain, callback){
         expect(user.friends.length).toEqual(1);
         expect(user.friends[0].username).toEqual(user2.username);
         expect(user.friends[0].thumbnail).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      frisby
+      .create('Get list of users from nerdy perspective')
+      .get(domain + '/users/' + user2.id + '/users/page/1')
+      .expectStatus(200)
+      .afterJSON(function(users){
+        expect(users.length).toEqual(2); //remember there is an admin always watching 
+        expect(users[1]._id).toBeDefined();
+        expect(users[1].username).toBeDefined();
+        expect(users[1].thumbnail).toBeDefined();
+        expect(_.findWhere(users, {_id: user2.id})).toBeUndefined();//we dont want own user returned in user list
+        expect(users.some(function(user){
+          return user.friendStatus === true;
+        })).toEqual(true);//expect one of the users to have a friend flag
         cb(null);
       })
       .toss();

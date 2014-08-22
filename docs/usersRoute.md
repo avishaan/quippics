@@ -172,13 +172,13 @@ Example Response
 ```
 response: [{
   username: 'jill1987',
-  friend: true,
+  friendStatus: true,
   _id: 52e73b76ca1c1f8202000008,
   thumbnail: {data: 0ad0fdsaf0dadfdffea0} 
 },
 {
   username: 'jack1985',
-  friend: false,
+  friendStatus: false,
   _id:52f548514f8c88b137000113,
   thumbnail: {data: 0ad0fdsaf0dadfdffea0}
 }]
