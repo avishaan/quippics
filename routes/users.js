@@ -476,9 +476,9 @@ exports.listUsers = function(req, res){
           //find out if some friends were returned
           users.forEach(function(user, index){
             if (_.contains(friends, user._id.toString())){
-              users[index].friendStatus = 'friend';
+              users[index].friendStatus = true;
             } else {
-              users[index].friendStatus = 'user';
+              users[index].friendStatus = false;
             }
           });
           cb(null, users);
