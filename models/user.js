@@ -312,7 +312,7 @@ userSchema.statics.gatewayRemoveDevice = function(options, cb){
             if (!err && user){
               return cb();
             } else {
-              return cb({clientMsg: "Couldn't remove device from user"});
+              return cb({clientMsg: "Couldn't remove device"});
             }
           });
         }
@@ -320,7 +320,7 @@ userSchema.statics.gatewayRemoveDevice = function(options, cb){
     } else {
       //couldn't find the user for whatever reason
       return cb({
-        clientMsg: "Couldn't Find User to Logout"
+        clientMsg: "Couldn't find user associated with logout"
       });
     }
   });
