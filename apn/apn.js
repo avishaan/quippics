@@ -57,6 +57,7 @@ agent.on('message:error', function(err, msg){
       //err.code is what apple reports
       //TODO we need to flag this token as invalid and not send messages to it
       logger.info('error num: %s > remove device: %s', err.code, msg.device().toString());
+      var User = require('../models/user.js');
       User.gatewayRemoveDevice({uuid: msg.device().toString()}, function(err){
         if (err){
           logger.error("Couldn't remove with gateway error: ", err.code, " message ", err);
