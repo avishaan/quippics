@@ -7,8 +7,9 @@ var logger = require('../logger/logger.js');
 
 //set environment based options
 // istanbul ignore next
-if (config.env === 'prod'){
+if (config.env === 'dev'){
   var feedback = module.exports = new apnagent.Feedback();
+  feedback.enable('sandbox');
 } else if (config.env === 'local'){
   var feedback = module.exports = new apnagent.MockFeedback();
   feedback
@@ -25,7 +26,6 @@ if (config.env === 'prod'){
 //  }, 2500);
 } else {
   var feedback = module.exports = new apnagent.Feedback();
-  feedback.enable('sandbox');
 }
 //set feedback credentials
 feedback.set('pfx file', path.join(process.cwd(), config.pfxPath));
