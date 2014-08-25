@@ -287,6 +287,46 @@ userSchema.statics.removeTokens = function(options, cb){
   });
 };
 
+//Remove uuid due to gateway error
+userSchema.statics.gatewayRemoveDevice = function(options, cb){
+  if (!options.uuid){
+    return cb({
+      clientMsg: "Malformed request",
+    });
+  }
+  //find user attempting the logout
+  User
+  .findOne({
+    'devices.uuid': options.uuid
+  })
+  .select('devices')
+  .exec(function(err, user){
+    if (!err && user && user.devices.length){
+      //go through the list of user devices and find matching device
+      user.devices.forEach(function(device, index){
+        //check device matching
+        if (options.uuid === device.uuid){
+          //remove from user devices list
+          user.devices.splice(index, 1);
+          user.save(function(err, user){
+            if (!err && user){
+              return cb();
+            } else {
+              return cb({clientMsg: "Couldn't remove device"});
+            }
+          });
+        }
+      });
+    } else {
+      //couldn't find the user for whatever reason
+      return cb({
+        clientMsg: "Couldn't find user associated with logout"
+      });
+    }
+  });
+  //go through the list of devices for that user
+  //when you find the matching device, go ahead and remove that device
+};
 //Remove device from user
 userSchema.statics.removeDevice = function(options, cb){
   if (!options.id|| !options.uuid){
