@@ -47,7 +47,7 @@ feedback.connect(function (err) {
 });
 
 feedback.use(function(device, timestamp, next){
-  //TODO, why the fuck do we need to require it here again, it will fail testscases if we dont
+  //TODO, why the do we need to require it here again, it will fail testscases if we dont
   var User = require('../models/user.js');
   logger.info("Device: %s at time: %s wants to unsub", device.toString(), timestamp);
   User.unsubDevice({device: device, timestamp: timestamp}, function(err){
