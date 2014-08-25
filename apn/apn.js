@@ -60,7 +60,7 @@ agent.on('message:error', function(err, msg){
       var User = require('../models/user.js');
       User.gatewayRemoveDevice({uuid: msg.device().toString()}, function(err){
         if (err){
-          logger.error("Couldn't remove with gateway error: ", err.code, " message ", err);
+          logger.error("Couldn't remove with gateway error: ", err);
         } else{
           logger.info("Success in removing device %s", msg.device().toString());
         }
