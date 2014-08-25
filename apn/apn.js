@@ -8,14 +8,14 @@ var logger = require('../logger/logger.js');
 
 //set environment based options
 // istanbul ignore next
-if (config.env === 'prod'){
+if (config.env === 'dev'){
   var agent = module.exports = new apnagent.Agent();
+  agent.enable('sandbox');
 } else if (config.env === 'local'){
   var agent = module.exports = new apnagent.MockAgent();
   agent.enable('sandbox');
 } else {
   var agent = module.exports = new apnagent.Agent();
-  agent.enable('sandbox');
 }
 
 //set the credentials

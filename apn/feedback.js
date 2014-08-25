@@ -7,8 +7,9 @@ var logger = require('../logger/logger.js');
 
 //set environment based options
 // istanbul ignore next
-if (config.env === 'prod'){
+if (config.env === 'dev'){
   var feedback = module.exports = new apnagent.Feedback();
+  feedback.enable('sandbox');
 } else if (config.env === 'local'){
   var feedback = module.exports = new apnagent.MockFeedback();
   feedback
@@ -25,7 +26,6 @@ if (config.env === 'prod'){
 //  }, 2500);
 } else {
   var feedback = module.exports = new apnagent.Feedback();
-  feedback.enable('sandbox');
 }
 //set feedback credentials
 feedback.set('pfx file', path.join(process.cwd(), config.pfxPath));
@@ -47,7 +47,7 @@ feedback.connect(function (err) {
 });
 
 feedback.use(function(device, timestamp, next){
-  //TODO, why the fuck do we need to require it here again, it will fail testscases if we dont
+  //TODO, why the do we need to require it here again, it will fail testscases if we dont
   var User = require('../models/user.js');
   logger.info("Device: %s at time: %s wants to unsub", device.toString(), timestamp);
   User.unsubDevice({device: device, timestamp: timestamp}, function(err){

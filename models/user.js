@@ -320,7 +320,7 @@ userSchema.statics.gatewayRemoveDevice = function(options, cb){
     } else {
       //couldn't find the user for whatever reason
       return cb({
-        clientMsg: "Couldn't find user associated with logout"
+        clientMsg: "Couldn't find user associated with uuid"
       });
     }
   });
