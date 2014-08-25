@@ -459,7 +459,7 @@ exports.spec = function(domain, callback){
           }
         })).toEqual(true);
         expect(activities.length).toEqual(1);
-        //cb(null);
+        cb(null);
       })
       .toss();
     },
