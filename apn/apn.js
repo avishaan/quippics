@@ -56,7 +56,7 @@ agent.on('message:error', function(err, msg){
     } else if (err.code === 8){
       //err.code is what apple reports
       //TODO we need to flag this token as invalid and not send messages to it
-      logger.error('    > %s', msg.device().toString());
+      logger.error('%s > %s', err.code, msg.device().toString());
     } else if (err.name === 'SerializationError'){
       //happens when apnagent has a problem encoding message for transfer
       logger.error('[message:error] SerializationError: %s', err.message);
