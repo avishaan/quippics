@@ -62,7 +62,7 @@ agent.on('message:error', function(err, msg){
         if (err){
           logger.error("Couldn't remove with gateway error: ", err.code, " message ", err);
         } else{
-          logger.info("Success in removing device UUID");
+          logger.info("Success in removing device %s", msg.device().toString());
         }
       });
     } else if (err.name === 'SerializationError'){
