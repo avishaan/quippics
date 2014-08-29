@@ -116,8 +116,8 @@ exports.spec = function(domain, callback){
             User.findOne({_id: user1._id})
             .exec(function(err, user){
               expect(user.devices.length).toEqual(1);
-              expect(user.devices.uuid).toBeDefined();
-              expect(user.devices.timestamp).toBeDefined();
+              expect(user.devices[0].uuid).toBeDefined();
+              expect(user.devices[0].timestamp).toBeDefined();
               done();
             });
           });
