@@ -17,7 +17,7 @@ var user1 = {
   email: 'popular123@gmail.com',
   uuid: '1a91bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95',
   uuid2: '1b91bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95',
-  tokenTimestamp: Date.now()
+  tokenTimestamp: (Date.now()-10000) //without 10, test may fail during unsub running too quickly
 };
 
 var user2 = {
@@ -25,14 +25,14 @@ var user2 = {
   password: '314',
   email: 'nerd314@gmail.com',
   uuid: '2a91bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be76',
-  tokenTimestamp: Date.now()
+  tokenTimestamp: (Date.now()-10000) //without 10, test may fail during unsub running too quickly
 };
 var user3 = {
   username: 'user3',
   password: 'password',
   email: 'user3@gmail.com',
   uuid: '3a91bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be77',
-  tokenTimestamp: Date.now()
+  tokenTimestamp: (Date.now()-10000) //without 10, test may fail during unsub running too quickly
 };
 var challenge1 = {};
 var challenge2 = {};
@@ -116,6 +116,8 @@ exports.spec = function(domain, callback){
             User.findOne({_id: user1._id})
             .exec(function(err, user){
               expect(user.devices.length).toEqual(1);
+              expect(user.devices[0].uuid).toBeDefined();
+              expect(user.devices[0].timestamp).toBeDefined();
               done();
             });
           });
@@ -442,7 +444,7 @@ exports.spec = function(domain, callback){
           .post(domain + '/users/' + user1._id + '/device')
           .send({
             uuid: user1.uuid,
-            tokenTimestamp: Date.now()+1000
+            tokenTimestamp: (Date.now()-9000)
           })
           .end(function(err, res){
             expect(res.status).toEqual(200);
