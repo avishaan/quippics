@@ -45,7 +45,7 @@ module.exports = function(){
       return {
         dbURI : process.env.MONGODB_URI,
         expressPort: process.env.PORT,
-        env: 'dev', //should be env/prod, can be changed to prod when we are comfy with prod environ
+        env: 'prod', //should be env/prod, can be changed to prod when we are comfy with prod environ
         logentriesToken: process.env.LOGENTRIES_TOKEN,
         nodetimeToken: process.env.NODETIME_ACCOUNT_KEY,
         loaderioToken: process.env.LOADERIO_API_KEY,
