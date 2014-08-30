@@ -51,7 +51,7 @@ module.exports = function(){
         loaderioToken: process.env.LOADERIO_API_KEY,
         loaderioVerficationLink: process.env.LOADERIO_VERIFICATION_LINK,
         pfxPath: '/conf/cert/pfx-prod.p12',
-        loggerLevel: 'error'
+        loggerLevel: 'debug'
       };
     default:
       throw new Error("No Environment Found");
