@@ -37,7 +37,7 @@ agent.
   } else {
     // it worked, don't be so surprised...
     var env = agent.enabled('sandbox') ? 'sandbox' : 'production';
-    logger.info('apnagent [%s] gateway connected', env);
+    logger.debug('apnagent [%s] gateway connected', env);
   }
 });
 
