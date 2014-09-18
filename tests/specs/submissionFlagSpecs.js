@@ -3,12 +3,9 @@ var async = require('async');
 var _ = require('underscore');
 var superagent = require('superagent');
 var db = require('../../dbs/db.js');
-var agent = require('../../apn/apn.js');
 var User = require('../../models/user.js');
 var Challenge = require('../../models/challenge.js');
 var Submission = require('../../models/submission.js');
-var Device = require('apnagent').Device;
-var feedback = require('../../apn/feedback.js');
 
 
 var user1 = {
@@ -39,69 +36,74 @@ var challenge2 = {};
 var submission1 = {}; //not widely accepted submission
 var submission2 = {}; //great submission
 
-agent.on('mock:message', function(raw){
-  //console.log(raw);
-});
-agent.on('queue:drain', function(raw){
-  //console.log(raw);
-});
-
 exports.spec = function(domain, callback){
 
   jasmine.getEnv().defaultTimeoutInterval = 2000;
-  async.series([
-    function(cb){
-      console.log("Starting the notification tests");
-      cb(null);
-    },
-    function(cb){
-      frisby
-      .create("Delete the database")
-      .delete(domain + "/server")
-      .expectStatus(200)
-      .afterJSON(function(){
+  console.log('Running Submission Flag Tests');
+  describe('The test setup', function(){
+    it('should be able to delete the database', function(done){
+      superagent
+      .del(domain + "/server")
+      .end(function(res){
+        expect(res.status).toEqual(200);
         console.log("Done deleting db");
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
-      describe('create users', function(){
-        it('user1', function(done){
-          User.create({
-            username: user1.username,
-            password: user1.password,
-            email: user1.email
-          }, function(err, user){
-            user1._id = user.id;
-            done();
-          });
-        });
-        it('user2', function(done){
-          User.create({
-            username: user2.username,
-            password: user2.password,
-            email: user2.email
-          }, function(err, user){
-            user2._id = user.id;
-            done();
-          });
-        });
-        it('user3', function(done){
-          User.create({
-            username: user3.username,
-            password: user3.password,
-            email: user3.email
-          }, function(err, user){
-            user3._id = user.id;
-            done();
-            cb(null);
-          });
-        });
+        done();
       });
-    },
-  ],
-  function(err, results){
-    callback(null);
+    });
+    it('should create a user', function(done){
+      console.log('after delete');
+      User.create({
+        username: user1.username,
+        password: user1.password,
+        email: user1.email
+      }, function(err, user){
+        user1.id = user.id;
+        done();
+      });
+    });
+    it('should create another user', function(done){
+      User.create({
+        username: user2.username,
+        password: user2.password,
+        email: user2.email
+      }, function(err, user){
+        user2.id = user.id;
+        done();
+      });
+    });
+    it('should create another user', function(done){
+      User.create({
+        username: user3.username,
+        password: user3.password,
+        email: user3.email
+      }, function(err, user){
+        user3.id = user.id;
+        done();
+      });
+    });
+    it('should invite all the users into a challenge', function(done){
+      Challenge.create({
+        title: 'Challenge Title',
+        description: 'Challenge Description',
+        owner: user3.id,
+        invites: [user1.id, user2.id, user3.id],
+        privacy: 'public',
+        expiration: new Date(2015, 3, 14),
+        participants: [{
+          user: user1.id,
+          inviteStatus: 'accepted'
+        },{
+          user: user2.id,
+          inviteStatus: 'accepted'
+        },{
+          user: user3.id,
+          inviteStatus: 'owner'
+        }]
+      }, function(err, challenge){
+        challenge1.id = challenge.id;
+        console.log(challenge);
+        done();
+      })
+    })
   });
 };
