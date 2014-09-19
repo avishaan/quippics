@@ -12,24 +12,22 @@ var user1 = {
   username: 'popular123',
   password: '123',
   email: 'popular123@gmail.com',
-  uuid: '1a91bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95',
-  uuid2: '1b91bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be95',
-  tokenTimestamp: (Date.now()-10000) //without 10, test may fail during unsub running too quickly
 };
 
 var user2 = {
   username: 'nerd314',
   password: '314',
   email: 'nerd314@gmail.com',
-  uuid: '2a91bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be76',
-  tokenTimestamp: (Date.now()-10000) //without 10, test may fail during unsub running too quickly
 };
 var user3 = {
   username: 'user3',
   password: 'password',
   email: 'user3@gmail.com',
-  uuid: '3a91bde2 720d89d4 086beaa8 43f9b061 a18b36b4 8cd0008a 1f347a5a d844be77',
-  tokenTimestamp: (Date.now()-10000) //without 10, test may fail during unsub running too quickly
+};
+var user4 = {
+  username: 'douche',
+  password: 'password',
+  email: 'sleepyfloydshaan@gmail.com',
 };
 var challenge1 = {};
 var challenge2 = {};
@@ -81,7 +79,17 @@ exports.spec = function(domain, callback){
         done();
       });
     });
-    it('should invite all the users into a challenge', function(done){
+    it('should create another user', function(done){
+      User.create({
+        username: user4.username,
+        password: user4.password,
+        email: user4.email
+      }, function(err, user){
+        user4.id = user.id;
+        done();
+      });
+    });
+    it('should invite all the users into a challenge and have them accept', function(done){
       Challenge.create({
         title: 'Challenge Title',
         description: 'Challenge Description',
@@ -101,9 +109,109 @@ exports.spec = function(domain, callback){
         }]
       }, function(err, challenge){
         challenge1.id = challenge.id;
-        console.log(challenge);
+        expect(challenge.id).toBeDefined();
+        expect(err).toEqual(null);
         done();
+      });
+    });
+    it('should have user1 enter a submission', function(done){
+      superagent
+      .post(domain + "/challenges/" + challenge1.id + "/submissions")
+      .type('form')
+      .attach("image", "./tests/specs/images/onepixel.png")
+      .field("owner", user1.id)
+      .end(function(err, res){
+        var submission = res.body;
+        //make sure something was returned in the response body
+        expect(submission).toBeDefined();
+        //make sure the id in the response body was returned
+        expect(submission._id).toBeDefined();
+        //expect 200 response
+        expect(res.status).toEqual(200);
+        submission1.id = submission._id;
+        //console.log("here is the returned superagent submission");
+        //console.log(submission);
+        done();
+      });
+    });
+    it('should have user4 (douche) comment on submission 1', function(done){
+      superagent
+      .post(domain + "/challenges/" +challenge1.id + "/submissions/" + submission1.id + '/comments')
+      .send({
+        commenter: user4.id,
+        comment: 'My potentially offensive comment'
       })
-    })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('should have user4 (douche) enter an inappropriate submission', function(done){
+      superagent
+      .post(domain + "/challenges/" + challenge1.id + "/submissions")
+      .type('form')
+      .attach("image", "./tests/specs/images/onepixel.png")
+      .field("owner", user4.id)
+      .end(function(err, res){
+        var submission = res.body;
+        //make sure something was returned in the response body
+        expect(submission).toBeDefined();
+        //make sure the id in the response body was returned
+        expect(submission._id).toBeDefined();
+        //expect 200 response
+        expect(res.status).toEqual(200);
+        submission2.id = submission._id;
+        //console.log("here is the returned superagent submission");
+        //console.log(submission);
+        done();
+      });
+    });
+  });
+  describe('Flagging of a submission', function(){
+    it('should be allowed by a user', function(done){
+      superagent
+      .post(domain + "/challenges/" + challenge1.id + '/submissions' + submission2.id + 'flags')
+      .send({
+        flagger: user1.id,
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('should be allowed by a second user', function(done){
+      superagent
+      .post(domain + "/challenges/" + challenge1.id + '/submissions' + submission2.id + 'flags')
+      .send({
+        flagger: user2.id,
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('shouldnt be impacted by a user flagging for a second time' , function(done){
+      superagent
+      .post(domain + "/challenges/" + challenge1.id + '/submissions' + submission2.id + 'flags')
+      .send({
+        flagger: user2.id,
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        expect(false).toEqual(true);
+        done();
+      });
+    });
+    it('should be allowed by a third user', function(done){
+      superagent
+      .post(domain + "/challenges/" + challenge1.id + '/submissions' + submission2.id + 'flags')
+      .send({
+        flagger: user3.id,
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
   });
 };
