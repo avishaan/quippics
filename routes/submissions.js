@@ -17,7 +17,7 @@ exports.flag = function(req, res){
     submissionId: req.param.sid,
     flagger: req.body.flagger
   }, function(err, submission){
-    if (err){
+    if (!err && submission){
       return res.send(200, submission);
     } else {
       return res.send(500, err);
