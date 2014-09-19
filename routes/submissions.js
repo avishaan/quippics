@@ -5,6 +5,32 @@ var validator = require('validator');
 var isObjectId = require('valid-objectid').isValid;
 var perPage = 24; //submission per page
 
+//flag a submission
+exports.flag = function(req, res){
+  // istanbul ignore if: bad request
+  if (!isObjectId(req.params.sid) ||
+      !isObjectId(req.body.flagger)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  Submission
+  .findOne({_id: req.params.sid})
+  .select('_id flaggers')
+  .exec(function(err, submission){
+    if (!err && submission.length){
+      submission.flaggers.addToSet(req.body.flagger);
+      submission.save(function(err, savedSubmission){
+        if (!err && savedSubmission.length){
+          return res.send(200, submission);
+        } else {
+          return res.send(500, err);
+        }
+      });
+    } else {
+      return res.send(500, err);
+    }
+  });
+};
 //read a specific submission
 exports.readOne = function(req, res){
   //find the submission
