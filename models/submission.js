@@ -17,6 +17,9 @@ var submissionSchema = new mongoose.Schema({
   thumbnail:
   { data: Buffer, contentType: String },
   ballots: [Ballot.schema],
+  flaggers: [
+    { type: mongoose.Schema.Types.ObjectId, ref: 'User' } //list of users who have flagged the submission
+  ],
   comments: [Comment.schema],
   score: { type: Number, default: 0}, //we calculate this in the pre save
   rank: { type: Number, default: 0}, //this should be calculated before every ballot added
