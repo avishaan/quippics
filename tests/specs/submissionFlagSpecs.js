@@ -239,14 +239,13 @@ exports.spec = function(domain, callback){
       })
       .end(function(res){
         expect(res.status).toEqual(200);
-        expect(false).toEqual(true);
         Submission
-        .findOne({_id: submission2.id})
-        .exec(function(submission){
-          expect(submission.flaggers.length).toEqua(2);
+        .findOne({'_id': submission2.id})
+        .exec(function(err, submission){
+          //find the submission and count the number of flags, make sure only at two
+          expect(submission.flaggers.length).toEqual(2);
+          done();
         });
-        //find the submission and count the number of flags, make sure only at two
-        done();
       });
     });
     it('should be allowed by a third user', function(done){
