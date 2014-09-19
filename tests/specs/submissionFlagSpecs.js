@@ -176,7 +176,7 @@ exports.spec = function(domain, callback){
     //this image is appropriate, the moderator will not confirm this image is bad
     it('should be allowed by a user', function(done){
       superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/flags')
+      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission1.id + '/flags')
       .send({
         flagger: user1.id,
       })
@@ -187,7 +187,7 @@ exports.spec = function(domain, callback){
     });
     it('should be allowed by a second user', function(done){
       superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/flags')
+      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission1.id + '/flags')
       .send({
         flagger: user2.id,
       })
@@ -198,7 +198,7 @@ exports.spec = function(domain, callback){
     });
     it('should be allowed by a third user', function(done){
       superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/flags')
+      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission1.id + '/flags')
       .send({
         flagger: user3.id,
       })
