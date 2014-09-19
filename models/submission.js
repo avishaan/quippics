@@ -54,6 +54,16 @@ submissionSchema.post('save', function(){
   }
 });
 
+//post save check if the image has been successfully flagged
+submissionSchema.post('save', function(){
+  //if the submission was flagged by 3 or more people
+  //sometimes the submission won't have the flaggers populated, in which case forget it
+  if (this.flaggers && this.flaggers.length >= 3){
+    //perform moderator actions and notifications
+    logger.info('Submission past flag threashold');
+  }
+});
+
 //do the following after save on new instance
 submissionSchema.post('new', function(){
   var submission = this;
