@@ -111,6 +111,29 @@ submissionSchema.post('new', function(){
   });
 });
 
+//flag submission
+submissionSchema.statics.flag = function(options, cb){
+  var submissionId = options.submissionId;
+  var flaggerId = options.flagger;
+  this
+  .findOne({id: submissionId})
+  .select('_id flaggers')
+  .exec(function(err, submission){
+    if (!err && submission.length){
+      submission.flaggers.addToSet(req.body.flagger);
+      submission.save(function(err, savedSubmission){
+        if (!err && savedSubmission.length){
+          cb(null, savedSubmission);
+        } else {
+          cb(err, null);
+        }
+      });
+    } else {
+      cb(err, null);
+    }
+  });
+
+};
 //find challenge of a submission //TODO, we already store this, why the hell are we looking for it!?
 submissionSchema.methods.findChallenge = function(next){
   //find the challenge this submissions exists in and pass that to the callback
