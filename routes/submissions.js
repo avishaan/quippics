@@ -13,19 +13,12 @@ exports.flag = function(req, res){
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
-  Submission
-  .findOne({_id: req.params.sid})
-  .select('_id flaggers')
-  .exec(function(err, submission){
-    if (!err && submission.length){
-      submission.flaggers.addToSet(req.body.flagger);
-      submission.save(function(err, savedSubmission){
-        if (!err && savedSubmission.length){
-          return res.send(200, submission);
-        } else {
-          return res.send(500, err);
-        }
-      });
+  Submission.flag({
+    submissionId: req.param.sid,
+    flagger: req.body.flagger
+  }, function(err, submission){
+    if (err){
+      return res.send(200, submission);
     } else {
       return res.send(500, err);
     }
