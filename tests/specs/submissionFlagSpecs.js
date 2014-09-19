@@ -167,7 +167,43 @@ exports.spec = function(domain, callback){
       });
     });
   });
-  describe('Flagging of a submission', function(){
+  describe('Flagging of a submission1', function(){
+    //this image is appropriate, the moderator will not confirm this image is bad
+    it('should be allowed by a user', function(done){
+      superagent
+      .post(domain + "/challenges/" + challenge1.id + '/submissions' + submission2.id + 'flags')
+      .send({
+        flagger: user1.id,
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('should be allowed by a second user', function(done){
+      superagent
+      .post(domain + "/challenges/" + challenge1.id + '/submissions' + submission2.id + 'flags')
+      .send({
+        flagger: user2.id,
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('should be allowed by a third user', function(done){
+      superagent
+      .post(domain + "/challenges/" + challenge1.id + '/submissions' + submission2.id + 'flags')
+      .send({
+        flagger: user3.id,
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+  });
+  describe('Flagging of a submission2', function(){
     it('should be allowed by a user', function(done){
       superagent
       .post(domain + "/challenges/" + challenge1.id + '/submissions' + submission2.id + 'flags')
@@ -199,6 +235,7 @@ exports.spec = function(domain, callback){
       .end(function(res){
         expect(res.status).toEqual(200);
         expect(false).toEqual(true);
+        //find the submission and count the number of flags, make sure only at two
         done();
       });
     });
@@ -213,5 +250,29 @@ exports.spec = function(domain, callback){
         done();
       });
     });
+  });
+  describe('A Succesfully Flagged Submission', function(){
+    it('should send an email message to the submission owner', function(done){
+      expect(false).toEqual(true);
+      done();
+    });
+    it('should send an email message to the moderator', function(done){
+      expect(false).toEqual(true);
+      done();
+    });
+    it('should remove user4 from challenge1', function(done){
+      expect(false).toEqual(true);
+      //pretend the user declined the challenge
+      //pretend the user hid the challenge so it doesn't show up in the archive
+      done();
+    });
+    it('should remove user4\'s inappropriate submission from challenge1', function(done){
+      expect(false).toEqual(true);
+      done();
+    });
+    it('should remove user4\'s comment from submission1 in challenge1', function(done){
+      expect(false).toEqual(true);
+      done();
+    })
   });
 };
