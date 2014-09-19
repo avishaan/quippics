@@ -14,7 +14,7 @@ exports.flag = function(req, res){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
   Submission.flag({
-    submissionId: req.param.sid,
+    submissionId: req.params.sid,
     flagger: req.body.flagger
   }, function(err, submission){
     if (!err && submission){

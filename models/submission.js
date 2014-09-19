@@ -116,8 +116,8 @@ submissionSchema.statics.flag = function(options, cb){
   var submissionId = options.submissionId;
   var flaggerId = options.flagger;
   this
-  .findOne({id: submissionId})
-  .select('_id flaggers')
+  .findOne({_id: submissionId})
+  //.select('_id flaggers')
   .exec(function(err, submission){
     if (!err && submission.length){
       submission.flaggers.addToSet(req.body.flagger);
