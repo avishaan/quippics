@@ -260,10 +260,18 @@ exports.spec = function(domain, callback){
       expect(false).toEqual(true);
       done();
     });
+    it('simulate the moderator keeping submission1', function(done){
+      expect(false).toEqual(true);
+      done();
+    });
+    it('simulate the moderator removing submission2', function(done){
+      expect(false).toEqual(true);
+      done();
+    });
     it('should remove user4 from challenge1', function(done){
       expect(false).toEqual(true);
-      //pretend the user declined the challenge
-      //pretend the user hid the challenge so it doesn't show up in the archive
+      //pretend the user was never invited to the challenge
+      //this way they won't even show up in the archive
       done();
     });
     it('should remove user4\'s inappropriate submission from challenge1', function(done){
@@ -273,6 +281,47 @@ exports.spec = function(domain, callback){
     it('should remove user4\'s comment from submission1 in challenge1', function(done){
       expect(false).toEqual(true);
       done();
-    })
+    });
+    it('should remove that submission from the recent activity of user4', function(done){
+      expect(false).toEqual(true);
+      done();
+    });
+    it('should remove the comment that user4 made in challenge1 from recent activity', function(done){
+      expect(false).toEqual(true);
+      done();
+    });
+    it('user4 should now have a strike against them', function(done){
+      expect(false).toEqual(true);
+      done();
+    });
+  });
+  describe('A Banned User', function(){
+    it('should be banned on the final strike', function(done){
+      expect(false).toEqual(true);
+      done();
+    });
+    it('should have an email sent to them', function(done){
+      expect(false).toEqual(true);
+      done();
+    });
+    it('should have their password changed to a random password', function(done){
+      expect(false).toEqual(true);
+      done();
+    });
+    it('should remove the device ids of the user', function(done){
+      //this prevents any notifications from being sent to the user system wide
+      expect(false).toEqual(true);
+      done();
+    });
+    it('should email the moderator letting them know which user was banned', function(done){
+      //this prevents any notifications from being sent to the user system wide
+      expect(false).toEqual(true);
+      done();
+    });
+    it('should remove the email address of the user allowing them to sign up with it again', function(done){
+      //this prevents any notifications from being sent to the user system wide
+      expect(false).toEqual(true);
+      done();
+    });
   });
 };
