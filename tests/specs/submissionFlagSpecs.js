@@ -55,6 +55,7 @@ exports.spec = function(domain, callback){
         password: user1.password,
         email: user1.email
       }, function(err, user){
+        expect(user).toBeDefined();
         user1.id = user.id;
         done();
       });
@@ -65,6 +66,7 @@ exports.spec = function(domain, callback){
         password: user2.password,
         email: user2.email
       }, function(err, user){
+        expect(user).toBeDefined();
         user2.id = user.id;
         done();
       });
@@ -75,6 +77,7 @@ exports.spec = function(domain, callback){
         password: user3.password,
         email: user3.email
       }, function(err, user){
+        expect(user).toBeDefined();
         user3.id = user.id;
         done();
       });
@@ -85,6 +88,7 @@ exports.spec = function(domain, callback){
         password: user4.password,
         email: user4.email
       }, function(err, user){
+        expect(user).toBeDefined();
         user4.id = user.id;
         done();
       });
@@ -108,6 +112,7 @@ exports.spec = function(domain, callback){
           inviteStatus: 'owner'
         }]
       }, function(err, challenge){
+        console.log(err);
         challenge1.id = challenge.id;
         expect(challenge.id).toBeDefined();
         expect(err).toEqual(null);
@@ -171,7 +176,7 @@ exports.spec = function(domain, callback){
     //this image is appropriate, the moderator will not confirm this image is bad
     it('should be allowed by a user', function(done){
       superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions' + submission2.id + 'flags')
+      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/flags')
       .send({
         flagger: user1.id,
       })
@@ -182,7 +187,7 @@ exports.spec = function(domain, callback){
     });
     it('should be allowed by a second user', function(done){
       superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions' + submission2.id + 'flags')
+      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/flags')
       .send({
         flagger: user2.id,
       })
@@ -193,7 +198,7 @@ exports.spec = function(domain, callback){
     });
     it('should be allowed by a third user', function(done){
       superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions' + submission2.id + 'flags')
+      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/flags')
       .send({
         flagger: user3.id,
       })
@@ -206,7 +211,7 @@ exports.spec = function(domain, callback){
   describe('Flagging of a submission2', function(){
     it('should be allowed by a user', function(done){
       superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions' + submission2.id + 'flags')
+      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/flags')
       .send({
         flagger: user1.id,
       })
@@ -217,7 +222,7 @@ exports.spec = function(domain, callback){
     });
     it('should be allowed by a second user', function(done){
       superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions' + submission2.id + 'flags')
+      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/flags')
       .send({
         flagger: user2.id,
       })
@@ -228,7 +233,7 @@ exports.spec = function(domain, callback){
     });
     it('shouldnt be impacted by a user flagging for a second time' , function(done){
       superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions' + submission2.id + 'flags')
+      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/flags')
       .send({
         flagger: user2.id,
       })
@@ -241,7 +246,7 @@ exports.spec = function(domain, callback){
     });
     it('should be allowed by a third user', function(done){
       superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions' + submission2.id + 'flags')
+      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/flags')
       .send({
         flagger: user3.id,
       })
