@@ -7,6 +7,7 @@ var Ballot = require('../models/ballot.js');
 var Comment = require("../models/comment.js");
 var async = require('async');
 var logger = require('../logger/logger.js');
+var config = require('../conf/config.js');
 
 var submissionSchema = new mongoose.Schema({
   createdOn: { type: Date, default: Date.now },
@@ -56,11 +57,11 @@ submissionSchema.post('save', function(){
 
 //post save check if the image has been successfully flagged
 submissionSchema.post('save', function(){
-  //if the submission was flagged by 3 or more people
+  //if the submission was flagged by X or more people
   //sometimes the submission won't have the flaggers populated, in which case forget it
-  if (this.flaggers && this.flaggers.length >= 3){
+  if (this.flaggers && this.flaggers.length >= config.flagThreshold){
     //perform moderator actions and notifications
-    logger.info('Submission past flag threashold');
+    logger.info('Submission past flag threashold: %d', config.flagThreshold);
   }
 });
 
