@@ -14,7 +14,8 @@ module.exports = function(){
         env: 'local', //should be env/prod
         logentriesToken: '',
         pfxPath: '/conf/cert/pfx-local.p12',
-        loggerLevel: 'info'
+        loggerLevel: 'info',
+        flagThreshold: 3
       };
     case "dev":
     case "development":
@@ -25,7 +26,8 @@ module.exports = function(){
         logentriesToken: 'bb995abb-8007-4433-a2af-ea7deba119cf',
         loaderioVerficationLink: process.env.LOADERIO_VERIFICATION_LINK,
         pfxPath: '/conf/cert/pfx-dev.p12',
-        loggerLevel: 'info'
+        loggerLevel: 'info',
+        flagThreshold: 3
       };
     case "test":
     case "testing":
@@ -38,7 +40,8 @@ module.exports = function(){
         loaderioToken: process.env.LOADERIO_API_KEY,
         loaderioVerficationLink: process.env.LOADERIO_VERIFICATION_LINK,
         pfxPath: '/conf/cert/pfx-test.p12',
-        loggerLevel: 'debug'
+        loggerLevel: 'debug',
+        flagThreshold: 3
       };
     case "prod":
     case "production":
@@ -51,7 +54,8 @@ module.exports = function(){
         loaderioToken: process.env.LOADERIO_API_KEY,
         loaderioVerficationLink: process.env.LOADERIO_VERIFICATION_LINK,
         pfxPath: '/conf/cert/pfx-prod.p12',
-        loggerLevel: 'debug'
+        loggerLevel: 'debug',
+        flagThreshold: 3
       };
     default:
       throw new Error("No Environment Found");
