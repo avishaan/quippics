@@ -256,6 +256,13 @@ exports.spec = function(domain, callback){
       })
       .end(function(res){
         expect(res.status).toEqual(200);
+        Submission
+        .findOne({'_id': submission2.id})
+        .exec(function(err, submission){
+          //find the submission and count the number of flags, make sure only at two
+          expect(submission.flaggers.length).toEqual(3);
+          done();
+        });
         done();
       });
     });
