@@ -1,4 +1,4 @@
-var transporter = require('transporter.js');
+var transporter = require('../mail/transporter.js');
 var logger = require('../logger/logger.js');
 
 /**
@@ -14,7 +14,7 @@ exports.moderateSubmission = function(options){
     text: text
   }, function(err){
     if (!err){
-      logger.info('Email send regarding flagged submission');
+      logger.info('Email sent for flagged submission');
       //return cb(null);
     } else {
       logger.error('Error: Could not send flagged submission email');
