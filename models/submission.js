@@ -8,6 +8,7 @@ var Comment = require("../models/comment.js");
 var async = require('async');
 var logger = require('../logger/logger.js');
 var config = require('../conf/config.js');
+var mailers = require('../mail/mailers.js');
 
 var submissionSchema = new mongoose.Schema({
   createdOn: { type: Date, default: Date.now },
@@ -45,6 +46,11 @@ submissionSchema.pre('save', function(next){ //right before saving a new submiss
   }
 });
 
+//do following during flag event/hook
+submissionSchema.on('flag', function(){
+  console.log('FLAG');
+});
+
 //do the following after each successful save
 submissionSchema.post('save', function(){
   if (this.wasNew){
@@ -62,6 +68,11 @@ submissionSchema.post('save', function(){
   if (this.flaggers && this.flaggers.length >= config.flagThreshold){
     //perform moderator actions and notifications
     logger.info('Submission past flag threashold: %d', config.flagThreshold);
+    //populate the fields needed for sending in the email
+    //send out an email to the moderator giving information on the bad submission
+    mailers.moderateSubmission({
+      flaggedUser: this.owner
+    });
   }
 });
 
@@ -128,7 +139,7 @@ submissionSchema.statics.flag = function(options, cb){
   var flaggerId = options.flagger;
   this
   .findOne({_id: submissionId})
-  .select('_id flaggers')
+  .select('_id flaggers owner image')
   .exec(function(err, submission){
     if (!err && submission){
       submission.flaggers.addToSet(flaggerId);
