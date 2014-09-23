@@ -71,7 +71,8 @@ submissionSchema.post('save', function(){
     //populate the fields needed for sending in the email
     //send out an email to the moderator giving information on the bad submission
     mailers.moderateSubmission({
-      flaggedUser: this.owner
+      flaggedUser: this.owner,
+      image: this.image
     });
   }
 });
@@ -139,7 +140,7 @@ submissionSchema.statics.flag = function(options, cb){
   var flaggerId = options.flagger;
   this
   .findOne({_id: submissionId})
-  .select('_id flaggers owner image')
+  .select('_id flaggers owner image thumbnail')
   .exec(function(err, submission){
     if (!err && submission){
       submission.flaggers.addToSet(flaggerId);
