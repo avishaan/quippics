@@ -11,7 +11,12 @@ exports.moderateSubmission = function(options){
     from: 'moderate@quipics.com',
     to: 'sleepyfloydshaan@gmail.com',
     subject: 'Quipics Flagged Submission',
-    text: text
+    text: text,
+    attachments: [{
+      filename: 'submission.png',
+      content: options.image.data,
+      encoding: 'base64'
+    }]
   }, function(err){
     if (!err){
       logger.info('Email sent for flagged submission');
