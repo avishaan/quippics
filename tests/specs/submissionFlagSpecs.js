@@ -123,7 +123,7 @@ exports.spec = function(domain, callback){
       superagent
       .post(domain + "/challenges/" + challenge1.id + "/submissions")
       .type('form')
-      .attach("image", "./tests/specs/images/onepixel.png")
+      .attach("image", "./tests/specs/images/tinyimg.png")
       .field("owner", user1.id)
       .end(function(err, res){
         var submission = res.body;
@@ -155,7 +155,7 @@ exports.spec = function(domain, callback){
       superagent
       .post(domain + "/challenges/" + challenge1.id + "/submissions")
       .type('form')
-      .attach("image", "./tests/specs/images/onepixel.png")
+      .attach("image", "./tests/specs/images/tinyimg.png")
       .field("owner", user4.id)
       .end(function(err, res){
         var submission = res.body;
