@@ -327,9 +327,17 @@ exports.spec = function(domain, callback){
         done();
       });
     });
-    it('should remove user4\'s inappropriate submission from challenge1', function(done){
-      expect(false).toEqual(true);
-      done();
+    it('should remove user4\'s inappropriate submission2 from challenge1', function(done){
+      //submission with that ID should no longer exist
+      Challenge
+      .findOne({_id: challenge1.id})
+      .exec(function(err, challenge){
+        //only one submission should be left
+        expect(challenge.submissions.length).toEqual(1);
+        //the only one left should be submission1 as submission2 is gone
+        expect(challenge.submissions[0].toString()).toEqual(submission1.id);
+        done();
+      });
     });
     it('should remove user4\'s comment from submission1 in challenge1', function(done){
       expect(false).toEqual(true);
