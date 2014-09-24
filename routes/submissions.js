@@ -6,7 +6,7 @@ var isObjectId = require('valid-objectid').isValid;
 var perPage = 24; //submission per page
 
 //flag a submission
-exports.removeFlaggged = function(req, res){
+exports.removeFlagged = function(req, res){
   // istanbul ignore if: bad request
   if (!isObjectId(req.params.sid)
      ){
