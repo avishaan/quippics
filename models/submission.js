@@ -142,9 +142,8 @@ submissionSchema.statics.removeFlagged = function(options, cb){
   async.series([
     function(done){
       //remove the submission
-      debugger;
       Submission
-      .findOne({_id: submissionId})
+      .findOneAndRemove({_id: submissionId})
       .select('_id owner challenge')
       .populate({
         path: 'owner',
@@ -156,15 +155,8 @@ submissionSchema.statics.removeFlagged = function(options, cb){
           //hold on to the doc, we need it for other stuff
           submissionDoc = submission;
           //we have the submission, delete it
-          submission.remove(function(err){
-            if (!err){
-              done(null);
-            } else {
-              err.clientMsg = 'Couldnt remove submission';
-            }
-          });
         } else {
-          err.clientMsg = 'Couldnt find submission';
+          err.clientMsg = 'Couldnt find and/or remove submission';
           done(err);
         }
       });
