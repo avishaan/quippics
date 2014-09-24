@@ -198,13 +198,15 @@ exports.spec = function(domain, callback){
         done();
       });
     });
-    it('should be allowed by a third user triggering email of submission', function(done){
+    it('should be allowed by a third user triggering email of submission to moderator and user', function(done){
       spyOn(mailers, 'moderateSubmission');
+      spyOn(mailers, 'mailUserTerms');
       Submission.flag({
         submissionId: submission1.id,
         flagger: user3.id
       }, function(err, submission){
         expect(mailers.moderateSubmission).toHaveBeenCalled();
+        expect(mailers.mailUserTerms).toHaveBeenCalled();
         done();
       });
     });
