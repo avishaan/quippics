@@ -269,10 +269,6 @@ exports.spec = function(domain, callback){
     });
   });
   describe('A Succesfully Flagged Submission', function(){
-    it('should send an email message to the submission owner', function(done){
-      expect(false).toEqual(true);
-      done();
-    });
     it('should send an email message to the moderator', function(done){
       expect(false).toEqual(true);
       done();
@@ -281,9 +277,18 @@ exports.spec = function(domain, callback){
       expect(false).toEqual(true);
       done();
     });
-    it('simulate the moderator removing submission2', function(done){
-      expect(false).toEqual(true);
-      done();
+    it('simulate the moderator removing submission2 and emailing user the TOS', function(done){
+      spyOn(mailers, 'mailUserTerms');
+      expect(mailers.mailUserTerms).toHaveBeenCalled();
+      superagent
+      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/remove')
+      .send({
+        placeholder: 'empty holder'
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
     });
     it('should remove user4 from challenge1', function(done){
       expect(false).toEqual(true);
