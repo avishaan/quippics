@@ -6,6 +6,23 @@ var isObjectId = require('valid-objectid').isValid;
 var perPage = 24; //submission per page
 
 //flag a submission
+exports.removeFlaggged = function(req, res){
+  // istanbul ignore if: bad request
+  if (!isObjectId(req.params.sid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  Submission.removeFlagged({
+    submissionId: req.params.sid
+  }, function(err, submission){
+    if (!err && submission){
+      return res.send(200, submission);
+    } else {
+      return res.send(500, err);
+    }
+  });
+};
+//flag a submission
 exports.flag = function(req, res){
   // istanbul ignore if: bad request
   if (!isObjectId(req.params.sid) ||
@@ -18,7 +35,7 @@ exports.flag = function(req, res){
     flagger: req.body.flagger
   }, function(err, submission){
     if (!err && submission){
-      return res.send(200, submission);
+      return res.send(200, {clientMsg: 'Submission was flagged!'});
     } else {
       return res.send(500, err);
     }
