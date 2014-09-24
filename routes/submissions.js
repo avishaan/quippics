@@ -16,7 +16,7 @@ exports.removeFlagged = function(req, res){
     submissionId: req.params.sid
   }, function(err, submission){
     if (!err && submission){
-      return res.send(200, submission);
+      return res.send(200, {clientMsg: 'Submission removed from system'});
     } else {
       return res.send(500, err);
     }
