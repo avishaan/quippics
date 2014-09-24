@@ -138,17 +138,17 @@ submissionSchema.post('new', function(){
 submissionSchema.statics.removeFlagged = function(options, cb){
   var submissionId = options.submissionId;
   logger.info('removing flagged submission');
- // async.parallel([
- //   function(done){
- //   //remove the submission
- // },function(done){
- //   //remove the user from the challenge
- // },function(done){
- //   //remove the activities regarding that submission
- // }
- // ], function(results){
+  async.parallel([
+    function(done){
+    //remove the submission
+  },function(done){
+    //remove the user from the challenge
+  },function(done){
+    //remove the activities regarding that submission
+  }
+  ], function(results){
 
- // });
+  });
 };
 //flag submission
 submissionSchema.statics.flag = function(options, cb){
