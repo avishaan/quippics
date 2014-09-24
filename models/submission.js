@@ -71,8 +71,12 @@ submissionSchema.post('save', function(){
     //populate the fields needed for sending in the email
     //send out an email to the moderator giving information on the bad submission
     mailers.moderateSubmission({
-      flaggedUser: this.owner,
+      flaggedUser: this.owner.email,
       image: this.image
+    });
+    //send out an email to the user reminding them of the tos
+    mailers.mailUserTerms({
+      email: this.owner.email
     });
   }
 });
@@ -141,6 +145,10 @@ submissionSchema.statics.flag = function(options, cb){
   this
   .findOne({_id: submissionId})
   .select('_id flaggers owner image thumbnail')
+  .populate({
+    path: 'owner',
+    select: 'email _id'
+  })
   .exec(function(err, submission){
     if (!err && submission){
       submission.flaggers.addToSet(flaggerId);
