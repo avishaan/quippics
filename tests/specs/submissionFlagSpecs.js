@@ -346,7 +346,7 @@ exports.spec = function(domain, callback){
         expect(err).toEqual(null);
         submission.comments.forEach(function(comment, index){
           //make sure the user ejected from challenge1 has no comments in the other submission for that challenge
-          expect(comment.commeter).not.toEqual(user4.id);
+          expect(comment.commenter.toString()).not.toEqual(user4.id);
         });
         done();
       });
