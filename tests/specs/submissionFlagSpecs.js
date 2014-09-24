@@ -6,6 +6,7 @@ var db = require('../../dbs/db.js');
 var User = require('../../models/user.js');
 var Challenge = require('../../models/challenge.js');
 var Submission = require('../../models/submission.js');
+var mailers = require('../../mail/mailers.js');
 
 
 var user1 = {
@@ -37,6 +38,7 @@ var submission2 = {}; //great submission
 exports.spec = function(domain, callback){
 
   jasmine.getEnv().defaultTimeoutInterval = 2000;
+
   console.log('Running Submission Flag Tests');
   describe('The test setup', function(){
     it('should be able to delete the database', function(done){
@@ -196,14 +198,13 @@ exports.spec = function(domain, callback){
         done();
       });
     });
-    it('should be allowed by a third user', function(done){
-      superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission1.id + '/flags')
-      .send({
-        flagger: user3.id,
-      })
-      .end(function(res){
-        expect(res.status).toEqual(200);
+    it('should be allowed by a third user triggering email of submission', function(done){
+      spyOn(mailers, 'moderateSubmission');
+      Submission.flag({
+        submissionId: submission1.id,
+        flagger: user3.id
+      }, function(err, submission){
+        expect(mailers.moderateSubmission).toHaveBeenCalled();
         done();
       });
     });
