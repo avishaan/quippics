@@ -147,14 +147,14 @@ submissionSchema.statics.removeFlagged = function(options, cb){
       .select('_id owner challenge')
       .populate({
         path: 'owner',
-        select: 'email _id'
+        select: 'id email _id'
       })
       .lean()
       .exec(function(err, submission){
         if (!err && submission){
           //hold on to the doc, we need it for other stuff
           submissionDoc = submission;
-          //we have the submission, delete it
+          done(null);
         } else {
           err.clientMsg = 'Couldnt find and/or remove submission';
           done(err);
@@ -166,6 +166,7 @@ submissionSchema.statics.removeFlagged = function(options, cb){
       mailers.mailUserTerms({
         email: submissionDoc.owner.email,
       });
+      done(null);
     },
     function(done){
       //clean up the challenge, remove submission from challenge, remove user from challenge
@@ -174,18 +175,44 @@ submissionSchema.statics.removeFlagged = function(options, cb){
       .findOne({_id: submissionDoc.challenge})
       .select('submissions invites participants')
       .exec(function(err, challenge){
-        challenge;
-        debugger;
+        //remove submission from challenge
+        challenge.submissions.pull(submissionId);
+        //remove user from invites
+        challenge.invites.pull(submissionDoc.owner._id.toString());
+        //remove user from participants
+        challenge.participants.forEach(function(val, index){
+          if (val.user.equals(submissionDoc.owner._id)){
+            //if user matches, remove subdoc at index and exit loop
+            challenge.participants.splice(index, 1);
+            return true;
+          }
+          return false;
+        });
+        challenge.save(function(err, savedChallenge){
+          if (!err){
+            done(null);
+          } else {
+            err.clientMsg = 'Couldnt remove submission from challenge';
+            done(err);
+          }
+        });
       });
     },
     function(done){
       //increment user banned value
+      debugger;
     },
     function(done){
       //remove the activities regarding that submission
     }
     ],
     function(err, results){
+      if (!err){
+
+      } else {
+        logger.error(err);
+        cb(err);
+      }
 
   });
 };
