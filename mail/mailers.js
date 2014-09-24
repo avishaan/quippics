@@ -19,10 +19,27 @@ exports.moderateSubmission = function(options){
     }]
   }, function(err){
     if (!err){
-      logger.info('Email sent for flagged submission');
+      logger.info('Email sent for to moderator flagged submission');
       //return cb(null);
     } else {
-      logger.error('Error: Could not send flagged submission email');
+      logger.error('Error: Could not send moderator flagged submission email');
+      //return cb({clientMsg: "Could not send flagged submission email"});
+    }
+  });
+exports.mailUserTerms = function(options){
+  var text = 'User TOS Here';
+  var email = options.email;
+  transporter.sendMail({
+    from: 'moderate@quipics.com',
+    to: options.email,
+    subject: 'Quipics Terms of Service',
+    text: text
+  }, function(err){
+    if (!err){
+      logger.info('TOS Email sent to user for flagged submission');
+      //return cb(null);
+    } else {
+      logger.error('Error: Could not send TOS to user for flagged submission');
       //return cb({clientMsg: "Could not send flagged submission email"});
     }
   });
