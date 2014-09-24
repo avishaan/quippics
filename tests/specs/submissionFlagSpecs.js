@@ -271,18 +271,15 @@ exports.spec = function(domain, callback){
       });
     });
   });
-  describe('A Succesfully Flagged Submission', function(){
-    it('should send an email message to the moderator', function(done){
-      expect(false).toEqual(true);
-      done();
-    });
+  describe('A Moderator should be able deem a submission unacceptable', function(){
     it('simulate the moderator keeping submission1', function(done){
       expect(false).toEqual(true);
       done();
     });
-    it('simulate the moderator removing submission2 and emailing user the TOS', function(done){
+  });
+  describe('A submission deemed unacceptable by a moderator', function(){
+    it('simulates the moderator removing submission2 and emailing user the TOS', function(done){
       spyOn(mailers, 'mailUserTerms');
-      expect(mailers.mailUserTerms).toHaveBeenCalled();
       superagent
       .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/remove')
       .send({
@@ -290,14 +287,45 @@ exports.spec = function(domain, callback){
       })
       .end(function(res){
         expect(res.status).toEqual(200);
+        expect(mailers.mailUserTerms).toHaveBeenCalled();
         done();
       });
     });
     it('should remove user4 from challenge1', function(done){
-      expect(false).toEqual(true);
-      //pretend the user was never invited to the challenge
-      //this way they won't even show up in the archive
-      done();
+      //user 4 should no longer have any challenges
+      superagent
+      .get(domain + "/users/" + user4.id + '/challenges/page/1')
+      .end(function(res){
+        expect(res.status).toEqual(404);
+        done();
+      });
+    });
+    it('should still allow user1 to see challenge1', function(done){
+      //other users should still see the challenge
+      superagent
+      .get(domain + "/users/" + user1.id + '/challenges/page/1')
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('should still allow user2 to see challenge1', function(done){
+      //other users should still see the challenge
+      superagent
+      .get(domain + "/users/" + user2.id + '/challenges/page/1')
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('should still allow user3 to see challenge1', function(done){
+      //other users should still see the challenge
+      superagent
+      .get(domain + "/users/" + user3.id + '/challenges/page/1')
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
     });
     it('should remove user4\'s inappropriate submission from challenge1', function(done){
       expect(false).toEqual(true);
@@ -315,7 +343,7 @@ exports.spec = function(domain, callback){
       expect(false).toEqual(true);
       done();
     });
-    it('user4 should now have a strike against them', function(done){
+    it('user4 should now have a strike against them that is they should be closer to being banned', function(done){
       expect(false).toEqual(true);
       done();
     });
