@@ -26,6 +26,8 @@ exports.moderateSubmission = function(options){
       //return cb({clientMsg: "Could not send flagged submission email"});
     }
   });
+};
+
 exports.mailUserTerms = function(options){
   var text = 'User TOS Here';
   var email = options.email;
