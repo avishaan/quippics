@@ -340,8 +340,16 @@ exports.spec = function(domain, callback){
       });
     });
     it('should remove user4\'s comment from submission1 in challenge1', function(done){
-      expect(false).toEqual(true);
-      done();
+      Submission
+      .findOne({_id: submission1.id})
+      .exec(function(err, submission){
+        expect(err).toEqual(null);
+        submission.comments.forEach(function(comment, index){
+          //make sure the user ejected from challenge1 has no comments in the other submission for that challenge
+          expect(comment.commeter).not.toEqual(user4.id);
+        });
+        done();
+      });
     });
     it('should remove that submission from the recent activity of user4', function(done){
       expect(false).toEqual(true);
