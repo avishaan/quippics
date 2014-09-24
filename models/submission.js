@@ -137,16 +137,63 @@ submissionSchema.post('new', function(){
 //remove submission
 submissionSchema.statics.removeFlagged = function(options, cb){
   var submissionId = options.submissionId;
+  var submissionDoc;
   logger.info('removing flagged submission');
-  async.parallel([
+  async.series([
     function(done){
-    //remove the submission
-  },function(done){
-    //remove the user from the challenge
-  },function(done){
-    //remove the activities regarding that submission
-  }
-  ], function(results){
+      //remove the submission
+      debugger;
+      Submission
+      .findOne({_id: submissionId})
+      .select('_id owner challenge')
+      .populate({
+        path: 'owner',
+        select: 'email _id'
+      })
+      .lean()
+      .exec(function(err, submission){
+        if (!err && submission){
+          //hold on to the doc, we need it for other stuff
+          submissionDoc = submission;
+          //we have the submission, delete it
+          submission.remove(function(err){
+            if (!err){
+              done(null);
+            } else {
+              err.clientMsg = 'Couldnt remove submission';
+            }
+          });
+        } else {
+          err.clientMsg = 'Couldnt find submission';
+          done(err);
+        }
+      });
+    },
+    function(done){
+      //send email to user
+      mailers.mailUserTerms({
+        email: submissionDoc.owner.email,
+      });
+    },
+    function(done){
+      //clean up the challenge, remove submission from challenge, remove user from challenge
+      //find the challenge
+      Challenge
+      .findOne({_id: submissionDoc.challenge})
+      .select('submissions invites participants')
+      .exec(function(err, challenge){
+        challenge;
+        debugger;
+      });
+    },
+    function(done){
+      //increment user banned value
+    },
+    function(done){
+      //remove the activities regarding that submission
+    }
+    ],
+    function(err, results){
 
   });
 };
