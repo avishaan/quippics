@@ -100,7 +100,7 @@ exports.spec = function(domain, callback){
         title: 'Challenge Title',
         description: 'Challenge Description',
         owner: user3.id,
-        invites: [user1.id, user2.id, user3.id],
+        invites: [user1.id, user2.id, user3.id, user4.id],
         privacy: 'public',
         expiration: new Date(2015, 3, 14),
         participants: [{
@@ -112,6 +112,9 @@ exports.spec = function(domain, callback){
         },{
           user: user3.id,
           inviteStatus: 'owner'
+        },{
+          user: user4.id,
+          inviteStatus: 'accepted'
         }]
       }, function(err, challenge){
         console.log(err);
