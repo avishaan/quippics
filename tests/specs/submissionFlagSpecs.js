@@ -198,7 +198,7 @@ exports.spec = function(domain, callback){
         done();
       });
     });
-    it('should be allowed by a third user triggering email of submission to moderator and user', function(done){
+    it('should be allowed by a third user triggering email of submission to moderator', function(done){
       spyOn(mailers, 'moderateSubmission');
       Submission.flag({
         submissionId: submission1.id,
