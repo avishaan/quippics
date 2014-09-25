@@ -373,6 +373,16 @@ exports.spec = function(domain, callback){
         done();
       });
     });
+    it('should keep user2\'s comment from submission1 in challenge1', function(done){
+      Submission
+      .findOne({_id: submission1.id, 'comments.commenter': user2.id})
+      .exec(function(err, submission){
+        expect(err).toEqual(null);
+        expect(submission).toBeDefined();
+        expect(submission).not.toEqual(null);
+        done();
+      });
+    });
     it('should remove user4\'s comment from submission1 in challenge1', function(done){
       Submission
       .findOne({_id: submission1.id})
