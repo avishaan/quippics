@@ -227,6 +227,13 @@ submissionSchema.statics.removeFlagged = function(options, cb){
               }
             });
           });
+          if (errors.length === 0){
+            //no errors in the process, lets finish up here
+            done(null);
+          } else {
+            //we had some errors after all that
+            done(errors);
+          }
         } else if (!err) {
           logger.debug('Didnt remove any comments');
         } else {
