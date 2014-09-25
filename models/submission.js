@@ -142,6 +142,7 @@ submissionSchema.statics.removeFlagged = function(options, cb){
   async.series([
     function(done){
       //remove the submission
+      //TODO consider not removing incase there is some left over reference to it
       Submission
       .findOneAndRemove({_id: submissionId})
       .select('_id owner challenge')
@@ -245,6 +246,24 @@ submissionSchema.statics.removeFlagged = function(options, cb){
     },
     function(done){
       //increment user badSubmissions value
+      User
+      .findOne({_id: submissionDoc.owner._id})
+      .select('badSubmissions')
+      .exec(function(err, user){
+        if (!err && user){
+          user.incrementBadSubmissions(function(err){
+            if (!err){
+              done(null);
+            } else {
+              done(err);
+            }
+          });
+        } else {
+          err.clientMsg = 'Couldnt find user to increment';
+          done(err);
+        }
+      });
+
       debugger;
     },
     function(done){
