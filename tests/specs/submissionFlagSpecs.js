@@ -144,6 +144,30 @@ exports.spec = function(domain, callback){
         done();
       });
     });
+    it('should have user2 comment on submission 1', function(done){
+      superagent
+      .post(domain + "/challenges/" +challenge1.id + "/submissions/" + submission1.id + '/comments')
+      .send({
+        commenter: user2.id,
+        comment: 'A good comment'
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('should have user1 comment on submission 1', function(done){
+      superagent
+      .post(domain + "/challenges/" +challenge1.id + "/submissions/" + submission1.id + '/comments')
+      .send({
+        commenter: user1.id,
+        comment: 'A good comment'
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
     it('should have user4 (douche) comment on submission 1', function(done){
       superagent
       .post(domain + "/challenges/" +challenge1.id + "/submissions/" + submission1.id + '/comments')
