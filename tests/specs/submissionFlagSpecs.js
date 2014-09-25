@@ -419,6 +419,12 @@ exports.spec = function(domain, callback){
         done();
       });
     });
+    it('should have incremented the badSubmissions counter on user4', function(done){
+      expect(false).toEqual(true);
+      //find user by id
+      //check that the flaggedSubmission value is now 1
+      done();
+    });
     it('should remove that submission from the recent activity of user4', function(done){
       expect(false).toEqual(true);
       done();
