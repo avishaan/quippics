@@ -263,12 +263,16 @@ submissionSchema.statics.removeFlagged = function(options, cb){
           done(err);
         }
       });
-
+    },
+    function(done){
+      //remove the activities regarding that submission
       debugger;
     },
     function(done){
       //remove the activities regarding that submission
+      debugger;
     }
+
     ],
     function(err, results){
       if (!err){
