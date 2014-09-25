@@ -38,7 +38,7 @@ var userSchema = new mongoose.Schema({
   thumbnail: {data: Buffer, contentType: String},
   joinDate: {type: Date, default: Date.now},
   rank: {type: String, default: 'Newbie'},
-  badSubmissions: {type: Number},
+  badSubmissions: {type: Number, default: 0},
   activities: [ //activities for the user are kept here making it easier to get my activities
     { type: mongoose.Schema.Types.ObjectId, ref: 'Activity'}
   ]
@@ -94,7 +94,16 @@ userSchema.methods.incrementBadSubmissions = function(cb){
   this.badSubmissions = this.badSubmissions + 1;
   //too many badSubmissions and we need to ban the user from the system
   if (this.badSubmissions >= 3){
-    //ban the user
+    //ban the user, then save
+    cb(null);
+  } else {
+    this.save(function(err){
+      if (!err){
+        cb(null);
+      } else {
+        cb(err);
+      }
+    });
   }
 
 };
