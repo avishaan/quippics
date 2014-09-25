@@ -420,10 +420,15 @@ exports.spec = function(domain, callback){
       });
     });
     it('should have incremented the badSubmissions counter on user4', function(done){
-      expect(false).toEqual(true);
       //find user by id
-      //check that the flaggedSubmission value is now 1
-      done();
+      User
+      .findOne({_id: user4.id})
+      .select('badSubmissions')
+      .exec(function(err, user){
+        //check that the flaggedSubmission value is now 1
+        expect(user.badSubmissions).toEqual(1);
+        done();
+      });
     });
     it('should remove that submission from the recent activity of user4', function(done){
       expect(false).toEqual(true);
