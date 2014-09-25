@@ -303,17 +303,40 @@ exports.spec = function(domain, callback){
   });
   describe('A submission deemed unacceptable by a moderator', function(){
     it('simulates the moderator removing submission2 and emailing user the TOS', function(done){
+      //TODO we never tested the actual rest interface
       spyOn(mailers, 'mailUserTerms');
-      superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/remove')
-      .send({
-        placeholder: 'empty holder'
-      })
-      .end(function(res){
-        expect(res.status).toEqual(200);
+      runs(function(){
+        //remove the flagged submission
+        Submission.removeFlagged({
+          submissionId: submission2.id
+        });
+      });
+      waitsFor(function(){
+        //keep going until drain has been called so we know all the messages have processed
+        return mailers.mailUserTerms.callCount === 1;
+      }, "Expect queue drain to finish and be called", 1000);
+      runs(function(){
+        //check that everything ran correctly and do any other checks here
+        //expect(agent.send.callCount).toEqual(2);
+        //expect(User.sendNotifications.mostRecentCall.args[0].payload.alert.body).toBeDefined();
+        //expect(User.sendNotifications.mostRecentCall.args[0].payload.alert["action-loc-key"]).toBeDefined();
+        //expect(User.sendNotifications.mostRecentCall.args[0].payload.body.type).toEqual('challenge');
+        //expect(User.sendNotifications.mostRecentCall.args[0].payload.body._id).toBeDefined();
+        //expect(User.sendNotifications.mostRecentCall.args[0].payload.body.title).toBeDefined();
+        //console.log("first call", agent.send.mostRecentCall.args);
         expect(mailers.mailUserTerms).toHaveBeenCalled();
         done();
       });
+     // superagent
+     // .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/remove')
+     // .send({
+     //   placeholder: 'empty holder'
+     // })
+     // .end(function(res){
+     //   expect(res.status).toEqual(200);
+     //   expect(mailers.mailUserTerms).toHaveBeenCalled();
+     //   done();
+     // });
     });
     it('should remove user4 from challenge1', function(done){
       //user 4 should no longer have any challenges
