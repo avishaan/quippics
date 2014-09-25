@@ -88,6 +88,16 @@ userSchema.pre('save', function(next){
   }
   //generate a new thumbnail if the image has been changed
 });
+//increment the number of badSubmissions the user has
+userSchema.methods.incrementBadSubmissions = function(cb){
+  //increment the number of bad submissions the user has
+  this.badSubmissions = this.badSubmissions + 1;
+  //too many badSubmissions and we need to ban the user from the system
+  if (this.badSubmissions >= 3){
+    //ban the user
+  }
+
+};
 //assign tmp password and email
 userSchema.statics.resetPassword = function(email, username, cb){
   //find the user by id
