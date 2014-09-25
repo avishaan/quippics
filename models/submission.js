@@ -244,7 +244,7 @@ submissionSchema.statics.removeFlagged = function(options, cb){
       });
     },
     function(done){
-      //increment user banned value
+      //increment user badSubmissions value
       debugger;
     },
     function(done){

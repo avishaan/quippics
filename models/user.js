@@ -38,6 +38,7 @@ var userSchema = new mongoose.Schema({
   thumbnail: {data: Buffer, contentType: String},
   joinDate: {type: Date, default: Date.now},
   rank: {type: String, default: 'Newbie'},
+  badSubmissions: {type: Number},
   activities: [ //activities for the user are kept here making it easier to get my activities
     { type: mongoose.Schema.Types.ObjectId, ref: 'Activity'}
   ]
