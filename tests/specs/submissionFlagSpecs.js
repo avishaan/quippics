@@ -365,7 +365,7 @@ exports.spec = function(domain, callback){
     });
     it('should keep user1\'s comment from submission1 in challenge1', function(done){
       Submission
-      .findOne({_id: submission1.id, 'comments.commeter': user1.id})
+      .findOne({_id: submission1.id, 'comments.commenter': user1.id})
       .exec(function(err, submission){
         expect(err).toEqual(null);
         expect(submission).toBeDefined();
