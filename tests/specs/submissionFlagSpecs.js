@@ -419,7 +419,7 @@ exports.spec = function(domain, callback){
         done();
       });
     });
-    it('should have incremented the badSubmissions counter on user4', function(done){
+    it('should have incremented the badSubmissions counter on user4 after submission flagged by moderator', function(done){
       //find user by id
       User
       .findOne({_id: user4.id})
