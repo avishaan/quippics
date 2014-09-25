@@ -7,6 +7,7 @@ var User = require('../../models/user.js');
 var Challenge = require('../../models/challenge.js');
 var Submission = require('../../models/submission.js');
 var mailers = require('../../mail/mailers.js');
+var transporter = require('../../mail/transporter.js');
 
 
 var user1 = {
@@ -304,7 +305,8 @@ exports.spec = function(domain, callback){
   describe('A submission deemed unacceptable by a moderator', function(){
     it('simulates the moderator removing submission2 and emailing user the TOS', function(done){
       //TODO we never tested the actual rest interface
-      spyOn(mailers, 'mailUserTerms');
+      spyOn(mailers, 'mailUserTerms').andCallThrough();
+      spyOn(transporter, 'sendMail');
       runs(function(){
         //remove the flagged submission
         Submission.removeFlagged({
@@ -314,17 +316,16 @@ exports.spec = function(domain, callback){
       waitsFor(function(){
         //keep going until drain has been called so we know all the messages have processed
         return mailers.mailUserTerms.callCount === 1;
-      }, "Expect queue drain to finish and be called", 1000);
+      }, "Expect queue drain to finish and be called", 2000);
       runs(function(){
         //check that everything ran correctly and do any other checks here
-        //expect(agent.send.callCount).toEqual(2);
-        //expect(User.sendNotifications.mostRecentCall.args[0].payload.alert.body).toBeDefined();
-        //expect(User.sendNotifications.mostRecentCall.args[0].payload.alert["action-loc-key"]).toBeDefined();
-        //expect(User.sendNotifications.mostRecentCall.args[0].payload.body.type).toEqual('challenge');
-        //expect(User.sendNotifications.mostRecentCall.args[0].payload.body._id).toBeDefined();
-        //expect(User.sendNotifications.mostRecentCall.args[0].payload.body.title).toBeDefined();
         //console.log("first call", agent.send.mostRecentCall.args);
+        //make sure it sent an options with the correct email
+        expect(mailers.mailUserTerms.mostRecentCall.args[0].email).toEqual(user4.email);
         expect(mailers.mailUserTerms).toHaveBeenCalled();
+        //make sure something was sent to the actual transporter, at least that the email is correct
+        expect(transporter.sendMail).toHaveBeenCalled();
+        expect(transporter.sendMail.mostRecentCall.args[0].to).toEqual(user4.email);
         done();
       });
      // superagent
