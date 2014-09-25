@@ -199,6 +199,44 @@ submissionSchema.statics.removeFlagged = function(options, cb){
       });
     },
     function(done){
+      var errors = [];
+      //remove other comments from that user in other submissions in that challenge
+      Submission
+      .find({'comments.commenter': submissionDoc.owner._id.toString(),
+             'challenge': submissionDoc.challenge}) //match only in that challenge, not all challenges
+      .select('comments challenge')
+      .exec(function(err, submissions){
+        debugger;
+        if (!err && submissions && submissions.length){
+          //go through each submission in the challenge
+          submissions.forEach(function(submission, index){
+            //in each submission check all the comments
+            submissions[index].comments.forEach(function(comment, cindex){
+              //check each comment for a user match, if so remove/splice that
+              if (comment.commenter.equals(submissionDoc.owner._id)){
+                //if this is a comment of the kicked commenter, remove it
+                submissions[index].comments.splice(cindex, 1);
+              }
+            });
+            //save each submission
+            //TODO only save the modified ones
+            submissions[index].save(function(err){
+              if (err){
+                //since we have multiple saves, add to error array
+                errors.push(err);
+              }
+            });
+          });
+        } else if (!err) {
+          logger.debug('Didnt remove any comments');
+        } else {
+          err.clientMsg = 'Didnt remove any comments';
+          logger.error('Error removing comments');
+          done(err);
+        }
+      });
+    },
+    function(done){
       //increment user banned value
       debugger;
     },
