@@ -448,8 +448,9 @@ exports.spec = function(domain, callback){
       .get(domain + '/users/' + user4.id + '/activities/page/1')
       .end(function(res){
         //make sure there are no activities for this user
-        debugger;
         expect(res.status).toEqual(404);
+        expect(res.body.activities).toBeUndefined();
+        debugger;
       });
       done();
     });
@@ -458,10 +459,15 @@ exports.spec = function(domain, callback){
       superagent
       .get(domain + '/users/' + user1.id + '/activities/page/1')
       .end(function(res){
+        var activities = res.body;
         //no activities should have a reference to submission2
         //no activities should havea  reference to user4
-
-        debugger;
+        debugger
+        activities.forEach(function(activity, index){
+          debugger
+          expect(activity.references.submission).not.toEqual(submission2.id);
+          expect(activity.subject).not.toEqual(user4.id);
+        });
         expect(res.status).toEqual(200);
       });
       done();
