@@ -145,6 +145,8 @@ POST /v1/challenges/:cid/submission/:sid/flags
 
 flagger: userid (string) of user performing the submission flagging
 
+An email message is sent have a submission has been successfully flagged X number of times
+
 Example Request 
 ```
 request: {
