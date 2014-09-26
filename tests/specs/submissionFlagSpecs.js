@@ -454,7 +454,6 @@ exports.spec = function(domain, callback){
       done();
     });
     it('should remove that submission from the recent activity of user1', function(done){
-      //at this point user1 shouldn't have any activities
       superagent
       .get(domain + '/users/' + user1.id + '/activities/page/1')
       .end(function(res){
@@ -475,14 +474,6 @@ exports.spec = function(domain, callback){
         expect(res.status).toEqual(200);
         done();
       });
-    });
-    it('should remove the comment that user4 made in challenge1 from recent activity', function(done){
-      expect(false).toEqual(true);
-      done();
-    });
-    it('user4 should now have a strike against them that is they should be closer to being banned', function(done){
-      expect(false).toEqual(true);
-      done();
     });
   });
   describe('A Banned User', function(){
