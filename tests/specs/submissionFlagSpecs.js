@@ -145,42 +145,6 @@ exports.spec = function(domain, callback){
         done();
       });
     });
-    it('should have user2 comment on submission 1', function(done){
-      superagent
-      .post(domain + "/challenges/" +challenge1.id + "/submissions/" + submission1.id + '/comments')
-      .send({
-        commenter: user2.id,
-        comment: 'A good comment'
-      })
-      .end(function(res){
-        expect(res.status).toEqual(200);
-        done();
-      });
-    });
-    it('should have user1 comment on submission 1', function(done){
-      superagent
-      .post(domain + "/challenges/" +challenge1.id + "/submissions/" + submission1.id + '/comments')
-      .send({
-        commenter: user1.id,
-        comment: 'A good comment'
-      })
-      .end(function(res){
-        expect(res.status).toEqual(200);
-        done();
-      });
-    });
-    it('should have user4 (douche) comment on submission 1', function(done){
-      superagent
-      .post(domain + "/challenges/" +challenge1.id + "/submissions/" + submission1.id + '/comments')
-      .send({
-        commenter: user4.id,
-        comment: 'My potentially offensive comment'
-      })
-      .end(function(res){
-        expect(res.status).toEqual(200);
-        done();
-      });
-    });
     it('should have user4 (douche) enter an inappropriate submission', function(done){
       superagent
       .post(domain + "/challenges/" + challenge1.id + "/submissions")
@@ -198,6 +162,54 @@ exports.spec = function(domain, callback){
         submission2.id = submission._id;
         //console.log("here is the returned superagent submission");
         //console.log(submission);
+        done();
+      });
+    });
+    it('should have user2 comment on submission 2', function(done){
+      superagent
+      .post(domain + "/challenges/" +challenge1.id + "/submissions/" + submission2.id + '/comments')
+      .send({
+        commenter: user2.id,
+        comment: 'A good commenter, in a bad submission'
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('should have user2 comment on submission 1', function(done){
+      superagent
+      .post(domain + "/challenges/" +challenge1.id + "/submissions/" + submission1.id + '/comments')
+      .send({
+        commenter: user2.id,
+        comment: 'A good commenter, in a good submission'
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('should have user1 comment on submission 1', function(done){
+      superagent
+      .post(domain + "/challenges/" +challenge1.id + "/submissions/" + submission1.id + '/comments')
+      .send({
+        commenter: user1.id,
+        comment: 'A good commenter, in a good submission'
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('should have user4 (douche) comment on submission 1', function(done){
+      superagent
+      .post(domain + "/challenges/" +challenge1.id + "/submissions/" + submission1.id + '/comments')
+      .send({
+        commenter: user4.id,
+        comment: 'A bad commenter, in a good submission'
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
         done();
       });
     });
@@ -431,7 +443,27 @@ exports.spec = function(domain, callback){
       });
     });
     it('should remove that submission from the recent activity of user4', function(done){
-      expect(false).toEqual(true);
+      //at this point user4 shouldn't have any activities
+      superagent
+      .get(domain + '/users/' + user4.id + '/activities/page/1')
+      .end(function(res){
+        //make sure there are no activities for this user
+        debugger;
+        expect(res.status).toEqual(404);
+      });
+      done();
+    });
+    it('should remove that submission from the recent activity of user1', function(done){
+      //at this point user1 shouldn't have any activities
+      superagent
+      .get(domain + '/users/' + user1.id + '/activities/page/1')
+      .end(function(res){
+        //no activities should have a reference to submission2
+        //no activities should havea  reference to user4
+
+        debugger;
+        expect(res.status).toEqual(200);
+      });
       done();
     });
     it('should remove the comment that user4 made in challenge1 from recent activity', function(done){
