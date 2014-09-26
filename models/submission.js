@@ -292,16 +292,10 @@ submissionSchema.statics.removeFlagged = function(options, cb){
         }
         done(null);
       });
-    },
-    function(done){
-      //remove the activities regarding that submission
-      done(null);
-    }
-
-    ],
+    }],
     function(err, results){
       if (!err){
-
+        logger.info('Removed submission:', submissionDoc._id.toString(), ' and all references to it');
       } else {
         logger.error('Error! Could not properly cleanup submission: ', submissionDoc, {err: err, stack: new Error().stack});
         cb(err);
