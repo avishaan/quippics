@@ -8,6 +8,7 @@ var im = gm.subClass({ imageMagick: true});
 var agent = require('../apn/apn.js');
 var transporter = require('../mail/transporter.js');
 var logger = require('../logger/logger.js');
+var config = require('../conf/config.js');
 /*
 |-------------------------------------------------------------
 | User Schema
@@ -93,7 +94,7 @@ userSchema.methods.incrementBadSubmissions = function(cb){
   //increment the number of bad submissions the user has
   this.badSubmissions = this.badSubmissions + 1;
   //too many badSubmissions and we need to ban the user from the system
-  if (this.badSubmissions >= 3){
+  if (this.badSubmissions >= config.banThreshold){
     //ban the user, then save
     cb(null);
   } else {
