@@ -2,11 +2,14 @@ var mongoose = require("mongoose");
 var fs = require('fs');
 var _ = require('underscore');
 var Challenge = require('../models/challenge.js');
+var Activity = require('../models/activity.js');
 var User = require('../models/user.js');
 var Ballot = require('../models/ballot.js');
 var Comment = require("../models/comment.js");
 var async = require('async');
 var logger = require('../logger/logger.js');
+var config = require('../conf/config.js');
+var mailers = require('../mail/mailers.js');
 
 var submissionSchema = new mongoose.Schema({
   createdOn: { type: Date, default: Date.now },
@@ -17,6 +20,9 @@ var submissionSchema = new mongoose.Schema({
   thumbnail:
   { data: Buffer, contentType: String },
   ballots: [Ballot.schema],
+  flaggers: [
+    { type: mongoose.Schema.Types.ObjectId, ref: 'User' } //list of users who have flagged the submission
+  ],
   comments: [Comment.schema],
   score: { type: Number, default: 0}, //we calculate this in the pre save
   rank: { type: Number, default: 0}, //this should be calculated before every ballot added
@@ -41,6 +47,11 @@ submissionSchema.pre('save', function(next){ //right before saving a new submiss
   }
 });
 
+//do following during flag event/hook
+submissionSchema.on('flag', function(){
+  console.log('FLAG');
+});
+
 //do the following after each successful save
 submissionSchema.post('save', function(){
   if (this.wasNew){
@@ -48,6 +59,22 @@ submissionSchema.post('save', function(){
     this.emit('new');
   } else {
     this.emit('update');
+  }
+});
+
+//post save check if the image has been successfully flagged
+submissionSchema.post('save', function(){
+  //if the submission was flagged by X or more people
+  //sometimes the submission won't have the flaggers populated, in which case forget it
+  if (this.flaggers && this.flaggers.length >= config.flagThreshold){
+    //perform moderator actions and notifications
+    logger.info('Submission past flag threashold: %d', config.flagThreshold);
+    //populate the fields needed for sending in the email
+    //send out an email to the moderator giving information on the bad submission
+    mailers.moderateSubmission({
+      flaggedUser: this.owner.email,
+      image: this.image
+    });
   }
 });
 
@@ -108,6 +135,203 @@ submissionSchema.post('new', function(){
   });
 });
 
+//remove submission
+submissionSchema.statics.removeFlagged = function(options, cb){
+  var submissionId = options.submissionId;
+  var submissionDoc;
+  logger.info('removing flagged submission');
+  async.series([
+    function(done){
+      //remove the submission
+      //TODO consider not removing incase there is some left over reference to it
+      Submission
+      .findOneAndRemove({_id: submissionId})
+      .select('_id owner challenge')
+      .populate({
+        path: 'owner',
+        select: 'id email _id'
+      })
+      .lean()
+      .exec(function(err, submission){
+        if (!err && submission){
+          //hold on to the doc, we need it for other stuff
+          submissionDoc = submission;
+          done(null);
+        } else {
+          err.clientMsg = 'Couldnt find and/or remove submission';
+          done(err);
+        }
+      });
+    },
+    function(done){
+      //send email to user
+      mailers.mailUserTerms({
+        email: submissionDoc.owner.email,
+      });
+      done(null);
+    },
+    function(done){
+      //clean up the challenge, remove submission from challenge, remove user from challenge
+      //find the challenge
+      Challenge
+      .findOne({_id: submissionDoc.challenge})
+      .select('submissions invites participants')
+      .exec(function(err, challenge){
+        //remove submission from challenge
+        challenge.submissions.pull(submissionId);
+        //remove user from invites
+        challenge.invites.pull(submissionDoc.owner._id.toString());
+        //remove user from participants
+        challenge.participants.forEach(function(val, index){
+          if (val.user.equals(submissionDoc.owner._id)){
+            //if user matches, remove subdoc at index and exit loop
+            challenge.participants.splice(index, 1);
+            return true;
+          }
+          return false;
+        });
+        challenge.save(function(err, savedChallenge){
+          if (!err){
+            done(null);
+          } else {
+            err.clientMsg = 'Couldnt remove submission from challenge';
+            done(err);
+          }
+        });
+      });
+    },
+    function(done){
+      var errors = [];
+      //remove other comments from that user in other submissions in that challenge
+      Submission
+      .find({'comments.commenter': submissionDoc.owner._id.toString(),
+             'challenge': submissionDoc.challenge}) //match only in that challenge, not all challenges
+      .select('comments challenge')
+      .exec(function(err, submissions){
+        if (!err && submissions && submissions.length){
+          //go through each submission in the challenge
+          submissions.forEach(function(submission, index){
+            //in each submission check all the comments
+            submissions[index].comments.forEach(function(comment, cindex){
+              //check each comment for a user match, if so remove/splice that
+              if (comment.commenter.equals(submissionDoc.owner._id)){
+                //if this is a comment of the kicked commenter, remove it
+                submissions[index].comments.splice(cindex, 1);
+              }
+            });
+            //save each submission
+            //TODO only save the modified ones
+            submissions[index].save(function(err){
+              if (err){
+                //since we have multiple saves, add to error array
+                errors.push(err);
+              }
+            });
+          });
+          if (errors.length === 0){
+            //no errors in the process, lets finish up here
+            done(null);
+          } else {
+            //we had some errors after all that
+            done(errors);
+          }
+        } else if (!err) {
+          logger.debug('Didnt remove any comments');
+        } else {
+          err.clientMsg = 'Didnt remove any comments';
+          logger.error('Error removing comments');
+          done(err);
+        }
+      });
+    },
+    function(done){
+      //increment user badSubmissions value
+      User
+      .findOne({_id: submissionDoc.owner._id})
+      .select('badSubmissions')
+      .exec(function(err, user){
+        if (!err && user){
+          user.incrementBadSubmissions(function(err){
+            if (!err){
+              done(null);
+            } else {
+              done(err);
+            }
+          });
+        } else {
+          err.clientMsg = 'Couldnt find user to increment';
+          done(err);
+        }
+      });
+    },
+    function(done){
+      //remove the submission activities regarding that submission
+      Activity
+      .find({'references.submission':submissionDoc._id})
+      .remove()
+      .exec(function(err, activities){
+        if (err){
+          //if error, let it proceed to next step just let the server know
+          logger.error('Error! Could not delete activities', {err: err, stack: new Error().stack});
+        }
+        done(null);
+      });
+    },
+    function(done){
+      //remove the comments activities regarding that user in that challenge 
+      Activity
+      .find({
+        'references.challenge': submissionDoc.challenge,
+        'subject': submissionDoc.owner._id
+      })
+      .remove()
+      .exec(function(err, activities){
+        if (err){
+          //if error, let it proceed to next step just let the server know
+          logger.error('Error! Could not delete activities', {err: err, stack: new Error().stack});
+        }
+        done(null);
+      });
+    },
+    function(done){
+      //remove the activities regarding that submission
+      done(null);
+    }
+
+    ],
+    function(err, results){
+      if (!err){
+
+      } else {
+        logger.error('Error! Could not properly cleanup submission: ', submissionDoc, {err: err, stack: new Error().stack});
+        cb(err);
+      }
+
+  });
+};
+//flag submission
+submissionSchema.statics.flag = function(options, cb){
+  var submissionId = options.submissionId;
+  var flaggerId = options.flagger;
+  this
+  .findOne({_id: submissionId})
+  .select('_id flaggers owner image thumbnail')
+  .exec(function(err, submission){
+    if (!err && submission){
+      submission.flaggers.addToSet(flaggerId);
+      submission.save(function(err, savedSubmission){
+        if (!err && savedSubmission){
+          cb(null, savedSubmission);
+        } else {
+          cb(err, null);
+        }
+      });
+    } else {
+      cb(err, null);
+    }
+  });
+
+};
 //find challenge of a submission //TODO, we already store this, why the hell are we looking for it!?
 submissionSchema.methods.findChallenge = function(next){
   //find the challenge this submissions exists in and pass that to the callback

@@ -5,6 +5,42 @@ var validator = require('validator');
 var isObjectId = require('valid-objectid').isValid;
 var perPage = 24; //submission per page
 
+//flag a submission
+exports.removeFlagged = function(req, res){
+  // istanbul ignore if: bad request
+  if (!isObjectId(req.params.sid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  Submission.removeFlagged({
+    submissionId: req.params.sid
+  }, function(err, submission){
+    if (!err && submission){
+      return res.send(200, {clientMsg: 'Submission removed from system'});
+    } else {
+      return res.send(500, err);
+    }
+  });
+};
+//flag a submission
+exports.flag = function(req, res){
+  // istanbul ignore if: bad request
+  if (!isObjectId(req.params.sid) ||
+      !isObjectId(req.body.flagger)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  Submission.flag({
+    submissionId: req.params.sid,
+    flagger: req.body.flagger
+  }, function(err, submission){
+    if (!err && submission){
+      return res.send(200, {clientMsg: 'Submission was flagged!'});
+    } else {
+      return res.send(500, err);
+    }
+  });
+};
 //read a specific submission
 exports.readOne = function(req, res){
   //find the submission
