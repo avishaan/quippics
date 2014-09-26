@@ -139,3 +139,58 @@ response: [ {
   }, {}, {}, {}]
 ```
 
+####Flag an submission as inappropriate
+#####_Status: Developed, Not Tested
+POST /v1/challenges/:cid/submission/:sid/flags
+
+flagger: userid (string) of user performing the submission flagging
+
+An email message is sent have a submission has been successfully flagged X number of times
+
+Example Request 
+```
+request: {
+  flagger: '52fc0d5713dd08084e0002ab'
+  }
+```
+Example Success Response
+```
+response: {
+  clientMsg: 'Submission was flagged'
+  }
+status: 200
+```
+
+####Remove a flagged submission
+#####_Status: Developed, Not Tested
+POST /v1/challenges/:cid/submission/:sid/remove
+
+Example Request 
+```
+request: {
+  }
+```
+Example Success Response
+```
+response: {
+  clientMsg: 'Submission was removed from the system'
+  }
+status: 200
+```
+
+####Keep a flagged submission
+#####_Status: Not Developed, Not Tested
+POST /v1/challenges/:cid/submission/:sid/keep
+
+Example Request 
+```
+request: {
+  }
+```
+Example Success Response
+```
+response: {
+  clientMsg: 'Submission was kept in the system'
+  }
+status: 200
+```
