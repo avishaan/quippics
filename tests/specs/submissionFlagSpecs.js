@@ -450,7 +450,6 @@ exports.spec = function(domain, callback){
         //make sure there are no activities for this user
         expect(res.status).toEqual(404);
         expect(res.body.activities).toBeUndefined();
-        debugger;
       });
       done();
     });
@@ -461,16 +460,21 @@ exports.spec = function(domain, callback){
       .end(function(res){
         var activities = res.body;
         //no activities should have a reference to submission2
-        //no activities should havea  reference to user4
-        debugger
+        //no activities should have a reference to user4
         activities.forEach(function(activity, index){
-          debugger
-          expect(activity.references.submission).not.toEqual(submission2.id);
-          expect(activity.subject).not.toEqual(user4.id);
+          //only some have a submission id to compare to
+          if (activity.references.submision){
+            expect(activity.references.submission.id).not.toEqual(submission2.id);
+          }
+          //not all activities have an object, make sure it does before comparing
+          if (activity.object){
+            expect(activity.object.id).not.toEqual(user4.id);
+          }
+          expect(activity.subject.id).not.toEqual(user4.id);
         });
         expect(res.status).toEqual(200);
+        done();
       });
-      done();
     });
     it('should remove the comment that user4 made in challenge1 from recent activity', function(done){
       expect(false).toEqual(true);
