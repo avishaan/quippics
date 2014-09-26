@@ -2,6 +2,7 @@ var mongoose = require("mongoose");
 var fs = require('fs');
 var _ = require('underscore');
 var Challenge = require('../models/challenge.js');
+var Activity = require('../models/activity.js');
 var User = require('../models/user.js');
 var Ballot = require('../models/ballot.js');
 var Comment = require("../models/comment.js");
@@ -207,7 +208,6 @@ submissionSchema.statics.removeFlagged = function(options, cb){
              'challenge': submissionDoc.challenge}) //match only in that challenge, not all challenges
       .select('comments challenge')
       .exec(function(err, submissions){
-        debugger;
         if (!err && submissions && submissions.length){
           //go through each submission in the challenge
           submissions.forEach(function(submission, index){
@@ -265,8 +265,33 @@ submissionSchema.statics.removeFlagged = function(options, cb){
       });
     },
     function(done){
-      //remove the activities regarding that submission
-      debugger;
+      //remove the submission activities regarding that submission
+      Activity
+      .find({'references.submission':submissionDoc._id})
+      .remove()
+      .exec(function(err, activities){
+        if (err){
+          //if error, let it proceed to next step just let the server know
+          logger.error('Error! Could not delete activities', {err: err, stack: new Error().stack});
+        }
+        done(null);
+      });
+    },
+    function(done){
+      //remove the comments activities regarding that user in that challenge 
+      Activity
+      .find({
+        'references.challenge': submissionDoc.challenge,
+        'subject': submissionDoc.owner._id
+      })
+      .remove()
+      .exec(function(err, activities){
+        if (err){
+          //if error, let it proceed to next step just let the server know
+          logger.error('Error! Could not delete activities', {err: err, stack: new Error().stack});
+        }
+        done(null);
+      });
     },
     function(done){
       //remove the activities regarding that submission
@@ -278,7 +303,7 @@ submissionSchema.statics.removeFlagged = function(options, cb){
       if (!err){
 
       } else {
-        logger.error(err);
+        logger.error('Error! Could not properly cleanup submission: ', submissionDoc, {err: err, stack: new Error().stack});
         cb(err);
       }
 
