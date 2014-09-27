@@ -89,6 +89,22 @@ userSchema.pre('save', function(next){
   }
   //generate a new thumbnail if the image has been changed
 });
+//ban the user
+userSchema.methods.ban = function(cb){
+  //email the user letting them know they have been banned, do this first when we still have an email
+  mailers.mailBannedUser({
+    email: this.email
+  });
+  //use findByIdAndUpdate to bypass email middleware
+  //change the password, remove the devices, remove the email address
+  User
+  .findByIdAndUpdate(this.id, {password: 'banned', email: 'banned@quipics.com', devices:[]})
+  .exec(function(err, user){
+    if (err){
+      logger.error('Couldnt ban user');
+    }
+  });
+};
 //increment the number of badSubmissions the user has
 userSchema.methods.incrementBadSubmissions = function(cb){
   //increment the number of bad submissions the user has
@@ -96,6 +112,7 @@ userSchema.methods.incrementBadSubmissions = function(cb){
   //too many badSubmissions and we need to ban the user from the system
   if (this.badSubmissions >= config.banThreshold){
     //ban the user, then save
+    logger.info('User is banned');
     cb(null);
   } else {
     this.save(function(err){
