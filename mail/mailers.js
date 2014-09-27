@@ -28,6 +28,25 @@ exports.moderateSubmission = function(options){
   });
 };
 
+exports.mailBannedUser = function(options){
+  var text = 'User Banned Info Here';
+  var email = options.email;
+  transporter.sendMail({
+    from: 'moderate@quipics.com',
+    to: options.email,
+    subject: 'Quipics Banned User Information',
+    text: text
+  }, function(err){
+    if (!err){
+      logger.info('Banned Email sent to user for being banned');
+      //return cb(null);
+    } else {
+      logger.error('Error: Could not send banned email to user for being banned');
+      //return cb({clientMsg: "Could not send flagged submission email"});
+    }
+  });
+
+};
 exports.mailUserTerms = function(options){
   var text = 'User TOS Here';
   var email = options.email;
