@@ -33,6 +33,7 @@ exports.mailBannedUser = function(options){
   var text = 'User Banned Info Here';
   var email = options.email;
   //send email to banned user
+  logger.info("Start to email user and moderator regarding banned status");
   transporter.sendMail({
     from: 'moderate@quipics.com',
     to: options.email,
@@ -43,7 +44,7 @@ exports.mailBannedUser = function(options){
       logger.info('Banned Email sent to user for being banned');
       //return cb(null);
     } else {
-      logger.error('Error: Could not send banned email to user for being banned');
+      logger.error('Error: Could not send banned email to user for being banned err:', {err: err, stack: new Error().stack});
       //return cb({clientMsg: "Could not send flagged submission email"});
     }
   });
@@ -58,7 +59,7 @@ exports.mailBannedUser = function(options){
     if (!err){
       logger.info('Banned email sent to moderator for their info');
     } else {
-      logger.error('Error: Couldnt not send banned email to moderator');
+      logger.error('Error: Couldnt not send banned email to moderator, err:', {err: err, stack: new Error().stack});
     }
   });
 
