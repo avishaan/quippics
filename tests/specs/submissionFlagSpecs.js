@@ -484,7 +484,7 @@ exports.spec = function(domain, callback){
     });
   });
   describe('A Banned User', function(){
-    it('should be banned on the final strike and sent an email', function(done){
+    it('should be banned on the final strike and sent an email to both him and the moderator', function(done){
       spyOn(mailers, 'mailBannedUser');
       runs(function(){
         User
@@ -538,9 +538,14 @@ exports.spec = function(domain, callback){
       done();
     });
     it('should remove the email address of the user allowing them to sign up with it again', function(done){
-      //this prevents any notifications from being sent to the user system wide
-      expect(false).toEqual(true);
-      done();
+      //this allows the user to use the same email address to sign up again later
+      User
+      .findOne({_id: user4.id})
+      .exec(function(err, user){
+        expect(user.email).not.toEqual(user4.email);
+        expect(user.email).toEqual('banned@quipics.com');
+        done();
+      });
     });
   });
 };
