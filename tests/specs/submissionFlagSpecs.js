@@ -485,7 +485,8 @@ exports.spec = function(domain, callback){
   });
   describe('A Banned User', function(){
     it('should be banned on the final strike and sent an email to both him and the moderator', function(done){
-      spyOn(mailers, 'mailBannedUser');
+      spyOn(mailers, 'mailBannedUser').andCallThrough();
+      spyOn(transporter, 'sendMail');
       runs(function(){
         User
         .findOne({_id: user4.id})
@@ -500,6 +501,7 @@ exports.spec = function(domain, callback){
 
       });
       waitsFor(function(){
+        //return transporter.sendMail.callCount === 1;
         return mailers.mailBannedUser.callCount === 1;
       }, "Expect Queue drain to finish and be called", 2000);
       runs(function(){
@@ -507,6 +509,9 @@ exports.spec = function(domain, callback){
         expect(mailers.mailBannedUser).toHaveBeenCalled();
         //make sure it was called with the correct email address
         expect(mailers.mailBannedUser.mostRecentCall.args[0].email).toEqual(user4.email);
+        //make sure the sendMail protocol was called twice, for email to user and one for email to moderator
+        expect(transporter.sendMail).toHaveBeenCalled();
+        expect(transporter.sendMail.callCount).toEqual(2);
         done();
       });
     });
