@@ -477,15 +477,29 @@ exports.spec = function(domain, callback){
     });
   });
   describe('A Banned User', function(){
+    var test = 'hello';
+    spyOn(mailers, 'mailBannedUser');
+
     it('should be banned on the final strike', function(done){
-      expect(false).toEqual(true);
+      User
+      .findOne({_id: user4.id})
+      .exec(function(err, user){
+        //increase to one less than the ban amount
+        user.badSubmissions = 2;
+        //then run the function to perform the banincrement and check to ban
+        user.incrementBadSubmissions(function(err){
+          expect(user.badSubmissions).toEqual(3);
+          done();
+        });
+      });
+    });
+    it('should have an email sent to them letting them know they were banned', function(done){
+      expect(mailers.mailBannedUser).toHaveBeenCalled();
+      //make sure it was called with the correct email address
+      expect(mailers.mailBannedUser.args[0].email).toEqual(user4.email;)
       done();
     });
-    it('should have an email sent to them', function(done){
-      expect(false).toEqual(true);
-      done();
-    });
-    it('should have their password changed to a random password', function(done){
+    it('should no longer let the user login', function(done){
       expect(false).toEqual(true);
       done();
     });
