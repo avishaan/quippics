@@ -547,5 +547,13 @@ exports.spec = function(domain, callback){
         done();
       });
     });
+    it('should not allow the user to sign up with the same username', function(done){
+      //this allows the user to use the same email address to sign up again later
+      done();
+    });
+    it('should allow the user to sign up with the same email address', function(done){
+      //this allows the user to use the same email address to sign up again later
+      done();
+    });
   });
 };
