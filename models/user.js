@@ -118,8 +118,11 @@ userSchema.methods.incrementBadSubmissions = function(cb){
     //ban the user, then save
     logger.info('User is banned');
     this.ban(function(err){
-      //pass the error or nonerror to the callback
-      cb(err);
+      if (!err){
+        cb(null);
+      } else {
+        cb(err);
+      }
     });
   } else {
     this.save(function(err){
