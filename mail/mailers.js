@@ -1,5 +1,6 @@
 var transporter = require('../mail/transporter.js');
 var logger = require('../logger/logger.js');
+var async = require('async');
 
 /**
   * @param options Info about the mail message to send
@@ -31,6 +32,7 @@ exports.moderateSubmission = function(options){
 exports.mailBannedUser = function(options){
   var text = 'User Banned Info Here';
   var email = options.email;
+  //send email to banned user
   transporter.sendMail({
     from: 'moderate@quipics.com',
     to: options.email,
@@ -43,6 +45,20 @@ exports.mailBannedUser = function(options){
     } else {
       logger.error('Error: Could not send banned email to user for being banned');
       //return cb({clientMsg: "Could not send flagged submission email"});
+    }
+  });
+  //send email to moderator regarding banned user
+  var bannedSubject = 'User with email: ' + email;
+  transporter.sendMail({
+    from: 'moderate@quipics.com',
+    to: 'moderate@quipics.com',
+    subject: bannedSubject,
+    text: 'User in subject was banned'
+  }, function(err){
+    if (!err){
+      logger.info('Banned email sent to moderator for their info');
+    } else {
+      logger.error('Error: Couldnt not send banned email to moderator');
     }
   });
 
