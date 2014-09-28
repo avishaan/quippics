@@ -89,7 +89,14 @@ exports.spec = function(domain, callback){
       User.create({
         username: user4.username,
         password: user4.password,
-        email: user4.email
+        email: user4.email,
+        devices: [{
+          uuid: '1',
+          timestamp: Date.now()
+        },{
+          uuid: '2',
+          timestamp: Date.now()
+        }]
       }, function(err, user){
         expect(user).toBeDefined();
         user4.id = user.id;
@@ -518,8 +525,12 @@ exports.spec = function(domain, callback){
     });
     it('should remove the device ids of the user', function(done){
       //this prevents any notifications from being sent to the user system wide
-      expect(false).toEqual(true);
-      done();
+      User
+      .findOne({_id: user4.id})
+      .exec(function(err, user){
+        expect(user.devices.length).toEqual(0);
+        done();
+      });
     });
     it('should email the moderator letting them know which user was banned', function(done){
       //this prevents any notifications from being sent to the user system wide
