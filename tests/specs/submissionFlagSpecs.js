@@ -536,11 +536,6 @@ exports.spec = function(domain, callback){
         done();
       });
     });
-    it('should email the moderator letting them know which user was banned', function(done){
-      //this prevents any notifications from being sent to the user system wide
-      expect(false).toEqual(true);
-      done();
-    });
     it('should remove the email address of the user allowing them to sign up with it again', function(done){
       //this allows the user to use the same email address to sign up again later
       User
