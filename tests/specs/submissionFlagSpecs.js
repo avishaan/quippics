@@ -499,6 +499,7 @@ exports.spec = function(domain, callback){
         //make sure an email was sent
         expect(mailers.mailBannedUser).toHaveBeenCalled();
         //make sure it was called with the correct email address
+        expect(mailers.mailBannedUser.mostRecentCall.args[0].email).toEqual(user4.email);
         done();
       });
     });
