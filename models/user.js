@@ -121,6 +121,7 @@ userSchema.methods.incrementBadSubmissions = function(cb){
       if (!err){
         cb(null);
       } else {
+        logger.error('Couldnt properly ban user', {err: err, stack: new Error().stack});
         cb(err);
       }
     });
@@ -129,6 +130,7 @@ userSchema.methods.incrementBadSubmissions = function(cb){
       if (!err){
         cb(null);
       } else {
+        logger.error('Couldnt save after increment bad submission',{err: err, stack: new Error().stack});
         cb(err);
       }
     });
