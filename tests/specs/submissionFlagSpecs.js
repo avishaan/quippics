@@ -504,8 +504,17 @@ exports.spec = function(domain, callback){
       });
     });
     it('should no longer let the user login', function(done){
-      expect(false).toEqual(true);
-      done();
+      superagent
+      .post(domain + "/users")
+      .send({
+        username: user4.username,
+        password: user4.password
+      })
+      .end(function(res){
+        expect(res.status).not.toEqual(200);
+        expect(res.status).toEqual(401);
+        done();
+      });
     });
     it('should remove the device ids of the user', function(done){
       //this prevents any notifications from being sent to the user system wide
