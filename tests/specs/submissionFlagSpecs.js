@@ -501,7 +501,6 @@ exports.spec = function(domain, callback){
 
       });
       waitsFor(function(){
-        //return transporter.sendMail.callCount === 1;
         return mailers.mailBannedUser.callCount === 1;
       }, "Expect Queue drain to finish and be called", 2000);
       runs(function(){
