@@ -9,6 +9,7 @@ var agent = require('../apn/apn.js');
 var transporter = require('../mail/transporter.js');
 var logger = require('../logger/logger.js');
 var config = require('../conf/config.js');
+var mailers = require('../mail/mailers.js');
 /*
 |-------------------------------------------------------------
 | User Schema
@@ -101,7 +102,10 @@ userSchema.methods.ban = function(cb){
   .findByIdAndUpdate(this.id, {password: 'banned', email: 'banned@quipics.com', devices:[]})
   .exec(function(err, user){
     if (err){
-      logger.error('Couldnt ban user');
+      logger.error('Couldnt ban user', {err: err, stack: new Error().stack});
+      cb(err);
+    } else {
+      cb(null);
     }
   });
 };
@@ -113,7 +117,10 @@ userSchema.methods.incrementBadSubmissions = function(cb){
   if (this.badSubmissions >= config.banThreshold){
     //ban the user, then save
     logger.info('User is banned');
-    cb(null);
+    this.ban(function(err){
+      //pass the error or nonerror to the callback
+      cb(err);
+    });
   } else {
     this.save(function(err){
       if (!err){
