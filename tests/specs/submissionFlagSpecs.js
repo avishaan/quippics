@@ -547,8 +547,19 @@ exports.spec = function(domain, callback){
       });
     });
     it('should not allow the user to sign up with the same username', function(done){
-      //this allows the user to use the same email address to sign up again later
-      done();
+      //prevent user from registering with a user with the same username as before
+      superagent
+      .post(domain + '/register')
+      .send({
+        username: user4.username,
+        password: user4.password,
+        email: user4.email
+      })
+      .end(function(res){
+        expect(res.status).not.toEqual(200);
+        console.log(res.status);
+        done();
+      });
     });
     it('should allow the user to sign up with the same email address', function(done){
       //this allows the user to use the same email address to sign up again later
