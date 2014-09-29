@@ -133,7 +133,8 @@ exports.readTop = function(req, res){
 exports.userSubmission = function(req, res){
   //make sure we are looking at the right challenge, we only want to know for a specific challenge
   // istanbul ignore if: bad request
-  if (!isObjectId(req.params.cid)
+  if (!isObjectId(req.params.cid) ||
+      !isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
