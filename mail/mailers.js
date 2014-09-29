@@ -1,6 +1,7 @@
 var transporter = require('../mail/transporter.js');
 var logger = require('../logger/logger.js');
 var async = require('async');
+var config = require('../conf/config.js');
 
 /**
   * @param options Info about the mail message to send
@@ -8,11 +9,16 @@ var async = require('async');
   */
 exports.moderateSubmission = function(options){
   var text = 'User:' + options.flaggedUserEmail + ' submission has been flagged';
+  var html = '<p>User:' + options.flaggedUserEmail + ' submission has been flagged </p>'
+    + "<a href='http://admin:admin@" + config.apiURL + ":" + config.expressPort + "/api/v1/challenges/" + options.challengeId + "/submissions/" + options.submissionId + "/remove'> Remove Submission </a>"
+    + "<br>"
+    + "<a href='http://admin:admin@" + config.apiURL + ":" + config.expressPort + "/api/v1/challenges/" + options.challengeId + "/submissions/" + options.submissionId + "/keep'> Keep Submission </a>"
+
   transporter.sendMail({
     from: 'moderate@quipics.com',
     to: options.flaggedUserEmail,
     subject: 'Quipics Flagged Submission',
-    text: text,
+    html: html,
     attachments: [{
       filename: 'submission.png',
       content: options.image.data,
