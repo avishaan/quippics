@@ -8,6 +8,8 @@ var im = gm.subClass({ imageMagick: true});
 var agent = require('../apn/apn.js');
 var transporter = require('../mail/transporter.js');
 var logger = require('../logger/logger.js');
+var config = require('../conf/config.js');
+var mailers = require('../mail/mailers.js');
 /*
 |-------------------------------------------------------------
 | User Schema
@@ -88,19 +90,47 @@ userSchema.pre('save', function(next){
   }
   //generate a new thumbnail if the image has been changed
 });
+//ban the user
+userSchema.methods.ban = function(cb){
+  //email the user letting them know they have been banned, do this first when we still have an email
+  mailers.mailBannedUser({
+    email: this.email
+  });
+  //use findByIdAndUpdate to bypass email middleware
+  //change the password, remove the devices, remove the email address
+  User
+  .findByIdAndUpdate(this.id, {password: 'banned', email: 'banned@quipics.com', devices:[]})
+  .exec(function(err, user){
+    if (err){
+      logger.error('Couldnt ban user', {err: err, stack: new Error().stack});
+      cb(err);
+    } else {
+      cb(null);
+    }
+  });
+};
 //increment the number of badSubmissions the user has
 userSchema.methods.incrementBadSubmissions = function(cb){
   //increment the number of bad submissions the user has
   this.badSubmissions = this.badSubmissions + 1;
   //too many badSubmissions and we need to ban the user from the system
-  if (this.badSubmissions >= 3){
+  if (this.badSubmissions >= config.banThreshold){
     //ban the user, then save
-    cb(null);
+    logger.info('User is banned');
+    this.ban(function(err){
+      if (!err){
+        cb(null);
+      } else {
+        logger.error('Couldnt properly ban user', {err: err, stack: new Error().stack});
+        cb(err);
+      }
+    });
   } else {
     this.save(function(err){
       if (!err){
         cb(null);
       } else {
+        logger.error('Couldnt save after increment bad submission',{err: err, stack: new Error().stack});
         cb(err);
       }
     });

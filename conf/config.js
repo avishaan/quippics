@@ -10,29 +10,35 @@ module.exports = function(){
     case "local":
       return {
         dbURI : "mongodb://localhost/" + npmInfo.name,
+        apiURL: "localhost",
         expressPort: 8081,
         env: 'local', //should be env/prod
         logentriesToken: '',
         pfxPath: '/conf/cert/pfx-local.p12',
         loggerLevel: 'info',
-        flagThreshold: 3
+        flagThreshold: 3,
+        banThreshold: 3
       };
     case "dev":
     case "development":
       return {
         dbURI : process.env.MONGODB_URI,
+        apiURL: process.env.API_URL,
         expressPort: process.env.PORT,
         env: 'dev', //should be env/prod
         logentriesToken: 'bb995abb-8007-4433-a2af-ea7deba119cf',
         loaderioVerficationLink: process.env.LOADERIO_VERIFICATION_LINK,
         pfxPath: '/conf/cert/pfx-dev.p12',
         loggerLevel: 'info',
-        flagThreshold: 3
+        flagThreshold: 3,
+        banThreshold: 3
+
       };
     case "test":
     case "testing":
       return {
         dbURI : process.env.MONGODB_URI,
+        apiURL: process.env.API_URL,
         expressPort: process.env.PORT,
         env: 'test', //should be env/prod, can be changed to prod when we are comfy with prod environ
         logentriesToken: process.env.LOGENTRIES_TOKEN,
@@ -41,12 +47,15 @@ module.exports = function(){
         loaderioVerficationLink: process.env.LOADERIO_VERIFICATION_LINK,
         pfxPath: '/conf/cert/pfx-test.p12',
         loggerLevel: 'debug',
-        flagThreshold: 3
+        flagThreshold: 3,
+        banThreshold: 3
+
       };
     case "prod":
     case "production":
       return {
         dbURI : process.env.MONGODB_URI,
+        apiURL: process.env.API_URL,
         expressPort: process.env.PORT,
         env: 'prod', //should be env/prod, can be changed to prod when we are comfy with prod environ
         logentriesToken: process.env.LOGENTRIES_TOKEN,
@@ -55,7 +64,9 @@ module.exports = function(){
         loaderioVerficationLink: process.env.LOADERIO_VERIFICATION_LINK,
         pfxPath: '/conf/cert/pfx-prod.p12',
         loggerLevel: 'debug',
-        flagThreshold: 3
+        flagThreshold: 3,
+        banThreshold: 3
+
       };
     default:
       throw new Error("No Environment Found");

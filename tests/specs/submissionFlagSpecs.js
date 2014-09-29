@@ -89,7 +89,14 @@ exports.spec = function(domain, callback){
       User.create({
         username: user4.username,
         password: user4.password,
-        email: user4.email
+        email: user4.email,
+        devices: [{
+          uuid: '1',
+          timestamp: Date.now()
+        },{
+          uuid: '2',
+          timestamp: Date.now()
+        }]
       }, function(err, user){
         expect(user).toBeDefined();
         user4.id = user.id;
@@ -245,6 +252,9 @@ exports.spec = function(domain, callback){
         flagger: user3.id
       }, function(err, submission){
         expect(mailers.moderateSubmission).toHaveBeenCalled();
+        expect(mailers.moderateSubmission.mostRecentCall.args[0].flaggedUserEmail).toEqual(user1.email);
+        expect(mailers.moderateSubmission.mostRecentCall.args[0].challengeId).toEqual(challenge1.id);
+        expect(mailers.moderateSubmission.mostRecentCall.args[0].submissionId).toEqual(submission1.id);
         done();
       });
     });
@@ -308,10 +318,28 @@ exports.spec = function(domain, callback){
       });
     });
   });
-  describe('A Moderator should be able deem a submission unacceptable', function(){
-    it('simulate the moderator keeping submission1', function(done){
-      expect(false).toEqual(true);
-      done();
+  describe('A submission deemed acceptable by a moderator', function(){
+    it('simulates the moderator keeping submission1, not emailing the user anything', function(done){
+      spyOn(mailers, 'mailUserTerms');
+      spyOn(transporter, 'sendMail');
+      Submission.keepFlagged({
+        submissionId: submission1.id
+      }, function(err){
+        expect(err).toEqual(null);
+        //make sure no mail is sent out to the user for a submission that was never flagged
+        expect(mailers.mailUserTerms).not.toHaveBeenCalled();
+        //make sure that the underlying function that actually sends the mail wasn't called
+        expect(transporter.sendMail).not.toHaveBeenCalled();
+        done();
+      });
+    });
+    it('should not reset the submission flag value, we want this submission to be sensitive', function(done){
+      Submission
+      .findOne({_id: submission1.id})
+      .exec(function(err, submission){
+        expect(submission.flaggers.length).toEqual(3);
+        done();
+      });
     });
   });
   describe('A submission deemed unacceptable by a moderator', function(){
@@ -450,64 +478,124 @@ exports.spec = function(domain, callback){
         //make sure there are no activities for this user
         expect(res.status).toEqual(404);
         expect(res.body.activities).toBeUndefined();
-        debugger;
       });
       done();
     });
     it('should remove that submission from the recent activity of user1', function(done){
-      //at this point user1 shouldn't have any activities
       superagent
       .get(domain + '/users/' + user1.id + '/activities/page/1')
       .end(function(res){
         var activities = res.body;
         //no activities should have a reference to submission2
-        //no activities should havea  reference to user4
-        debugger
+        //no activities should have a reference to user4
         activities.forEach(function(activity, index){
-          debugger
-          expect(activity.references.submission).not.toEqual(submission2.id);
-          expect(activity.subject).not.toEqual(user4.id);
+          //only some have a submission id to compare to
+          if (activity.references.submision){
+            expect(activity.references.submission.id).not.toEqual(submission2.id);
+          }
+          //not all activities have an object, make sure it does before comparing
+          if (activity.object){
+            expect(activity.object.id).not.toEqual(user4.id);
+          }
+          expect(activity.subject.id).not.toEqual(user4.id);
         });
         expect(res.status).toEqual(200);
+        done();
       });
-      done();
-    });
-    it('should remove the comment that user4 made in challenge1 from recent activity', function(done){
-      expect(false).toEqual(true);
-      done();
-    });
-    it('user4 should now have a strike against them that is they should be closer to being banned', function(done){
-      expect(false).toEqual(true);
-      done();
     });
   });
   describe('A Banned User', function(){
-    it('should be banned on the final strike', function(done){
-      expect(false).toEqual(true);
-      done();
+    it('should be banned on the final strike and sent an email to both him and the moderator', function(done){
+      spyOn(mailers, 'mailBannedUser').andCallThrough();
+      spyOn(transporter, 'sendMail');
+      runs(function(){
+        User
+        .findOne({_id: user4.id})
+        .exec(function(err, user){
+          //increase to one less than the ban amount
+          user.badSubmissions = 2;
+          //then run the function to perform the banincrement and check to ban
+          user.incrementBadSubmissions(function(err){
+            expect(user.badSubmissions).toEqual(3);
+          });
+        });
+
+      });
+      waitsFor(function(){
+        return mailers.mailBannedUser.callCount === 1;
+      }, "Expect Queue drain to finish and be called", 2000);
+      runs(function(){
+        //make sure an email was sent
+        expect(mailers.mailBannedUser).toHaveBeenCalled();
+        //make sure it was called with the correct email address
+        expect(mailers.mailBannedUser.mostRecentCall.args[0].email).toEqual(user4.email);
+        //make sure the sendMail protocol was called twice, for email to user and one for email to moderator
+        expect(transporter.sendMail).toHaveBeenCalled();
+        expect(transporter.sendMail.callCount).toEqual(2);
+        done();
+      });
     });
-    it('should have an email sent to them', function(done){
-      expect(false).toEqual(true);
-      done();
-    });
-    it('should have their password changed to a random password', function(done){
-      expect(false).toEqual(true);
-      done();
+    it('should no longer let the user login', function(done){
+      superagent
+      .post(domain + "/users")
+      .send({
+        username: user4.username,
+        password: user4.password
+      })
+      .end(function(res){
+        expect(res.status).not.toEqual(200);
+        expect(res.status).toEqual(401);
+        done();
+      });
     });
     it('should remove the device ids of the user', function(done){
       //this prevents any notifications from being sent to the user system wide
-      expect(false).toEqual(true);
-      done();
-    });
-    it('should email the moderator letting them know which user was banned', function(done){
-      //this prevents any notifications from being sent to the user system wide
-      expect(false).toEqual(true);
-      done();
+      User
+      .findOne({_id: user4.id})
+      .exec(function(err, user){
+        expect(user.devices.length).toEqual(0);
+        done();
+      });
     });
     it('should remove the email address of the user allowing them to sign up with it again', function(done){
-      //this prevents any notifications from being sent to the user system wide
-      expect(false).toEqual(true);
-      done();
+      //this allows the user to use the same email address to sign up again later
+      User
+      .findOne({_id: user4.id})
+      .exec(function(err, user){
+        expect(user.email).not.toEqual(user4.email);
+        expect(user.email).toEqual('banned@quipics.com');
+        done();
+      });
+    });
+    it('should not allow the user to sign up with the same username', function(done){
+      //prevent user from registering with a user with the same username as before
+      superagent
+      .post(domain + '/register')
+      .send({
+        username: user4.username,
+        password: user4.password,
+        email: user4.email
+      })
+      .end(function(res){
+        expect(res.status).not.toEqual(200);
+        done();
+      });
+    });
+    it('should allow the user to sign up with the same email address but a different username', function(done){
+      //this allows the user to use the same email address to sign up again later
+      //pick another, different username
+      user4.username = user4.username + '123';
+      superagent
+      .post(domain + '/register')
+      .send({
+        username: user4.username,
+        password: user4.password,
+        email: user4.email
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
     });
   });
 };

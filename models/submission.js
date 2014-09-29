@@ -62,22 +62,6 @@ submissionSchema.post('save', function(){
   }
 });
 
-//post save check if the image has been successfully flagged
-submissionSchema.post('save', function(){
-  //if the submission was flagged by X or more people
-  //sometimes the submission won't have the flaggers populated, in which case forget it
-  if (this.flaggers && this.flaggers.length >= config.flagThreshold){
-    //perform moderator actions and notifications
-    logger.info('Submission past flag threashold: %d', config.flagThreshold);
-    //populate the fields needed for sending in the email
-    //send out an email to the moderator giving information on the bad submission
-    mailers.moderateSubmission({
-      flaggedUser: this.owner.email,
-      image: this.image
-    });
-  }
-});
-
 //do the following after save on new instance
 submissionSchema.post('new', function(){
   var submission = this;
@@ -135,6 +119,12 @@ submissionSchema.post('new', function(){
   });
 });
 
+//keep submission
+submissionSchema.statics.keepFlagged = function(options, cb){
+  var submissionId = options.submissionId;
+  logger.info('keeping flagged submission');
+  cb(null);
+};
 //remove submission
 submissionSchema.statics.removeFlagged = function(options, cb){
   var submissionId = options.submissionId;
@@ -292,16 +282,10 @@ submissionSchema.statics.removeFlagged = function(options, cb){
         }
         done(null);
       });
-    },
-    function(done){
-      //remove the activities regarding that submission
-      done(null);
-    }
-
-    ],
+    }],
     function(err, results){
       if (!err){
-
+        logger.info('Removed submission:', submissionDoc._id.toString(), ' and all references to it');
       } else {
         logger.error('Error! Could not properly cleanup submission: ', submissionDoc, {err: err, stack: new Error().stack});
         cb(err);
@@ -313,24 +297,54 @@ submissionSchema.statics.removeFlagged = function(options, cb){
 submissionSchema.statics.flag = function(options, cb){
   var submissionId = options.submissionId;
   var flaggerId = options.flagger;
-  this
-  .findOne({_id: submissionId})
-  .select('_id flaggers owner image thumbnail')
-  .exec(function(err, submission){
-    if (!err && submission){
-      submission.flaggers.addToSet(flaggerId);
-      submission.save(function(err, savedSubmission){
-        if (!err && savedSubmission){
-          cb(null, savedSubmission);
+  async.waterfall([
+    function(done){
+      //first add flagger to submission
+      Submission
+      .findOne({_id: submissionId})
+      .select('challenge _id flaggers owner image thumbnail')
+      .populate({
+        path: 'owner',
+        select: 'email username'
+      })
+      .exec(function(err, submission){
+        if (!err && submission){
+          submission.flaggers.addToSet(flaggerId);
+          submission.save(function(err, savedSubmission){
+            if (!err && savedSubmission){
+              done(null, savedSubmission);
+            } else {
+              done(err, null);
+            }
+          });
         } else {
-          cb(err, null);
+          done(err, null);
         }
       });
+    },
+    function(submission, done){
+      //check if past flag threshold and send email if that is the case
+      if (submission.flaggers.length >= config.flagThreshold){
+        logger.info('Submission past flag threashold: %d', config.flagThreshold);
+        //populate the fields needed for sending in the email
+        //send out an email to the moderator giving information on the bad submission
+        mailers.moderateSubmission({
+          flaggedUserEmail: submission.owner.email,
+          image: submission.image,
+          challengeId: submission.challenge.toString(),
+          submissionId: submission.id
+        });
+      }
+      done(null);
+    }
+  ], function(err, reslts){
+    //handle the errors here
+    if (!err){
+      cb(null);
     } else {
-      cb(err, null);
+      cb(err);
     }
   });
-
 };
 //find challenge of a submission //TODO, we already store this, why the hell are we looking for it!?
 submissionSchema.methods.findChallenge = function(next){
