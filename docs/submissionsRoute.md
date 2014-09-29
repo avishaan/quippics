@@ -77,8 +77,8 @@ response:
   _id: '52fc36b8014f010102000036',
   owner: '52fc36b8014f010102000031',
   rank: 1,
-  score: 9,
   commentCount: 5,
+  score: 9,
   thumbnail: 'iVBORw0KGgoAAAANSUh', 
   image: 'iVBORw0KGgoAAAANSUh', 
  }
