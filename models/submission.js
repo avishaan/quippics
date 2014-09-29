@@ -135,6 +135,12 @@ submissionSchema.post('new', function(){
   });
 });
 
+//keep submission
+submissionSchema.statics.keepFlagged = function(options, cb){
+  var submissionId = options.submissionId;
+  logger.info('keeping flagged submission');
+  cb(null);
+};
 //remove submission
 submissionSchema.statics.removeFlagged = function(options, cb){
   var submissionId = options.submissionId;
