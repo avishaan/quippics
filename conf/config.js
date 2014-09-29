@@ -10,6 +10,7 @@ module.exports = function(){
     case "local":
       return {
         dbURI : "mongodb://localhost/" + npmInfo.name,
+        apiURL: "localhost",
         expressPort: 8081,
         env: 'local', //should be env/prod
         logentriesToken: '',
@@ -22,6 +23,7 @@ module.exports = function(){
     case "development":
       return {
         dbURI : process.env.MONGODB_URI,
+        apiURL: process.env.API_URL,
         expressPort: process.env.PORT,
         env: 'dev', //should be env/prod
         logentriesToken: 'bb995abb-8007-4433-a2af-ea7deba119cf',
@@ -36,6 +38,7 @@ module.exports = function(){
     case "testing":
       return {
         dbURI : process.env.MONGODB_URI,
+        apiURL: process.env.API_URL,
         expressPort: process.env.PORT,
         env: 'test', //should be env/prod, can be changed to prod when we are comfy with prod environ
         logentriesToken: process.env.LOGENTRIES_TOKEN,
@@ -52,6 +55,7 @@ module.exports = function(){
     case "production":
       return {
         dbURI : process.env.MONGODB_URI,
+        apiURL: process.env.API_URL,
         expressPort: process.env.PORT,
         env: 'prod', //should be env/prod, can be changed to prod when we are comfy with prod environ
         logentriesToken: process.env.LOGENTRIES_TOKEN,
