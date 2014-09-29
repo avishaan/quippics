@@ -252,6 +252,7 @@ exports.spec = function(domain, callback){
         flagger: user3.id
       }, function(err, submission){
         expect(mailers.moderateSubmission).toHaveBeenCalled();
+        expect(mailers.moderateSubmission.mostRecentCall.args[0].flaggedUser).toEqual(user4.id);
         done();
       });
     });
