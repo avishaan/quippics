@@ -244,6 +244,19 @@ exports.spec = function(domain, callback){
         cb(null);
       })
       .toss();
+    },
+    function(cb){
+      //make sure the correct comment count number is being returned
+      frisby
+      .create("Get a specific's user submission in a challenge and test the comment number")
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/users/' + user2._id)
+      .expectStatus(200)
+      .afterJSON(function(submission){
+        expect(submission.commentCount).toBeDefined();
+        expect(submission.commentCount).toEqual(2);
+        cb(null);
+      })
+      .toss();
     }
   ],
   function(err, results){
