@@ -155,6 +155,7 @@ exports.userSubmission = function(req, res){
               //TODO need to fix this
               var submissionObj = submission.toJSON();
               submissionObj.rank = rank;
+              submissionObj.commentCount = submissionObj.comments.length;
               return res.send(200, submissionObj);
             });
             return true; //this will stop 'some' from running otherwise eventually the elseif will still hit
