@@ -320,7 +320,7 @@ exports.spec = function(domain, callback){
       spyOn(mailers, 'mailUserTerms');
       spyOn(transporter, 'sendMail');
       Submission.keepFlagged({
-        submissionId: submission2.id
+        submissionId: submission1.id
       }, function(err){
         expect(err).toEqual(null);
         //make sure no mail is sent out to the user for a submission that was never flagged
@@ -332,7 +332,7 @@ exports.spec = function(domain, callback){
     });
     it('should not reset the submission flag value, we want this submission to be sensitive', function(done){
       Submission
-      .findOne({_id: submission2.id})
+      .findOne({_id: submission1.id})
       .exec(function(err, submission){
         expect(submission.flaggers.length).toEqual(3);
         done();
