@@ -561,9 +561,21 @@ exports.spec = function(domain, callback){
         done();
       });
     });
-    it('should allow the user to sign up with the same email address', function(done){
+    it('should allow the user to sign up with the same email address but a different username', function(done){
       //this allows the user to use the same email address to sign up again later
-      done();
+      //pick another, different username
+      user4.username = user4.username + '123';
+      superagent
+      .post(domain + '/register')
+      .send({
+        username: user4.username,
+        password: user4.password,
+        email: user4.email
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
     });
   });
 };
