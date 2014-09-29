@@ -316,7 +316,21 @@ exports.spec = function(domain, callback){
     });
   });
   describe('A Moderator should be able deem a submission unacceptable', function(){
-    it('simulate the moderator keeping submission1', function(done){
+    it('simulate the moderator keeping submission1, not emailing the user anything', function(done){
+      spyOn(mailers, 'mailUserTerms');
+      spyOn(transporter, 'sendMail');
+      Submission.keepFlagged({
+        submissionId: submission2.id
+      }, function(err){
+        expect(err).toEqual(null);
+        //make sure no mail is sent out to the user for a submission that was never flagged
+        expect(mailers.mailUserTerms).not.toHaveBeenCalled();
+        //make sure that the underlying function that actually sends the mail wasn't called
+        expect(transporter.sendMail).not.toHaveBeenCalled();
+        done();
+      });
+    });
+    it('should not reset the submission flag value, we want this submission to be sensitive', function(done){
       expect(false).toEqual(true);
       done();
     });
