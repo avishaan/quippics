@@ -302,7 +302,7 @@ submissionSchema.statics.flag = function(options, cb){
       //first add flagger to submission
       Submission
       .findOne({_id: submissionId})
-      .select('_id flaggers owner image thumbnail')
+      .select('challenge _id flaggers owner image thumbnail')
       .populate({
         path: 'owner',
         select: 'email username'
@@ -330,7 +330,9 @@ submissionSchema.statics.flag = function(options, cb){
         //send out an email to the moderator giving information on the bad submission
         mailers.moderateSubmission({
           flaggedUserEmail: submission.owner.email,
-          image: submission.image
+          image: submission.image,
+          challengeId: submission.challenge,
+          submissionId: submission._id
         });
       }
       done(null);
