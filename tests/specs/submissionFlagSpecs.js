@@ -315,8 +315,8 @@ exports.spec = function(domain, callback){
       });
     });
   });
-  describe('A Moderator should be able deem a submission unacceptable', function(){
-    it('simulate the moderator keeping submission1, not emailing the user anything', function(done){
+  describe('A submission deemed acceptable by a moderator', function(){
+    it('simulates the moderator keeping submission1, not emailing the user anything', function(done){
       spyOn(mailers, 'mailUserTerms');
       spyOn(transporter, 'sendMail');
       Submission.keepFlagged({
