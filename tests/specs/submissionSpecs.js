@@ -236,6 +236,8 @@ exports.spec = function(domain, callback){
         expect(submission.score).toBeDefined();
         expect(submission.rank).toBeDefined();
         expect(submission.image).toBeDefined();
+        expect(submission.commentCount).toBeDefined();
+        expect(submission.commentCount).toEqual(0);
         cb(null);
       })
       .toss();
