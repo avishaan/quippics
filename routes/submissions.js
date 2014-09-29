@@ -33,8 +33,8 @@ exports.flag = function(req, res){
   Submission.flag({
     submissionId: req.params.sid,
     flagger: req.body.flagger
-  }, function(err, submission){
-    if (!err && submission){
+  }, function(err){
+    if (!err){
       return res.send(200, {clientMsg: 'Submission was flagged!'});
     } else {
       return res.send(500, err);
