@@ -331,8 +331,8 @@ submissionSchema.statics.flag = function(options, cb){
         mailers.moderateSubmission({
           flaggedUserEmail: submission.owner.email,
           image: submission.image,
-          challengeId: submission.challenge,
-          submissionId: submission._id
+          challengeId: submission.challenge.toString(),
+          submissionId: submission.id
         });
       }
       done(null);
