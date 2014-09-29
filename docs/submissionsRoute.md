@@ -78,6 +78,7 @@ response:
   owner: '52fc36b8014f010102000031',
   rank: 1,
   score: 9,
+  commentCount: 5,
   thumbnail: 'iVBORw0KGgoAAAANSUh', 
   image: 'iVBORw0KGgoAAAANSUh', 
  }
