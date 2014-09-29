@@ -557,7 +557,6 @@ exports.spec = function(domain, callback){
       })
       .end(function(res){
         expect(res.status).not.toEqual(200);
-        console.log(res.status);
         done();
       });
     });
