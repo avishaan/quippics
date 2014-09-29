@@ -7,10 +7,10 @@ var async = require('async');
   * @param options.flaggedUser The name of the user being flagged.
   */
 exports.moderateSubmission = function(options){
-  var text = 'User:' + options.flaggedUser + ' submission has been flagged';
+  var text = 'User:' + options.flaggedUserEmail + ' submission has been flagged';
   transporter.sendMail({
     from: 'moderate@quipics.com',
-    to: 'sleepyfloydshaan@gmail.com',
+    to: flaggedUserEmail,
     subject: 'Quipics Flagged Submission',
     text: text,
     attachments: [{

@@ -329,7 +329,7 @@ submissionSchema.statics.flag = function(options, cb){
         //populate the fields needed for sending in the email
         //send out an email to the moderator giving information on the bad submission
         mailers.moderateSubmission({
-          flaggedUser: submission.owner.email,
+          flaggedUserEmail: submission.owner.email,
           image: submission.image
         });
       }
