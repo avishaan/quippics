@@ -253,6 +253,8 @@ exports.spec = function(domain, callback){
       }, function(err, submission){
         expect(mailers.moderateSubmission).toHaveBeenCalled();
         expect(mailers.moderateSubmission.mostRecentCall.args[0].flaggedUserEmail).toEqual(user1.email);
+        expect(mailers.moderateSubmission.mostRecentCall.args[0].challengeId).toEqual(challenge1.id);
+        expect(mailers.moderateSubmission.mostRecentCall.args[0].submissionId).toEqual(submission1.id);
         done();
       });
     });
