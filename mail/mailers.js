@@ -10,7 +10,7 @@ exports.moderateSubmission = function(options){
   var text = 'User:' + options.flaggedUserEmail + ' submission has been flagged';
   transporter.sendMail({
     from: 'moderate@quipics.com',
-    to: flaggedUserEmail,
+    to: options.flaggedUserEmail,
     subject: 'Quipics Flagged Submission',
     text: text,
     attachments: [{
