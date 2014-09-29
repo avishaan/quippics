@@ -331,8 +331,12 @@ exports.spec = function(domain, callback){
       });
     });
     it('should not reset the submission flag value, we want this submission to be sensitive', function(done){
-      expect(false).toEqual(true);
-      done();
+      Submission
+      .findOne({_id: submission2.id})
+      .exec(function(err, submission){
+        expect(submission.flaggers.length).toEqual(3);
+        done();
+      });
     });
   });
   describe('A submission deemed unacceptable by a moderator', function(){
