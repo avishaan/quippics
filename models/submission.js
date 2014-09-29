@@ -303,6 +303,10 @@ submissionSchema.statics.flag = function(options, cb){
       Submission
       .findOne({_id: submissionId})
       .select('_id flaggers owner image thumbnail')
+      .populate({
+        path: 'owner',
+        select: 'email username'
+      })
       .exec(function(err, submission){
         if (!err && submission){
           submission.flaggers.addToSet(flaggerId);
