@@ -276,7 +276,22 @@
 58
 59
 60
-61</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-yes">1</span>
@@ -296,14 +311,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -320,7 +327,30 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -348,27 +378,35 @@ module.exports = function(){
     case "local":
       return {
         dbURI : "mongodb://localhost/" + npmInfo.name,
+        apiURL: "localhost",
         expressPort: 8081,
         env: 'local', //should be env/prod
         logentriesToken: '',
         pfxPath: '/conf/cert/pfx-local.p12',
-        loggerLevel: 'info'
+        loggerLevel: 'info',
+        flagThreshold: 3,
+        banThreshold: 3
       };
 <span class="branch-3 cbranch-skip" title="branch not covered" >    case "dev":</span>
 <span class="branch-4 cbranch-skip" title="branch not covered" >    case "development":</span>
 <span class="cstat-skip" title="statement not covered" >      return {</span>
         dbURI : process.env.MONGODB_URI,
+        apiURL: 'quippics-dev.herokuapp.com',
         expressPort: process.env.PORT,
         env: 'dev', //should be env/prod
         logentriesToken: 'bb995abb-8007-4433-a2af-ea7deba119cf',
         loaderioVerficationLink: process.env.LOADERIO_VERIFICATION_LINK,
         pfxPath: '/conf/cert/pfx-dev.p12',
-        loggerLevel: 'info'
+        loggerLevel: 'info',
+        flagThreshold: 3,
+        banThreshold: 3
+&nbsp;
       };
 <span class="branch-5 cbranch-skip" title="branch not covered" >    case "test":</span>
 <span class="branch-6 cbranch-skip" title="branch not covered" >    case "testing":</span>
 <span class="cstat-skip" title="statement not covered" >      return {</span>
         dbURI : process.env.MONGODB_URI,
+        apiURL:  'quippics-test.herokuapp.com',
         expressPort: process.env.PORT,
         env: 'test', //should be env/prod, can be changed to prod when we are comfy with prod environ
         logentriesToken: process.env.LOGENTRIES_TOKEN,
@@ -376,20 +414,27 @@ module.exports = function(){
         loaderioToken: process.env.LOADERIO_API_KEY,
         loaderioVerficationLink: process.env.LOADERIO_VERIFICATION_LINK,
         pfxPath: '/conf/cert/pfx-test.p12',
-        loggerLevel: 'debug'
+        loggerLevel: 'debug',
+        flagThreshold: 3,
+        banThreshold: 3
+&nbsp;
       };
 <span class="branch-7 cbranch-skip" title="branch not covered" >    case "prod":</span>
 <span class="branch-8 cbranch-skip" title="branch not covered" >    case "production":</span>
 <span class="cstat-skip" title="statement not covered" >      return {</span>
         dbURI : process.env.MONGODB_URI,
+        apiURL:  'quippics-prod.herokuapp.com',
         expressPort: process.env.PORT,
-        env: 'dev', //should be env/prod, can be changed to prod when we are comfy with prod environ
+        env: 'prod', //should be env/prod, can be changed to prod when we are comfy with prod environ
         logentriesToken: process.env.LOGENTRIES_TOKEN,
         nodetimeToken: process.env.NODETIME_ACCOUNT_KEY,
         loaderioToken: process.env.LOADERIO_API_KEY,
         loaderioVerficationLink: process.env.LOADERIO_VERIFICATION_LINK,
         pfxPath: '/conf/cert/pfx-prod.p12',
-        loggerLevel: 'error'
+        loggerLevel: 'debug',
+        flagThreshold: 3,
+        banThreshold: 3
+&nbsp;
       };
 <span class="branch-9 cbranch-skip" title="branch not covered" >    default:</span>
 <span class="cstat-skip" title="statement not covered" >      throw new Error("No Environment Found");</span>
@@ -401,7 +446,7 @@ module.exports = function(){
 
 </div>
 <div class="footer">
-    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Aug 24 2014 22:42:58 GMT-0400 (EDT)</div>
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Oct 01 2014 22:00:21 GMT+0530 (IST)</div>
 </div>
 
 <script src="../../prettify.js"></script>

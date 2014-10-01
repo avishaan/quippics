@@ -199,7 +199,7 @@
     <h1>Code coverage report for <span class="entity">quippics/app.js</span></h1>
     <h2>
         
-        Statements: <span class="metric">94.95% <small>(94 / 99)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Statements: <span class="metric">95.05% <small>(96 / 101)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
         Branches: <span class="metric">66.67% <small>(10 / 15)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
@@ -208,7 +208,7 @@
         Functions: <span class="metric">66.67% <small>(6 / 9)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Lines: <span class="metric">95.88% <small>(93 / 97)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">95.96% <small>(95 / 99)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
     </h2>
@@ -378,7 +378,9 @@
 160
 161
 162
-163</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
+163
+164
+165</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -425,8 +427,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">166</span>
-<span class="cline-any cline-yes">166</span>
+<span class="cline-any cline-yes">189</span>
+<span class="cline-any cline-yes">189</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -442,28 +444,28 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">115</span>
+<span class="cline-any cline-yes">124</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">130</span>
+<span class="cline-any cline-yes">150</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">130</span>
-<span class="cline-any cline-yes">130</span>
-<span class="cline-any cline-yes">129</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">150</span>
+<span class="cline-any cline-yes">150</span>
+<span class="cline-any cline-yes">149</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">35</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">37</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -512,6 +514,8 @@
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-yes">1</span>
@@ -674,6 +678,8 @@ app.post('/api/v1/challenges/:cid/accepts', apiAuth(), challenges.acceptChalleng
 app.post('/api/v1/challenges/:cid/declines', apiAuth(), challenges.declineChallenge); //decline a challenge
 app.post('/api/v1/challenges/:cid/hidden', apiAuth(), challenges.hideChallenge); //hide a challenge
 //submission routes
+app.post('/api/v1/challenges/:cid/submissions/:sid/remove', apiAuth(), submissions.removeFlagged); //remove existing flagged submission
+app.post('/api/v1/challenges/:cid/submissions/:sid/flags', apiAuth(), submissions.flag); //flag existing submission
 app.post('/api/v1/challenges/:cid/submissions', apiAuth(), submissions.create); //create a new submission
 app.get('/api/v1/challenges/:cid/submissions/page/:page', apiAuth(), submissions.readAll); //read all the submissions in a specific challenge
 app.get('/api/v1/challenges/:cid/submissions/users/:uid', apiAuth(), submissions.userSubmission); //read the submission for a specific user
@@ -707,7 +713,7 @@ http.createServer(app).listen(app.get('port'), function(){
 
 </div>
 <div class="footer">
-    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Aug 24 2014 22:42:58 GMT-0400 (EDT)</div>
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Oct 01 2014 22:00:21 GMT+0530 (IST)</div>
 </div>
 
 <script src="../prettify.js"></script>
