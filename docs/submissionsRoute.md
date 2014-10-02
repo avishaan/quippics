@@ -142,7 +142,7 @@ response: [ {
 
 ####Flag an submission as inappropriate
 #####_Status: Developed, Not Tested
-POST /v1/challenges/:cid/submission/:sid/flags
+POST /v1/challenges/:cid/submissions/:sid/flags
 
 flagger: userid (string) of user performing the submission flagging
 
@@ -164,7 +164,7 @@ status: 200
 
 ####Remove a flagged submission
 #####_Status: Developed, Not Tested
-POST /v1/challenges/:cid/submission/:sid/remove
+POST /v1/challenges/:cid/submissions/:sid/remove
 
 Example Request 
 ```
@@ -181,7 +181,7 @@ status: 200
 
 ####Keep a flagged submission
 #####_Status: Not Developed, Not Tested
-POST /v1/challenges/:cid/submission/:sid/keep
+POST /v1/challenges/:cid/submissions/:sid/keep
 
 Example Request 
 ```
