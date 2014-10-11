@@ -203,7 +203,7 @@ exports.spec = function(domain, callback){
         it("should allow a user to change image", function(done){
           //user should be able to change profile picture after registering
           superagent
-          .put(domain + '/users/' + user2._id)
+          .post(domain + '/users/' + user2._id)
           .type('form')
           .attach("image", "./tests/specs/images/onepixel.png") //this is based on where you are running jasmine-node from
           .field("username", user2.username)
@@ -244,7 +244,7 @@ exports.spec = function(domain, callback){
       user1.email = 'newemail@gmail.com';
 
       frisby.create('Have user1 change their password')
-      .put(domain + '/users/' + user1._id, {
+      .post(domain + '/users/' + user1._id, {
         newPassword: user1.password,
         email: user1.email
       })
@@ -272,7 +272,7 @@ exports.spec = function(domain, callback){
       user1.email = 'sleepyfloydshaan@gmail.com';
 
       frisby.create('Have user1 change their username')
-      .put(domain + '/users/' + user1._id, {
+      .post(domain + '/users/' + user1._id, {
         newUsername: user1.username,
         email: user1.email
       })
