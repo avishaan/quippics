@@ -111,12 +111,12 @@ app.get('/api/v1/users/:uid/friends/page/:page', apiAuth(), users.listFriends); 
 app.get('/api/v1/users/:uid/users/page/:page', apiAuth(), users.listUsers); //get list of all users
 app.get('/api/v1/users/:uid', apiAuth(), users.profile); //profile of specific user
 app.get('/api/v1/users/search/:search', apiAuth(), users.search); //search for a specific user
+app.post('/api/v1/users/:uid', apiAuth(), users.update); //update an existing user
 app.post('/api/v1/register', users.register); //register new user
 app.post('/api/v1/users', apiAuth(), users.authenticate); //check password of user and return id
 app.post('/api/v1/users/password', users.resetPassword); //password reset sequence
 app.del('/api/v1/users', apiAuth(), users.logout); //logout user
 app.post('/api/v1/users/:uid/device', apiAuth(), users.registerDevice); //register the user's device
-app.put('/api/v1/users/:uid', apiAuth(), users.update); //update an existing user
 //comment routes
 app.post('/api/v1/challenges/:cid/submissions/:sid/comments', apiAuth(), comments.create); //post a comment to a submission
 app.get('/api/v1/challenges/:cid/submissions/:sid/comments/page/:page', apiAuth(), comments.readAll); //get all of the comments
