@@ -40,7 +40,7 @@ response:
 
 ####Update an existing user
 #####_Status: Developed, Tested
-PUT /v1/users/:uid
+POST /v1/users/:uid
 
 - User can change their profile picture
 - User can change their password (tested)
