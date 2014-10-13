@@ -14,6 +14,7 @@ Technology/Players
 - Jasmine as the testing framework.
 - Mongoose as the object modeler for Node.js.
 - MongoDB as the x-platform document based noSQL database.
+- Istanbul as the code coverage assessment tool
 
 Domains
 ----------------------
