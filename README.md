@@ -37,8 +37,8 @@ The route is located in the route documentation.
 The version differences are specified in each route.
 Route Example: `dev.quippics.us/api/v1/register`
 
-- Test Coverage (via Istanbul)
-  - [Test Coverage Reports](./coverage/lcov-report/index.html)
+- Code Coverage(via Istanbul)
+  - [Code Coverage Reports](./coverage/lcov-report/index.html)
 
 - Route Documentation
   - [Information on Challenge Routes](./docs/challengesRoute.md)
