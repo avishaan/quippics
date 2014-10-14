@@ -62,8 +62,10 @@ Example Response
 ```
 response: 
 [ 
-  { _id: '543cb9c99c01bb67d0214e29' },
-  { _id: '543cb9c99c01bb67d0214e26' } 
+  { _id: '543cb9c99c01bb67d0214e29',
+    owner: '52fc2fd313dd08084e000396' },
+  { _id: '543cb9c99c01bb67d0214e26',
+    owner: '52fc2fd313dd08084e000396' } 
 ]
 ```
 ####Read all the submissions for a challenge where the user has voted
