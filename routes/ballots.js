@@ -23,15 +23,15 @@ exports.userVotedSubmissions = function(req, res){
   }
   Submission
   .find({'ballots.voter': req.params.uid})
-  .select('ballots owner')
+  .select('_id')
   .lean()
   .exec(function(err, submissions){
     if (!err && submissions.length){
       //return only as a list of submission ids
-      debugger;
+      return res.send(200, submissions);
       // istanbul ignore else: db error
     } else if (!err){
-      return res.send (200, {clientMsg: "Could not find any voted submissions for that user"});
+      return res.send(200, {clientMsg: "Could not find any voted submissions for that user"});
     } else {
       return res.send(500, err);
     }
