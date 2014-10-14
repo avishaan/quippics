@@ -287,9 +287,37 @@ exports.spec = function(domain, callback){
       .create("Get all the submission a user has voted on")
       .get(domain + '/users/' + user2._id + '/submissions/voted')
       .expectStatus(200)
-      //.inspectJSON()
       .afterJSON(function(submissions){
         expect(submissions.length).toBeDefined();
+        expect(submissions.length).toEqual(1);
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //vote on popular submission in the challenge
+      frisby
+      .create("Have nerdy vote on nerdy submission")
+      .post(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/ballots/', {
+        score: 10,
+        voter: user2._id
+      })
+      .expectStatus(200)
+      .afterJSON(function(res){
+        expect(res).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //make sure the list of submissions work across challenges
+      frisby
+      .create("Again, Get all the submission a user has voted on")
+      .get(domain + '/users/' + user2._id + '/submissions/voted')
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(submissions){
+        expect(submissions.length).toEqual(2);
         cb(null);
       })
       .toss();
