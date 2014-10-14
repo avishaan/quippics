@@ -23,7 +23,7 @@ exports.userVotedSubmissions = function(req, res){
   }
   Submission
   .find({'ballots.voter': req.params.uid})
-  .select('_id')
+  .select('_id owner')
   .lean()
   .exec(function(err, submissions){
     if (!err && submissions.length){
