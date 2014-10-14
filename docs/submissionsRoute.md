@@ -55,16 +55,16 @@ response.body:
 }
 ```
 ####Read all the submissions the user has voted
-#####_Status: Not Developed, Not Tested
+#####_Status: Developed, Tested
 GET '/v1/users/:uid/submissions/voted'
-
-- The user who is the owner of the submission is also returned to prevent user from voting on self (untested)
 
 Example Response
 ```
 response: 
-[ '52fc2fd313dd08084e000396',
-  '52fc2fd313dd08084e00039a' ]
+[ 
+  { _id: '543cb9c99c01bb67d0214e29' },
+  { _id: '543cb9c99c01bb67d0214e26' } 
+]
 ```
 ####Read all the submissions for a challenge where the user has voted
 #####_Status: Developed, Tested
