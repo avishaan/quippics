@@ -246,6 +246,19 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
+      //get all of the submissions for a specific user
+      frisby
+      .create("Get mine aka popular's submission in a challenge")
+      .get(domain + '/users/' + user1._id + '/submissions')
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(submissions){
+        expect(submissions.length).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
       //get the top submission from a challenge
       frisby
       .create("Get a top submission from a set of challenges")
