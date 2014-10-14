@@ -315,7 +315,6 @@ exports.spec = function(domain, callback){
       .create("Again, Get all the submission a user has voted on")
       .get(domain + '/users/' + user2._id + '/submissions/voted')
       .expectStatus(200)
-      //.inspectJSON()
       .afterJSON(function(submissions){
         expect(submissions.length).toEqual(2);
         cb(null);
