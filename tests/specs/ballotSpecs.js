@@ -249,7 +249,7 @@ exports.spec = function(domain, callback){
       //get all of the submissions a specific user has voted on 
       frisby
       .create("Get all the submission a user has voted on")
-      .get(domain + '/users/' + user1._id + '/submissions/voted')
+      .get(domain + '/users/' + user2._id + '/submissions/voted')
       .expectStatus(200)
       //.inspectJSON()
       .afterJSON(function(submissions){
