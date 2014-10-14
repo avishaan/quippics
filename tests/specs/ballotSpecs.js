@@ -246,10 +246,10 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      //get all of the submissions for a specific user
+      //get all of the submissions a specific user has voted on 
       frisby
-      .create("Get mine aka popular's submission in a challenge")
-      .get(domain + '/users/' + user1._id + '/submissions')
+      .create("Get all the submission a user has voted on")
+      .get(domain + '/users/' + user1._id + '/submissions/voted')
       .expectStatus(200)
       //.inspectJSON()
       .afterJSON(function(submissions){
