@@ -54,6 +54,18 @@ response.body:
   image: '01021000sf0fs0er0ew0rqgfsgaffdasfeq'
 }
 ```
+####Read all the submissions the user has voted
+#####_Status: Not Developed, Not Tested
+GET '/v1/users/submissions/:sid/voted'
+
+- The user who is the owner of the submission is also returned to prevent user from voting on self (untested)
+
+Example Response
+```
+response: 
+[ '52fc2fd313dd08084e000396',
+  '52fc2fd313dd08084e00039a' ]
+```
 ####Read all the submissions for a challenge where the user has voted
 #####_Status: Developed, Tested
 GET '/v1/challenges/:cid/submissions/users/:uid/voted'
