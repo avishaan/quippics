@@ -246,19 +246,6 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      //get all of the submissions a specific user has voted on 
-      frisby
-      .create("Get all the submission a user has voted on")
-      .get(domain + '/users/' + user2._id + '/submissions/voted')
-      .expectStatus(200)
-      //.inspectJSON()
-      .afterJSON(function(submissions){
-        expect(submissions.length).toBeDefined();
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
       //get the top submission from a challenge
       frisby
       .create("Get a top submission from a set of challenges")
@@ -290,6 +277,19 @@ exports.spec = function(domain, callback){
         expect(submission.score).toBeDefined();
         expect(submission.owner).toBeDefined();
         expect(submission.image).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //get all of the submissions a specific user has voted on 
+      frisby
+      .create("Get all the submission a user has voted on")
+      .get(domain + '/users/' + user2._id + '/submissions/voted')
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(submissions){
+        expect(submissions.length).toBeDefined();
         cb(null);
       })
       .toss();
