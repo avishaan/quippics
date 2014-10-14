@@ -56,7 +56,7 @@ response.body:
 ```
 ####Read all the submissions the user has voted
 #####_Status: Not Developed, Not Tested
-GET '/v1/users/submissions/:sid/voted'
+GET '/v1/users/:uid/submissions/voted'
 
 - The user who is the owner of the submission is also returned to prevent user from voting on self (untested)
 
