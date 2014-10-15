@@ -346,7 +346,7 @@ exports.spec = function(domain, callback){
     it('simulates the moderator removing submission2 and emailing user the TOS', function(done){
       //TODO we never tested the actual rest interface
       spyOn(mailers, 'mailUserTerms').andCallThrough();
-      spyOn(transporter, 'sendMail');
+      spyOn(transporter, 'sendMail'); //we aren't actually sending the TOS since we aren't calling through
       runs(function(){
         //remove the flagged submission
         Submission.removeFlagged({
