@@ -307,9 +307,9 @@ exports.spec = function(domain, callback){
     },
     function(cb){
       describe("A lost user", function(){
-        it("should be able to request their password reset", function(done){
+        it("should be able to request their password reset without having to log in", function(done){
           superagent
-          .post( 'http://localhost:8081/api/v1' + '/users/password')
+          .post( 'http://localhost:8081/api/v1/users/password')
           .send({
             username: user1.username,
             email: user1.email,
