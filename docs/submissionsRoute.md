@@ -123,7 +123,9 @@ Example Response
     _id: '53c9978c8c5808246f6c0453'
   },
   challenge: {
-    title: 'Challenge Title'
+    title: 'Challenge Title',
+    description: 'Challenge Description',
+    tags: ['tag1', 'tag2', 'tag3']
   },
   "rank": 1,
   "score": 9,
