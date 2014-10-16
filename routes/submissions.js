@@ -57,7 +57,7 @@ exports.readOne = function(req, res){
   })
   .populate({
     path: 'challenge',
-    select: 'title'
+    select: 'title description tags'
   })
   .populate({
     path: 'owner',
