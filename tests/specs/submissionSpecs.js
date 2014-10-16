@@ -270,6 +270,8 @@ exports.spec = function(domain, callback){
         expect(submission).toBeDefined();
         expect(submission.challenge).toBeDefined();
         expect(submission.challenge.title).toBeDefined();
+        expect(submission.challenge.description).toBeDefined();
+        expect(submission.challenge.tags).toBeDefined();
         expect(submission.rank).toBeDefined();
         expect(submission.score).toBeDefined();
         expect(submission.owner).toBeDefined();
