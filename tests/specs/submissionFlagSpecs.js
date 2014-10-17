@@ -594,7 +594,16 @@ exports.spec = function(domain, callback){
       })
       .end(function(res){
         expect(res.status).toEqual(200);
+        user4.id = res.body._id;
         done();
+      });
+    });
+    it ('should allow user4 to now get banned', function(done){
+      User.findOne({_id: user4.id})
+      .exec(function(err, user){
+        user.ban(function(err, user){
+          expect(err).toBeUndefined();
+        });
       });
     });
   });
