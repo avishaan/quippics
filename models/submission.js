@@ -226,7 +226,8 @@ submissionSchema.statics.removeFlagged = function(options, cb){
             done(null);
           } else {
             //we had some errors after all that
-            done(errors);
+            done(null)
+            //done(errors);
           }
         } else if (!err) {
           logger.debug('Didnt remove any comments');
