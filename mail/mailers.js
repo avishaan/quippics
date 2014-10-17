@@ -71,7 +71,7 @@ exports.mailBannedUser = function(options){
 
 };
 exports.mailUserTerms = function(options){
-  var text = 'User TOS Here';
+  var text = "Your submission has been removed because it has violated the Quipic's TOS";
   var email = options.email;
   transporter.sendMail({
     from: 'moderate@quipics.com',
