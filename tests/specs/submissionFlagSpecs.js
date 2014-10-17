@@ -563,7 +563,8 @@ exports.spec = function(domain, callback){
       .findOne({_id: user4.id})
       .exec(function(err, user){
         expect(user.email).not.toEqual(user4.email);
-        expect(user.email).toEqual('banned@quipics.com');
+        //we take the userid and add it to their email address to come up with a unique non conflicting email
+        expect(user.email).toEqual(user4.id + '|' + user4.email);
         done();
       });
     });
@@ -604,7 +605,7 @@ exports.spec = function(domain, callback){
       User.findOne({_id: user4.id})
       .exec(function(err, user){
         user.ban(function(err, user){
-          expect(err).toBeUndefined();
+          expect(err).toBe(null);
           done();
         });
       });
