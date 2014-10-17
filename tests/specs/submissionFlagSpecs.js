@@ -599,10 +599,13 @@ exports.spec = function(domain, callback){
       });
     });
     it ('should allow user4 to now get banned', function(done){
+      //before we were setting all banned users to the same email, that causes a conflict when the second user
+      //was banned since the email had to be unique
       User.findOne({_id: user4.id})
       .exec(function(err, user){
         user.ban(function(err, user){
           expect(err).toBeUndefined();
+          done();
         });
       });
     });
