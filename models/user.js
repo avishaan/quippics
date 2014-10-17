@@ -96,10 +96,11 @@ userSchema.methods.ban = function(cb){
   mailers.mailBannedUser({
     email: this.email
   });
+  var newEmail = this.id + '|' + this.email;
   //use findByIdAndUpdate to bypass email middleware
   //change the password, remove the devices, remove the email address
   User
-  .findByIdAndUpdate(this.id, {password: 'banned', email: 'banned@quipics.com', devices:[]})
+  .findByIdAndUpdate(this.id, {password: 'banned', email: newEmail, devices:[]})
   .exec(function(err, user){
     if (err){
       logger.error('Couldnt ban user', {err: err, stack: new Error().stack});
