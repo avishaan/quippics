@@ -30,8 +30,8 @@ module.exports = function(){
         loaderioVerficationLink: process.env.LOADERIO_VERIFICATION_LINK,
         pfxPath: '/conf/cert/pfx-dev.p12',
         loggerLevel: 'info',
-        flagThreshold: 3,
-        banThreshold: 3
+        flagThreshold: 1,
+        banThreshold: 2
 
       };
     case "test":
