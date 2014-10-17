@@ -147,7 +147,10 @@ submissionSchema.statics.removeFlagged = function(options, cb){
           //hold on to the doc, we need it for other stuff
           submissionDoc = submission;
           done(null);
+        } else if (err){
+          err.clientMsg = 'Couldnt find and/or remove submission';
         } else {
+          var err = {};
           err.clientMsg = 'Couldnt find and/or remove submission';
           done(err);
         }
@@ -227,6 +230,7 @@ submissionSchema.statics.removeFlagged = function(options, cb){
           }
         } else if (!err) {
           logger.debug('Didnt remove any comments');
+          done(null);
         } else {
           err.clientMsg = 'Didnt remove any comments';
           logger.error('Error removing comments');
