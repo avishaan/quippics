@@ -36,7 +36,7 @@ exports.moderateSubmission = function(options){
 };
 
 exports.mailBannedUser = function(options){
-  var text = 'User Banned Info Here';
+  var text = 'You have been banned for violating the TOS. Email us if you feel this was in error';
   var email = options.email;
   //send email to banned user
   logger.info("Start to email user and moderator regarding banned status");
@@ -50,7 +50,7 @@ exports.mailBannedUser = function(options){
       logger.info('Banned Email sent to user for being banned');
       //return cb(null);
     } else {
-      logger.error('Error: Could not send banned email to user for being banned err:', {err: err, stack: new Error().stack});
+      logger.error('Error: Could not send banned email to user for being banned err:', {options: options, err: err, stack: new Error().stack});
       //return cb({clientMsg: "Could not send flagged submission email"});
     }
   });
