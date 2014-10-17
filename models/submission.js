@@ -234,7 +234,8 @@ submissionSchema.statics.removeFlagged = function(options, cb){
         } else {
           err.clientMsg = 'Didnt remove any comments';
           logger.error('Error removing comments');
-          done(err);
+          done(null);
+          //done(err);
         }
       });
     },
