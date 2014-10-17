@@ -351,7 +351,7 @@ exports.spec = function(domain, callback){
         //remove the flagged submission
         Submission.removeFlagged({
           submissionId: submission2.id
-        });
+        }, function(){});
       });
       waitsFor(function(){
         //keep going until drain has been called so we know all the messages have processed
