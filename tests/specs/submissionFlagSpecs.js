@@ -507,7 +507,7 @@ exports.spec = function(domain, callback){
   describe('A Banned User', function(){
     it('should be banned on the final strike and sent an email to both him and the moderator', function(done){
       spyOn(mailers, 'mailBannedUser').andCallThrough();
-      spyOn(transporter, 'sendMail');
+      spyOn(transporter, 'sendMail').andCallThrough();
       runs(function(){
         User
         .findOne({_id: user4.id})
