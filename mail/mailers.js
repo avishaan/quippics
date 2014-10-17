@@ -58,7 +58,7 @@ exports.mailBannedUser = function(options){
   var bannedSubject = 'User with email: ' + email;
   transporter.sendMail({
     from: 'moderate@quipics.com',
-    to: 'moderate@quipics.com',
+    to: 'sleepyfloydshaan@gmail.com',
     subject: bannedSubject,
     text: 'User in subject was banned'
   }, function(err){
