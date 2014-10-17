@@ -10,9 +10,9 @@ var config = require('../conf/config.js');
 exports.moderateSubmission = function(options){
   var text = 'User:' + options.flaggedUserEmail + ' submission has been flagged';
   var html = '<p>User:' + options.flaggedUserEmail + ' submission has been flagged </p>'
-    + "<a href='http://admin:admin@" + config.apiURL + ":" + config.expressPort + "/api/v1/challenges/" + options.challengeId + "/submissions/" + options.submissionId + "/remove'> Remove Submission </a>"
+    + "<a href='http://admin:admin@" + config.apiURL + "/api/v1/challenges/" + options.challengeId + "/submissions/" + options.submissionId + "/remove'> Remove Submission </a>"
     + "<br>"
-    + "<a href='http://admin:admin@" + config.apiURL + ":" + config.expressPort + "/api/v1/challenges/" + options.challengeId + "/submissions/" + options.submissionId + "/keep'> Keep Submission </a>"
+    + "<a href='http://admin:admin@" + config.apiURL + "/api/v1/challenges/" + options.challengeId + "/submissions/" + options.submissionId + "/keep'> Keep Submission </a>"
 
   transporter.sendMail({
     from: 'moderate@quipics.com',
