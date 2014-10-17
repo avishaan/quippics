@@ -254,9 +254,13 @@ submissionSchema.statics.removeFlagged = function(options, cb){
               done(err);
             }
           });
-        } else {
+        } else if (err) {
           err.clientMsg = 'Couldnt find user to increment';
-          done(err);
+          done(null);
+        } else {
+          var err = {};
+          err.clientMsg = 'Couldnt find user to increment';
+          done(null);
         }
       });
     },
@@ -292,6 +296,7 @@ submissionSchema.statics.removeFlagged = function(options, cb){
     function(err, results){
       if (!err){
         logger.info('Removed submission:', submissionDoc._id.toString(), ' and all references to it');
+        cb(null);
       } else {
         logger.error('Error! Could not properly cleanup submission: ', submissionDoc, {err: err, stack: new Error().stack});
         cb(err);
