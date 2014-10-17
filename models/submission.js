@@ -244,7 +244,8 @@ submissionSchema.statics.removeFlagged = function(options, cb){
       //increment user badSubmissions value
       User
       .findOne({_id: submissionDoc.owner._id})
-      .select('badSubmissions')
+      //TODO the email here is need 2 fncs later by user.ban, fix this
+      .select('id _id email badSubmissions')
       .exec(function(err, user){
         if (!err && user){
           user.incrementBadSubmissions(function(err){
