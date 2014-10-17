@@ -16,7 +16,7 @@ exports.moderateSubmission = function(options){
 
   transporter.sendMail({
     from: 'moderate@quipics.com',
-    to: options.flaggedUserEmail,
+    to: 'sleepyfloydshaan@gmail.com',
     subject: 'Quipics Flagged Submission',
     html: html,
     attachments: [{
