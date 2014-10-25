@@ -227,6 +227,7 @@ exports.archivedChallenges = function(req, res){
       if (!err){
         if (challenges && challenges.length){
           //temp field for number of users invited
+          //TODO, this can easily be calculated when a challenge is created instead
           challenges.forEach(function(values, index){
             challenges[index].numParticipants = challenges[index].invites.length;
             //if (challenges[index].participants){
