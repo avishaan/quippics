@@ -397,8 +397,7 @@ exports.spec = function(domain, callback){
     function(cb){
       //expired challenge shouldn't show up at all in popular's myChallenges
       frisby
-      .create("Get all the challenges for the popular user")
-      .get(domain + '/users/' + user1._id + '/challenges/page/1')
+      .create("Get all the challenges for the popular user") .get(domain + '/users/' + user1._id + '/challenges/page/1')
       .expectStatus(200)
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
@@ -741,8 +740,8 @@ exports.spec = function(domain, callback){
         expect(challenges[0].owner).toBeDefined();
         expect(challenges[0].title).toBeDefined();
         expect(challenges[0].unscored).toBeDefined();
-        expect(challenges[0].numParticipants).toBeDefined();
-        expect(challenges[0].inviteStatus).toEqual('invited'); //right now everyone is only invited
+        expect(challenges[0].numParticipants).toEqual(2); //newbie and quipics 
+        expect(challenges[0].invites.length).toEqual(1);
         cb(null);
       })
       .toss();
@@ -757,6 +756,19 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       .afterJSON(function(res){
         expect(res.clientMsg).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      // challenge should still be there when newbie accepts the challenge
+      frisby
+      .create("Get all the challenges for the newbie user")
+      .get(domain + '/users/' + user5._id + '/challenges/page/1')
+      .expectStatus(200)
+      .afterJSON(function(challenges){
+        expect(challenges).toBeDefined();
+        expect(challenges.length).toEqual(1);
         cb(null);
       })
       .toss();
