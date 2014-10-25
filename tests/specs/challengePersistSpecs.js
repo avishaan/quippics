@@ -667,7 +667,7 @@ exports.spec = function(domain, callback){
         title: 'ChallengePersist Title',
         description: 'ChallengePersist Description',
         tags: ['tag1', 'tag2', 'tag3'],
-        owner: user1._id,
+        owner: user4._id,
         privacy: 'private',
         expiration: new Date(2015, 3, 14),
         invites: []
