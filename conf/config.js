@@ -17,7 +17,8 @@ module.exports = function(){
         pfxPath: '/conf/cert/pfx-local.p12',
         loggerLevel: 'info',
         flagThreshold: 3,
-        banThreshold: 3
+        banThreshold: 3,
+        persistUser: 'Quipics'
       };
     case "dev":
     case "development":
@@ -31,7 +32,8 @@ module.exports = function(){
         pfxPath: '/conf/cert/pfx-dev.p12',
         loggerLevel: 'info',
         flagThreshold: 1,
-        banThreshold: 2
+        banThreshold: 2,
+        persistUser: 'Quipics'
 
       };
     case "test":
@@ -48,7 +50,8 @@ module.exports = function(){
         pfxPath: '/conf/cert/pfx-test.p12',
         loggerLevel: 'debug',
         flagThreshold: 3,
-        banThreshold: 3
+        banThreshold: 3,
+        persistUser: 'Quipics'
 
       };
     case "prod":
@@ -65,8 +68,8 @@ module.exports = function(){
         pfxPath: '/conf/cert/pfx-prod.p12',
         loggerLevel: 'debug',
         flagThreshold: 3,
-        banThreshold: 3
-
+        banThreshold: 3,
+        persistUser: 'Quipics'
       };
     default:
       throw new Error("No Environment Found");

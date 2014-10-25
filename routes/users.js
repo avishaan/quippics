@@ -578,6 +578,8 @@ exports.register = function(req, res){
             'username': newUser.username,
             '_id': newUser._id
           });
+          //add user to any persisted challenge
+          //find any challenge of type persist
         } else {
           return res.send(500, {
             'err': err,

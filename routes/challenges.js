@@ -326,23 +326,29 @@ exports.create = function(req, res){
   //add owner to the array as accepted for simplicity sake
   newChallenge.participants.push({user: req.body.owner, inviteStatus: 'owner'});
   //add each of the invited users onto the participants list as status=invited
-  if (req.body.invites.length>0){
+  if (req.body.invites && (req.body.invites.length>0)){
     req.body.invites.forEach(function(value, index, array){
       newChallenge.participants.push({user: value, inviteStatus: 'invited'});
     });
   }
-  newChallenge.save(function(err, challenge){
-    // istanbul ignore else: db error
-    if (!err){
-      if (challenge){
-      //a good save means we should add an activity 
-      require("../models/activity.js").create(challenge);
-      return res.send(200, challenge);
-      } else {
-        return res.send(500, {clientMsg: "Could not save challenge at this time"});
-      }
-    } else {
-      return res.send(500, err);
+  //check if the user is the persistAdmin, in which case set the challenge type accordingly
+  User.isPersistUser(req.body.owner, function(err, match){
+    if (!err && match){
+      newChallenge.persisted = true;
     }
+    newChallenge.save(function(err, challenge){
+      // istanbul ignore else: db error
+      if (!err){
+        if (challenge){
+          //a good save means we should add an activity 
+          require("../models/activity.js").create(challenge);
+          return res.send(200, challenge);
+        } else {
+          return res.send(500, {clientMsg: "Could not save challenge at this time"});
+        }
+      } else {
+        return res.send(500, err);
+      }
+    });
   });
 };

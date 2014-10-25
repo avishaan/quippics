@@ -25,7 +25,8 @@ var challengeSchema = new mongoose.Schema({
   submissions: [
     { type: mongoose.Schema.Types.ObjectId, ref: 'Submission'}
   ],
-  privacy: { type: String }
+  privacy: { type: String },
+  persisted: { type: Boolean, default: false} // persisted challenges are constantly added to users
 });
 
 challengeSchema.pre('save', function(next){

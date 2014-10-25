@@ -110,6 +110,25 @@ userSchema.methods.ban = function(cb){
     }
   });
 };
+//check if user is is a persisted user
+userSchema.statics.isPersistUser = function(userId, cb){
+  User
+  .findOne({_id: userId})
+  .select('username')
+  .lean()
+  .exec(function(err, user){
+    if (!err){
+      if (user.username === config.persistUser){
+        cb(null, true);
+      } else {
+        cb(null, false);
+      }
+    } else {
+      cb(err, null);
+    }
+  });
+};
+
 //increment the number of badSubmissions the user has
 userSchema.methods.incrementBadSubmissions = function(cb){
   //increment the number of bad submissions the user has
