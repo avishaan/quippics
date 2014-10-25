@@ -5,6 +5,7 @@
 */
 
 var User = require("../models/user.js");
+var Challenge = require('../models/challenge.js');
 var perPage = 24;
 var async = require('async');
 var validator = require('validator');
@@ -574,12 +575,31 @@ exports.register = function(req, res){
     if (!err){
       user.save(function(err, newUser){
         if (!err){
+          //add user to any persisted challenge
+          //find any challenge of type persist that is not expired
+          Challenge
+          .find({persisted: true})
+          .where('expiration').gt(Date.now())
+          .select('expiration numParticipants invites participants')
+          .exec(function(err, challenges){
+            //add this user as invited to all of those challenges and update accordingly
+            challenges.forEach(function(value, index){
+              //for each challenge, add the user as invited
+              challenges[index].participants.push({user: newUser.id, inviteStatus: 'invited'});
+              challenges[index].invites.push(newUser.id);
+              challenges[index].numParticipants++;
+              challenges[index].save(function(err){
+                if (err){
+                  logger.error({err:err});
+                }
+              });
+            });
+          });
+          //send  back to the user
           return res.send(200, {
             'username': newUser.username,
             '_id': newUser._id
           });
-          //add user to any persisted challenge
-          //find any challenge of type persist
         } else {
           return res.send(500, {
             'err': err,

@@ -12,7 +12,7 @@ var challengeSchema = new mongoose.Schema({
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   unscored: { type: Number, default: -1 },  //we need this field before we set it
   inviteStatus: { type: String }, //we need this field before we set it
-  numParticipants: { type: Number }, //we need this field before we set it
+  numParticipants: { type: Number, default: 1 }, //we need this field before we set it
   invites: [
     { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
   ],
