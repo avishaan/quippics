@@ -709,7 +709,7 @@ exports.spec = function(domain, callback){
     function(cb){
       //nerdy should NOT be invited to challengePersistExpired
       frisby
-      .create("Get all the challenges for the nerdy user")
+      .create("Expect the nerdy user is NOT invited to an EXPIRED persisted challenge")
       .get(domain + '/users/' + user2._id + '/challenges/page/1')
       .expectStatus(200)
       .afterJSON(function(challenges){
@@ -727,7 +727,7 @@ exports.spec = function(domain, callback){
     function(cb){
       //nerdy should be invited to persistedChallenge but not the persisted expired challenge
       frisby
-      .create("Get all the challenges for the nerdy user")
+      .create("Expect the nerdy user to be invited to a persisted challenge")
       .get(domain + '/users/' + user2._id + '/challenges/page/1')
       .expectStatus(200)
       .afterJSON(function(challenges){
