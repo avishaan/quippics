@@ -707,24 +707,6 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      //nerdy should NOT be invited to challengePersistExpired
-      frisby
-      .create("Expect the nerdy user is NOT invited to an EXPIRED persisted challenge")
-      .get(domain + '/users/' + user2._id + '/challenges/page/1')
-      .expectStatus(200)
-      .afterJSON(function(challenges){
-        expect(challenges.length).toEqual(4);
-        expect(challenges.some(function(challenge){
-          return challenge._id === challengePersistExpired._id;
-        })).toEqual(true);
-        //please check this logic over once
-        expect(false).toEqual(true);
-
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
       //nerdy should be invited to persistedChallenge but not the persisted expired challenge
       frisby
       .create("Expect the nerdy user to be invited to a persisted challenge")
@@ -777,6 +759,24 @@ exports.spec = function(domain, callback){
         expect(challenges[0].unscored).toBeDefined();
         expect(challenges[0].numParticipants).toEqual(2); //newbie and quipics 
         expect(challenges[0].invites.length).toEqual(1);
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //newbie should NOT be invited to challengePersistExpired
+      frisby
+      .create("Expect the newbie user is NOT invited to an EXPIRED persisted challenge")
+      .get(domain + '/users/' + user5._id + '/challenges/page/1')
+      .expectStatus(200)
+      .afterJSON(function(challenges){
+        expect(challenges.length).toEqual(4);
+        expect(challenges.some(function(challenge){
+          return challenge._id === challengePersistExpired._id;
+        })).toEqual(true);
+        //please check this logic over once
+        expect(false).toEqual(true);
+
         cb(null);
       })
       .toss();
@@ -860,6 +860,40 @@ exports.spec = function(domain, callback){
       .expectStatus(500)
       .inspectJSON()
       .afterJSON(function(activities){
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //newbie2 should NOT be invited to challengePersistExpired
+      frisby
+      .create("Expect the newbie2 user is NOT invited to an EXPIRED persisted challenge")
+      .get(domain + '/users/' + user6._id + '/challenges/page/1')
+      .expectStatus(200)
+      .afterJSON(function(challenges){
+        expect(challenges.length).toEqual(4);
+        expect(challenges.some(function(challenge){
+          return challenge._id === challengePersistExpired._id;
+        })).toEqual(true);
+        //please check this logic over once
+        expect(false).toEqual(true);
+
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //newbie2 should be invited to persistedChallenge but not the persisted expired challenge
+      frisby
+      .create("Expect the newbie2 user to be invited to a persisted challenge")
+      .get(domain + '/users/' + user6._id + '/challenges/page/1')
+      .expectStatus(200)
+      .afterJSON(function(challenges){
+        expect(challenges.length).toEqual(4);
+        expect(challenges.some(function(challenge){
+          return challenge._id === challengePersist._id;
+        })).toEqual(true);
+
         cb(null);
       })
       .toss();
