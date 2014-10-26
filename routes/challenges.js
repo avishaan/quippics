@@ -332,11 +332,39 @@ exports.create = function(req, res){
       newChallenge.participants.push({user: value, inviteStatus: 'invited'});
     });
   }
-  //check if the user is the persistAdmin, in which case set the challenge type accordingly
-  User.isPersistUser(req.body.owner, function(err, match){
-    if (!err && match){
-      newChallenge.persisted = true;
+  async.series([
+    function(cb){
+    //check if the user is the persistAdmin, in which case set the challenge type accordingly
+      User.isPersistUser(req.body.owner, function(err, match){
+        if (!err && match){
+          // if the user that created the challenge is the persistUser
+          newChallenge.persisted = true;
+          // persisted challenges should add all existing users to the challenge
+          User
+          .find()
+          .limit(5000)
+          .sort({joinDate: 'descending'})
+          .select('_id')
+          .lean()
+          .exec(function(err, users){
+            if (!err && users && users.length){
+              users.forEach(function(user, index){
+                newChallenge.participants.push({user: user._id, inviteStatus: 'invited'})
+              });
+            }
+            cb(null);
+          });
+        } else {
+          // just move on to the next bit of code
+          cb(null);
+        }
+      });
+    },
+    function(cb){
+      cb(null);
     }
+  ],
+  function(err, results){
     newChallenge.save(function(err, challenge){
       // istanbul ignore else: db error
       if (!err){
