@@ -319,7 +319,7 @@ exports.create = function(req, res){
     description: req.body.description,
     tags: req.body.tags,
     owner: req.body.owner,
-    invites: req.body.invites, //this is the list of friends you want to invite
+    invites: req.body.invites || [], //this is the list of friends you want to invite
     privacy: req.body.privacy,
     expiration: req.body.expiration,
     participants: []
@@ -349,8 +349,12 @@ exports.create = function(req, res){
           .exec(function(err, users){
             if (!err && users && users.length){
               users.forEach(function(user, index){
-                newChallenge.participants.push({user: user._id, inviteStatus: 'invited'})
+                //update the participants array
+                newChallenge.participants.push({user: user._id, inviteStatus: 'invited'});
+                //update the invites array also
+                newChallenge.invites.push(user._id);
               });
+              // update the number of invites as well
             }
             cb(null);
           });
@@ -361,6 +365,7 @@ exports.create = function(req, res){
       });
     },
     function(cb){
+      newChallenge.numParticipants = newChallenge.invites.length;
       cb(null);
     }
   ],
