@@ -7,6 +7,7 @@
 - [ ] test data returned from a specific submission
 - [ ] allow delete route only when env != prod
 - [ ] put mail based functions in separate files
+- [ ] persisted challenge should add all existing users as invitees to it
 
 
 
