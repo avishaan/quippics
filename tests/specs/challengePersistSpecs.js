@@ -656,7 +656,7 @@ exports.spec = function(domain, callback){
       .toss();
     },
     //we are now going to test the actual persist items which include
-    //having quipics create a challenge, register the newbie, check that the newbie is invited,
+    //having quipics create a challenge, check existing users are invited, register the newbie, check that the newbie is invited,
     //check the newbie can submit, register newbie2, check that newbie2 can see activity around
     //that challenge, make sure the number of participants in correct, check all the participants are in the challenge
     function(cb){
