@@ -821,33 +821,27 @@ exports.spec = function(domain, callback){
       //look at the activity from newbie2 perspective
       frisby
       .create("Get all of newbie2 activities")
-      .get(domain + '/users/' + user6._id + '/activities/page/1')
-      .expectStatus(200)
-      //.inspectJSON()
+      .get(domain + '/users/' + user6._id + '/friends/activities/page/1')
+      .expectStatus(500)
+      .inspectJSON()
       .afterJSON(function(activities){
-        //full range of tests here
-        expect(activities.length).toEqual(1);
         cb(null);
       })
       .toss();
     },
     function(cb){
-      //make sure the number of participants and all the participants are in the challenge
       frisby
-      .create("Get all the challenges for the nerdy user")
+      .create("Get all the challenges for the newbie2 user")
       .get(domain + '/users/' + user6._id + '/challenges/page/1')
       .expectStatus(200)
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
-        expect(challenges[0].submissions.length).toEqual(0);
-        expect(challenges[0].submissions[0].thumbnail).toBeDefined();
+        expect(challenges[0].submissions.length).toEqual(1);
         expect(challenges[0].expiration).toBeDefined();
         expect(challenges[0].owner).toBeDefined();
         expect(challenges[0].title).toBeDefined();
         expect(challenges[0].unscored).toBeDefined();
-        expect(challenges[0].numParticipants).toEqual(2);
-        expect(challenges[0].participants.length).toEqual(2);
         cb(null);
       })
       .toss();
