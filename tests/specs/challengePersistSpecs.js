@@ -871,7 +871,6 @@ exports.spec = function(domain, callback){
       .get(domain + '/users/' + user6._id + '/challenges/page/1')
       .expectStatus(200)
       .afterJSON(function(challenges){
-        expect(challenges.length).toEqual(4);
         expect(challenges.some(function(challenge){
           return challenge._id === challengePersistExpired._id;
         })).toEqual(true);
@@ -889,7 +888,6 @@ exports.spec = function(domain, callback){
       .get(domain + '/users/' + user6._id + '/challenges/page/1')
       .expectStatus(200)
       .afterJSON(function(challenges){
-        expect(challenges.length).toEqual(4);
         expect(challenges.some(function(challenge){
           return challenge._id === challengePersist._id;
         })).toEqual(true);
@@ -903,6 +901,7 @@ exports.spec = function(domain, callback){
       .create("Get all the challenges for the newbie2 user")
       .get(domain + '/users/' + user6._id + '/challenges/page/1')
       .expectStatus(200)
+      .inspectJSON()
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
@@ -911,6 +910,7 @@ exports.spec = function(domain, callback){
         expect(challenges[0].owner).toBeDefined();
         expect(challenges[0].title).toBeDefined();
         expect(challenges[0].unscored).toBeDefined();
+        expect(challenges[0].participants.length).toEqual((challenges[0].invites.length)-1);
         cb(null);
       })
       .toss();
