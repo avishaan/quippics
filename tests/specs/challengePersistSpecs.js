@@ -397,7 +397,8 @@ exports.spec = function(domain, callback){
     function(cb){
       //expired challenge shouldn't show up at all in popular's myChallenges
       frisby
-      .create("Get all the challenges for the popular user") .get(domain + '/users/' + user1._id + '/challenges/page/1')
+      .create("Get all the challenges for the popular user")
+      .get(domain + '/users/' + user1._id + '/challenges/page/1')
       .expectStatus(200)
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
@@ -701,6 +702,40 @@ exports.spec = function(domain, callback){
       .afterJSON(function(challenge){
         expect(challenge._id).toBeDefined();
         challengePersistExpired._id = challenge._id;
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //nerdy should NOT be invited to challengePersistExpired
+      frisby
+      .create("Get all the challenges for the nerdy user")
+      .get(domain + '/users/' + user2._id + '/challenges/page/1')
+      .expectStatus(200)
+      .afterJSON(function(challenges){
+        expect(challenges.length).toEqual(4);
+        expect(challenges.some(function(challenge){
+          return challenge._id === challengePersistExpired._id;
+        })).toEqual(true);
+        //please check this logic over once
+        expect(false).toEqual(true);
+
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //nerdy should be invited to persistedChallenge but not the persisted expired challenge
+      frisby
+      .create("Get all the challenges for the nerdy user")
+      .get(domain + '/users/' + user2._id + '/challenges/page/1')
+      .expectStatus(200)
+      .afterJSON(function(challenges){
+        expect(challenges.length).toEqual(4);
+        expect(challenges.some(function(challenge){
+          return challenge._id === challengePersist._id;
+        })).toEqual(true);
+
         cb(null);
       })
       .toss();
