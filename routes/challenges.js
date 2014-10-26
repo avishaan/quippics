@@ -342,6 +342,7 @@ exports.create = function(req, res){
           // persisted challenges should add all existing users to the challenge
           User
           .find()
+          .where('username').ne('admin')
           .limit(5000)
           .sort({joinDate: 'descending'})
           .select('_id')
