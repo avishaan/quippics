@@ -14,6 +14,7 @@ var activityFilterSpec = require('./specs/activityFilterSpecs.js');
 var commentSpec = require('./specs/commentSpecs.js');
 var notificationSpec = require('./specs/notificationSpecs.js');
 var submissionFlagSpec = require('./specs/submissionFlagSpecs.js');
+var challengePersistSpec = require('./specs/challengePersistSpecs.js');
 //var superSpec = require('./specs/superTest.js');
 var async = require('async');
 
@@ -64,6 +65,12 @@ async.series([
   function(cb){
     console.log("Calling Comment Specs");
     commentSpec.spec(domain, function(){
+      cb(null);
+    });
+  },
+  function(cb){
+    console.log("Calling Persisted Challenge Specs");
+    challengePersistSpec.spec(domain, function(){
       cb(null);
     });
   },
