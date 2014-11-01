@@ -98,7 +98,8 @@ response:
  }
 ```
 ####Read a specific submission
-#####_Status: Developed, Tested
+#####_Status: Developed, Not Tested
+GET /v2/submissions/:sid
 GET /v1/challenges/:cid/submissions/:sid
 
 Example Response
