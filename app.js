@@ -132,6 +132,7 @@ app.post('/api/v1/challenges/:cid/accepts', apiAuth(), challenges.acceptChalleng
 app.post('/api/v1/challenges/:cid/declines', apiAuth(), challenges.declineChallenge); //decline a challenge
 app.post('/api/v1/challenges/:cid/hidden', apiAuth(), challenges.hideChallenge); //hide a challenge
 //submission routes
+app.get('/api/v2/submissions/:sid', apiAuth(), submissions.readOne); //read the submission specified
 app.get('/api/v1/challenges/:cid/submissions/:sid/remove', apiAuth(), submissions.removeFlagged); //remove existing flagged submission
 app.post('/api/v1/challenges/:cid/submissions/:sid/flags', apiAuth(), submissions.flag); //flag existing submission
 app.post('/api/v1/challenges/:cid/submissions', apiAuth(), submissions.create); //create a new submission
