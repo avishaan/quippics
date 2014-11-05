@@ -48,6 +48,7 @@ if (config.env === 'dev' ||
     log.debug();
     next();
   });
+  app.delete('/api/v1/server', server.delete);
 }
 // all environments
 app.set('port', config.expressPort);
@@ -150,7 +151,6 @@ app.get('/api/v1/users/:uid/activities/page/:page', apiAuth(), activities.myActi
 app.get('/api/v1/activities/users/:uid/friends/page/:page', apiAuth(), activities.friendActivities); //read all the activities of the friends of the user
 app.get('/api/v1/users/:uid/friends/activities/page/:page', apiAuth(), activities.friendActivities); //read all the activities of the friends of the user
 //misc routes
-app.delete('/api/v1/server', server.delete);
 //verification routes
 //verify loaderio
 if (config.loaderioVerficationLink){
