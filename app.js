@@ -48,7 +48,6 @@ if (config.env === 'dev' ||
     log.debug();
     next();
   });
-  app.delete('/api/v1/server', server.delete);
 }
 // all environments
 app.set('port', config.expressPort);
@@ -156,7 +155,10 @@ app.get('/api/v1/users/:uid/friends/activities/page/:page', apiAuth(), activitie
 if (config.loaderioVerficationLink){
   app.get('/' + config.loaderioVerficationLink + '.txt', function(req, res){return res.send(200, config.loaderioVerficationLink);});
 }
-
+// dev routes
+if (config.env !== 'prod'){
+  app.delete('/api/v1/server', server.delete);
+}
 app.use(function(req, res){
   res.send(404, {clientMsg: 'This route is a misroute, check your route address for mistakes'});
 });
