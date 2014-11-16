@@ -418,6 +418,7 @@ exports.listFriends = function(req, res){
       select: 'username thumbnail _id lastLogin', //but only return the username from the full user information
       options: {
         limit: perPage,
+        sort: 'username',
         skip: skip
       }
     })
