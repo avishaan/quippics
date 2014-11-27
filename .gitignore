@@ -2,3 +2,5 @@ node_modules/*
 .idea/*
 coverage/*
 npm-debug.log
+conf/cert/prodv1.p12
+conf/cert/prodv2.p12
