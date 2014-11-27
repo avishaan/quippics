@@ -427,6 +427,17 @@ exports.spec = function(domain, callback){
         done();
       });
     });
+    it('should not crash when a user tries to access a removed submission', function(done){
+      // we need this route incase a submission is removed but a user is looking at a list of submissions
+      // and tries to access it directly
+      superagent
+      .get(domain + '/challenges/' + challenge1.id + '/submissions/' + submission2.id)
+      //.inspectJSON()
+      .end(function(res){
+        expect(res.status).toEqual(404);
+        done(null);
+      });
+    });
     it('should keep user1\'s comment from submission1 in challenge1', function(done){
       Submission
       .findOne({_id: submission1.id, 'comments.commenter': user1.id})
