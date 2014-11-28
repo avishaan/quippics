@@ -4,10 +4,11 @@
 - [x] Integrate APN
 - [x] Better way to perform testing without REST interface
 - [x] test data returned from archive challenges, specific to correct submission
-- [ ] test data returned from a specific submission
+- [x] test data returned from a specific submission
 - [ ] allow delete route only when env != prod
 - [ ] put mail based functions in separate files
-- [ ] persisted challenge should add all existing users as invitees to it
+- [x] persisted challenge should add all existing users as invitees to it
+- [ ] email configuration based on environment
 
 
 
