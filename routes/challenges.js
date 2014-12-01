@@ -14,7 +14,7 @@ exports.read = function(req, res){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
   Challenge.findOne({_id: req.params.cid})
-  .select('title owner _id description tags createdOn expiration')
+  .select('title owner _id description tags createdOn expiration privacy')
   .exec(function(err, challenge){
     // istanbul ignore else: db error
     if (!err) {
