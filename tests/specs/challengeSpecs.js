@@ -542,6 +542,7 @@ exports.spec = function(domain, callback){
         expect(challenge.description).toEqual(challenge1.description);
         expect(challenge.createdOn).toBeDefined();
         expect(challenge.expiration).toBeDefined();
+        expect(challenge.privacy).toEqual('public');
         cb(null);
       })
       .toss();
