@@ -2,6 +2,7 @@ var frisby = require('frisby');
 var async = require('async');
 var superagent = require('superagent');
 var _ = require('underscore');
+var Challenge = require('../../models/challenge.js');
 
 var user1 = {
   username: 'popular123',
@@ -317,6 +318,39 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       .afterJSON(function(submissions){
         expect(submissions.length).toEqual(2);
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //get the challenge from the database and make it expired
+      describe('The Date', function(){
+        it('Will be made in the past so we can test in archive', function(done){
+          Challenge
+          .findOne({_id: challenge1._id })
+          .exec(function(err, challenge){
+            challenge.expiration = new Date(2013, 10, 15);
+            challenge.save(function(err, saved){
+              done();
+              cb(err);
+            });
+          });
+        });
+      });
+    },
+    function(cb){
+      // now find all the archived submissions for a user and make sure the rank for it is correct
+      frisby
+      .create("Get mine aka popular's archived challenges")
+      .get(domain + '/users/' + user1._id + '/challenges/archive/page/1')
+      .expectStatus(200)
+      .inspectJSON()
+      .afterJSON(function(challenges){
+        console.log('enter');
+        expect(challenges[0].submissions[0].rank).toEqual(1);
+        // make sure the id we are checking the rank for matches pop user's id
+        expect(challenges[0].submissions[0]._id).toEqual(submission2._id);
+        console.log(submission2._id);
         cb(null);
       })
       .toss();
