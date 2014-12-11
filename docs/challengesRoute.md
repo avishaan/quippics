@@ -35,7 +35,7 @@ request.body:
   title: 'sampleChallenge',
   owner: '52f548514f8c88b137000113',
   tags: [ 'tag1', 'tag2', 'tag3' ],
-
+  persisted: true,
   privacy: 'public',
   expiration: new Date(2014, 10, 15),
   description: 'Description for challenge',
