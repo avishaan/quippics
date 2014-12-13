@@ -67,6 +67,16 @@ challengeSchema.post('new', function(){
     }
   });
 });
+// return the privacy type of the challenge
+challengeSchema.virtual('private').get(function(){
+  if (this.privacy === 'private' && this.persisted) {
+    return false;
+  } else if (this.privacy === 'private' && !this.persisted){
+    return true;
+  } else {
+    return true;
+  }
+});
 //calculate the unscored submissions from a user's perspective
 challengeSchema.virtual('scored').set(function(uid){
       //todo, this is all async and should be a proper query

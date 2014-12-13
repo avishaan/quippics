@@ -14,12 +14,12 @@ exports.read = function(req, res){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
   Challenge.findOne({_id: req.params.cid})
-  .select('title owner _id description tags createdOn expiration privacy')
+  .select('title owner _id description tags createdOn expiration privacy persisted private')
   .exec(function(err, challenge){
     // istanbul ignore else: db error
     if (!err) {
       if (challenge){
-        return res.send(200, challenge);
+        return res.send(200, challenge.toJSON({getters: true, virtuals: true}));
       } else {
         return res.send(404, {clientMsg: "No Challenges Found"});
       }
