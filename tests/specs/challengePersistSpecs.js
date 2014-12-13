@@ -900,7 +900,7 @@ exports.spec = function(domain, callback){
       .get(domain + '/challenges/' + challengePersist._id)
       .expectStatus(200)
       .afterJSON(function(challenge){
-        expect(challenge.private).toEqual(false);
+        expect(challenge.private).toEqual('public');
         cb(null);
       })
       .toss();
