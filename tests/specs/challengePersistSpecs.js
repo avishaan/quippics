@@ -237,7 +237,6 @@ exports.spec = function(domain, callback){
         expect(challenges[0].unscored).toBeDefined();
         expect(challenges[0].numParticipants).toBeDefined();
         expect(challenges[0].inviteStatus).toEqual('invited'); //right now everyone is only invited
-        expect(challenges[0].privacy).toEqual('public');
         cb(null);
       })
       .toss();
@@ -586,6 +585,7 @@ exports.spec = function(domain, callback){
         expect(challenge.description).toEqual(challenge1.description);
         expect(challenge.createdOn).toBeDefined();
         expect(challenge.expiration).toBeDefined();
+        expect(challenge.private).toEqual(true);
         cb(null);
       })
       .toss();
