@@ -585,7 +585,6 @@ exports.spec = function(domain, callback){
         expect(challenge.description).toEqual(challenge1.description);
         expect(challenge.createdOn).toBeDefined();
         expect(challenge.expiration).toBeDefined();
-        expect(challenge.private).toEqual(true);
         cb(null);
       })
       .toss();
@@ -890,6 +889,19 @@ exports.spec = function(domain, callback){
         expect(challenges[0].unscored).toBeDefined();
         expect(challenges[0].invites.length).toEqual(6);
         //expect(challenges[0].numParticipants).toEqual(challenges[0].invites.length);
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //get a specific challenge
+      frisby
+      .create("Get a specific challenge by id")
+      .get(domain + '/challenges/' + challengePersist._id)
+      .expectStatus(200)
+      .inspectJSON()
+      .afterJSON(function(challenge){
+        expect(challenge.private).toEqual(true);
         cb(null);
       })
       .toss();
