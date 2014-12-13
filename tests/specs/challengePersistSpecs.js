@@ -901,7 +901,7 @@ exports.spec = function(domain, callback){
       .expectStatus(200)
       .inspectJSON()
       .afterJSON(function(challenge){
-        expect(challenge.private).toEqual(true);
+        expect(challenge.private).toEqual(false);
         cb(null);
       })
       .toss();
