@@ -70,11 +70,11 @@ challengeSchema.post('new', function(){
 // return the privacy type of the challenge
 challengeSchema.virtual('private').get(function(){
   if (this.privacy === 'private' && this.persisted) {
-    return false;
+    return 'public';
   } else if (this.privacy === 'private' && !this.persisted){
-    return true;
+    return 'private';
   } else {
-    return true;
+    return 'public';
   }
 });
 //calculate the unscored submissions from a user's perspective
