@@ -899,7 +899,6 @@ exports.spec = function(domain, callback){
       .create("Get a specific challenge by id")
       .get(domain + '/challenges/' + challengePersist._id)
       .expectStatus(200)
-      .inspectJSON()
       .afterJSON(function(challenge){
         expect(challenge.private).toEqual(false);
         cb(null);
