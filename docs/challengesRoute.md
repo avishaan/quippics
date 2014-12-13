@@ -69,7 +69,8 @@ Example Response
   description: 'Challenge Description',
   createdOn: '2014-02-07T20:55:45.259Z',
   tags: [ 'tag1', 'tag2', 'tag3' ] ,
-  privacy: 'public'
+  privacy: 'public',
+  private: true
 }
 ```
 ####Accept a challenge invite
