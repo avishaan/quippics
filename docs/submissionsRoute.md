@@ -138,7 +138,9 @@ Example Response
       "data": "iVBORw0KGgoAAAANSUhEUgAAA",
       "contentType": "image/png"
   },
-  "createdOn": "2014-04-18T00:26:59.816Z"
+  "createdOn": "2014-04-18T00:26:59.816Z",
+  "prevSubmission": "53c9978c8c5808246f6c0453",
+  "nextSubmission": "null"
 }
 ```
 ####Read all the submissions for a specific challenge
