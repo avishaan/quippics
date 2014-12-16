@@ -1,6 +1,7 @@
 var Challenge = require('../models/challenge.js');
 var Submission = require('../models/submission.js');
 var _ = require('underscore');
+var async = require('async');
 var validator = require('validator');
 var isObjectId = require('valid-objectid').isValid;
 var perPage = 24; //submission per page
@@ -49,29 +50,63 @@ exports.readOne = function(req, res){
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
-  Submission
-  .findOne({_id: req.params.sid})
-  .populate({
-    path: 'comments.commenter',
-    select: 'username'
-  })
-  .populate({
-    path: 'challenge',
-    select: 'title description tags'
-  })
-  .populate({
-    path: 'owner',
-    select: 'username'
-  })
-  .exec(function(err, submission){
-    // istanbul ignore else: db error
-    if (!err){ //no error
-      if (submission){ //we found a submission by that id
+  async
+  .parallel([
+    function(cb){
+      // get the main submission we are looking for
+      Submission
+      .findOne({_id: req.params.sid})
+      .populate({
+        path: 'comments.commenter',
+        select: 'username'
+      })
+      .populate({
+        path: 'challenge',
+        select: 'title description tags'
+      })
+      .populate({
+        path: 'owner',
+        select: 'username'
+      })
+      .lean()
+      .exec(function(err, submission){
+        cb(err, submission);
+      });
+    },
+    function(cb){
+      // get the next submission we are looking for
+      Submission
+      .findOne({_id: {$gt: req.params.sid}})
+      .select('_id')
+      .exec(function(err, submission){
+        cb(err, submission);
+      });
+    },
+    function(cb){
+      // get the previous submission we are looking for
+      Submission
+      .findOne({_id: {$lt: req.params.sid}})
+      .select('_id')
+      .exec(function(err, submission){
+        cb(err, submission);
+      });
+    }
+  ],
+  function(err, results){
+    // make sure the first submission exists, if not then send 404
+    if (!err){
+      if (results[0]){
+        var submission = results[0];
+        // before sending the array, add the prev and next first
+        submission.nextSubmission = results[1] ? results[1].id : null;
+        submission.prevSubmission = results[2] ? results[2].id : null;
         return res.send(200, submission);
-      } else { //found nothing by that id
+      } else {
+        // we didn't get anything back
         return res.send(404), {clientMsg: "Couldn't find this submission, try again"};
       }
-    } else { //some sort of error encountered
+    } else {
+      // we had an error
       return res.send(500, err);
     }
   });
