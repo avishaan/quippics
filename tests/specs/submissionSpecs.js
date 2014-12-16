@@ -28,6 +28,7 @@ var challenge1 = {};
 var challenge2 = {};
 var submission1 = {}; //not widely accepted submission
 var submission2 = {}; //great submission
+var submission3 = {}; // submission added to test next/prev submission for #85
 exports.spec = function(domain, callback){
   jasmine.getEnv().defaultTimeoutInterval = 1000;
   async.series([
@@ -282,7 +283,114 @@ exports.spec = function(domain, callback){
         cb(null);
       })
       .toss();
-    }
+    },
+    function(cb){
+      // make sure we can get the submission after when looking at the first submission
+      frisby
+      .create("Look at the first submission made")
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id)
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(submission){
+        //full tests here
+        expect(submission).toBeDefined();
+        expect(submission.challenge).toBeDefined();
+        expect(submission.challenge.title).toBeDefined();
+        expect(submission.challenge.description).toBeDefined();
+        expect(submission.challenge.tags).toBeDefined();
+        expect(submission.rank).toBeDefined();
+        expect(submission.score).toBeDefined();
+        expect(submission.owner).toBeDefined();
+        expect(submission.image).toBeDefined();
+        expect(submission.owner.username).toBeDefined();
+        expect(submission.owner._id).toBeDefined();
+        expect(submission.comments).toBeDefined();
+        expect(submission.nextSubmission).toEqual(submission2._id);
+        expect(submission.prevSubmission).toEqual(null);
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      // have user3 submit so we can have three submissions to test all cases for #85
+      describe("A Submission", function(){
+        it("can be submitted by user 3", function(done){
+          superagent
+          .post(domain + "/challenges/" + challenge1._id + "/submissions")
+          .type('form')
+          .attach("image", "./tests/specs/images/onepixel.png")
+          .field("owner", user3._id)
+          .end(function(err, res){
+            var submission = res.body;
+            //make sure something was returned in the response body
+            expect(submission).toBeDefined();
+            //make sure the id in the response body was returned
+            expect(submission._id).toBeDefined();
+            //expect 200 response
+            expect(res.status).toEqual(200);
+            submission3._id = submission._id;
+            //console.log("here is the returned superagent submission");
+            //console.log(submission);
+            cb(null);
+            done();
+          });
+        });
+      });
+    },
+    function(cb){
+      // there should be a submission before and after the second submission
+      frisby
+      .create("Look at the second submission made")
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission2._id)
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(submission){
+        //full tests here
+        expect(submission).toBeDefined();
+        expect(submission.challenge).toBeDefined();
+        expect(submission.challenge.title).toBeDefined();
+        expect(submission.challenge.description).toBeDefined();
+        expect(submission.challenge.tags).toBeDefined();
+        expect(submission.rank).toBeDefined();
+        expect(submission.score).toBeDefined();
+        expect(submission.owner).toBeDefined();
+        expect(submission.image).toBeDefined();
+        expect(submission.owner.username).toBeDefined();
+        expect(submission.owner._id).toBeDefined();
+        expect(submission.comments).toBeDefined();
+        expect(submission.nextSubmission).toEqual(submission2._id);
+        expect(submission.prevSubmission).toEqual(submission1._id);
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      // there should only be a submission before the last submission
+      frisby
+      .create("Look at the third submission made")
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission3._id)
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(submission){
+        //full tests here
+        expect(submission).toBeDefined();
+        expect(submission.challenge).toBeDefined();
+        expect(submission.challenge.title).toBeDefined();
+        expect(submission.challenge.description).toBeDefined();
+        expect(submission.challenge.tags).toBeDefined();
+        expect(submission.rank).toBeDefined();
+        expect(submission.score).toBeDefined();
+        expect(submission.owner).toBeDefined();
+        expect(submission.image).toBeDefined();
+        expect(submission.owner.username).toBeDefined();
+        expect(submission.owner._id).toBeDefined();
+        expect(submission.comments).toBeDefined();
+        expect(submission.nextSubmission).toEqual(null);
+        expect(submission.prevSubmission).toEqual(submission2._id);
+        cb(null);
+      })
+      .toss();
+    },
   ],
   function(err, results){
     callback(null);
