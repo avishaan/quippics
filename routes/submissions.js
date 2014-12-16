@@ -76,7 +76,9 @@ exports.readOne = function(req, res){
     function(cb){
       // get the next submission we are looking for
       Submission
-      .findOne({_id: {$gt: req.params.sid}})
+      .find({_id: {$gt: req.params.sid}})
+      .limit(1)
+      .sort({'_id': 1})
       .select('_id')
       .exec(function(err, submission){
         cb(err, submission);
@@ -85,7 +87,9 @@ exports.readOne = function(req, res){
     function(cb){
       // get the previous submission we are looking for
       Submission
-      .findOne({_id: {$lt: req.params.sid}})
+      .find({_id: {$lt: req.params.sid}})
+      .limit(1)
+      .sort({'_id': -1})
       .select('_id')
       .exec(function(err, submission){
         cb(err, submission);
@@ -98,8 +102,8 @@ exports.readOne = function(req, res){
       if (results[0]){
         var submission = results[0];
         // before sending the array, add the prev and next first
-        submission.nextSubmission = results[1] ? results[1].id : null;
-        submission.prevSubmission = results[2] ? results[2].id : null;
+        submission.nextSubmission = results[1][0] ? results[1][0].id : null;
+        submission.prevSubmission = results[2][0] ? results[2][0].id : null;
         return res.send(200, submission);
       } else {
         // we didn't get anything back
