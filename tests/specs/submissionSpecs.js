@@ -343,7 +343,6 @@ exports.spec = function(domain, callback){
       .create("Look at the second submission made")
       .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission2._id)
       .expectStatus(200)
-      //.inspectJSON()
       .afterJSON(function(submission){
         //full tests here
         expect(submission).toBeDefined();
@@ -358,7 +357,7 @@ exports.spec = function(domain, callback){
         expect(submission.owner.username).toBeDefined();
         expect(submission.owner._id).toBeDefined();
         expect(submission.comments).toBeDefined();
-        expect(submission.nextSubmission).toEqual(submission2._id);
+        expect(submission.nextSubmission).toEqual(submission3._id);
         expect(submission.prevSubmission).toEqual(submission1._id);
         cb(null);
       })
