@@ -212,6 +212,29 @@ exports.userSubmission = function(req, res){
       }
     });
 };
+//Return submission image data
+exports.readImage = function(req, res){
+  // istanbul ignore if: bad request
+  if (!isObjectId(req.params.cid)){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  Submission
+    .findOne({id: req.params.sid})
+    .populate('image')
+    .exec(function(err, submission){
+      // istanbul ignore else: db error
+      if (!err){
+        if (challenge && challenge.submissions.length){
+          debugger;
+          return res.send(200, submission);
+        } else {
+          return res.send(404, {clientMsg: "No Submissions in Challenge Found"});
+        }
+      } else {
+        return res.send(500, err);
+      }
+    });
+};
 //Read all the challenge in a submission
 exports.readAll = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
