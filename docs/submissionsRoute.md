@@ -160,7 +160,7 @@ response: [ {
 ```
 
 ####Read all the submissions for a specific challenge (v2) issue #86
-#####_Status: Not Developed, Not Tested
+#####_Status: Partially Developed, Partially Tested
 GET /v2/challenges/:cid/submissions
 
 Example Response
