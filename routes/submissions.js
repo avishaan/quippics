@@ -245,10 +245,8 @@ exports.readAll = function(req, res){
     });
 };
 
-//Read all the challenge in a submission
+//Read all (V2) the challenge in a submission
 exports.readAllV2 = function(req, res){
-  //if the page number was not passed, go ahead and default to page one for backward compatibility
-  req.params.page = req.params.page || 1;
   //find all the submissions for a specific challenge
   // istanbul ignore if: bad request
   if (!validator.isNumeric(req.params.page) ||
