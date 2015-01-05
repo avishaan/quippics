@@ -177,8 +177,11 @@ response:
       username: 'jack1234',
       _id: '53c9978c8c5808246f6c0453'
     },
-  "commentsCount": 10,
-    "image": "www.quippics-prod.com/submissions/535071535897f4b97500000f.jpg",
+  comments: [
+    53c9978c8c5808246f6c0453,
+    53c9978c8c5808246f6c0454,
+  ],
+  "image": "www.quippics-prod.com/submissions/535071535897f4b97500000f.jpg",
   },{...},{...},{...}]
 
 ```
