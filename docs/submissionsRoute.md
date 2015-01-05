@@ -166,9 +166,7 @@ GET /v2/challenges/:cid/submissions
 Example Response
 ```
 response: 
-  challenge: {
-    title: 'Challenge Title',
-  },
+  title: 'Challenge Title',
   submissions: [{
     "__v": 4,
     "_id": "535071535897f4b97500000f",
