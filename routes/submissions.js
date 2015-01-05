@@ -270,7 +270,11 @@ exports.readAllV2 = function(req, res){
             path: 'owner',
             select: 'username'
           }, function(err, submissions){
-            return res.send(200, challenge);
+            if (!err) {
+              return res.send(200, challenge);
+            } else {
+              return res.send(500, err);
+            }
           });
         } else {
           return res.send(404, {clientMsg: "No Submissions in Challenge Found"});
