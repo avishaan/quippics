@@ -244,6 +244,40 @@ exports.readAll = function(req, res){
       }
     });
 };
+
+//Read all the challenge in a submission
+exports.readAllV2 = function(req, res){
+  //if the page number was not passed, go ahead and default to page one for backward compatibility
+  req.params.page = req.params.page || 1;
+  //find all the submissions for a specific challenge
+  // istanbul ignore if: bad request
+  if (!validator.isNumeric(req.params.page) ||
+      !isObjectId(req.params.cid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  Challenge
+    .findById(req.params.cid)
+    .sort('createdOn')
+    .skip(perPage * (req.params.page - 1))
+    .limit(perPage)
+    .populate({
+      path: 'submissions',
+      select: '-image'
+    })
+    .exec(function(err, challenge){
+      // istanbul ignore else: db error
+      if (!err){
+        if (challenge && challenge.submissions.length){
+          return res.send(200, challenge.submissions);
+        } else {
+          return res.send(404, {clientMsg: "No Submissions in Challenge Found"});
+        }
+      } else {
+        return res.send(500, err);
+      }
+    });
+};
 //Submit submission for specific challenge
 exports.create = function(req, res){
   //see if the owner already has submitted a challenge here
