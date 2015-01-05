@@ -285,6 +285,19 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
+      //get image data via url from specific submission
+      frisby
+      .create("Get image data from specific submission using url")
+      .get(domain + '/submissions/' + submission1._id + '/image')
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(submission){
+        //full tests here
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
       //read an existing submission
       frisby
       .create("Get an existing submission, let's get Nerdy's submission")
