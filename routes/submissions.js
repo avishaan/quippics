@@ -224,8 +224,7 @@ exports.readImage = function(req, res){
     .exec(function(err, submission){
       // istanbul ignore else: db error
       if (!err){
-        if (challenge && challenge.submissions.length){
-          debugger;
+        if (submission){
           return res.send(200, submission);
         } else {
           return res.send(404, {clientMsg: "No Submissions in Challenge Found"});
