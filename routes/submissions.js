@@ -1,5 +1,6 @@
 var Challenge = require('../models/challenge.js');
 var Submission = require('../models/submission.js');
+var User = require('../models/user.js');
 var _ = require('underscore');
 var async = require('async');
 var validator = require('validator');
@@ -256,12 +257,17 @@ exports.readAllV2 = function(req, res){
   Challenge
     .findById(req.params.cid)
     .sort('createdOn')
-    .skip(perPage * (req.params.page - 1))
-    .limit(perPage)
+    .select('submissions title')
     .populate({
       path: 'submissions',
-      select: '-image'
+      select: '_id id challenge owner comments'
     })
+    .populate({
+      path: 'submissions.owner',
+      select: 'username',
+      model: User
+    })
+    .lean()
     .exec(function(err, challenge){
       // istanbul ignore else: db error
       if (!err){
