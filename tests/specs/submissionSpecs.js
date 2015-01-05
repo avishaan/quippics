@@ -2,6 +2,8 @@ var frisby = require('frisby');
 var async = require('async');
 var superagent = require('superagent');
 
+// this normally would be passed into function properly but we need one passed directly
+var domainv2 = 'http://admin:admin@localhost:8081/api/v2';
 var user1 = {
   username: 'popular123',
   password: '123',
@@ -220,6 +222,25 @@ exports.spec = function(domain, callback){
         expect(submissions.length).toEqual(2);
         expect(submissions[0].thumbnail).toBeDefined();
         expect(submissions[0]._id).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //get list of the submissions for a challenge v2
+      frisby
+      .create("Get (v2) list of submissions for a challenge")
+      .get(domainv2 + '/challenges/' + challenge1._id + '/submissions')
+      .expectStatus(200)
+      .afterJSON(function(submissions){
+        expect(submissions.length).toEqual(2);
+        expect(submissions[0].thumbnail).not.toBeDefined();
+        expect(submissions[0]._id).toBeDefined();
+        expect(submissions[0].owner.username).toBeDefined();
+        expect(submissions[0].owner).toBeDefined();
+        expect(submissions[0].challenge).toBeDefined();
+        expect(submissions[0].comments).toBeDefined();
+        expect(submissions[0].imageURL).toBeDefined();
         cb(null);
       })
       .toss();
