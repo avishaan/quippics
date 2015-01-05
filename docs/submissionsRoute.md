@@ -159,6 +159,30 @@ response: [ {
   }, {}, {}, {}]
 ```
 
+####Read all the submissions for a specific challenge (v2) issue #86
+#####_Status: Not Developed, Not Tested
+GET /v2/challenges/:cid/submissions
+
+Example Response
+```
+response: 
+  challenge: {
+    title: 'Challenge Title',
+  },
+  submissions: [{
+    "__v": 4,
+    "_id": "535071535897f4b97500000f",
+    "challenge": "535071535897f4b97500000b",
+    owner: {
+      username: 'jack1234',
+      _id: '53c9978c8c5808246f6c0453'
+    },
+  "commentsCount":'10',
+    "image": "www.quippics-prod.com/submissions/535071535897f4b97500000f.jpg",
+  },{...},{...},{...}]
+
+```
+
 ####Flag an submission as inappropriate
 #####_Status: Developed, Not Tested
 POST /v1/challenges/:cid/submissions/:sid/flags
