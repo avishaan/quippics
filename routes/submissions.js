@@ -215,7 +215,7 @@ exports.userSubmission = function(req, res){
 //Return submission image data
 exports.readImage = function(req, res){
   // istanbul ignore if: bad request
-  if (!isObjectId(req.params.cid)){
+  if (!isObjectId(req.params.sid)){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
   Submission
