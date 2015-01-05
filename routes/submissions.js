@@ -272,7 +272,7 @@ exports.readAllV2 = function(req, res){
       // istanbul ignore else: db error
       if (!err){
         if (challenge && challenge.submissions.length){
-          return res.send(200, challenge.submissions);
+          return res.send(200, challenge);
         } else {
           return res.send(404, {clientMsg: "No Submissions in Challenge Found"});
         }
