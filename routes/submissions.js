@@ -249,8 +249,7 @@ exports.readAll = function(req, res){
 exports.readAllV2 = function(req, res){
   //find all the submissions for a specific challenge
   // istanbul ignore if: bad request
-  if (!validator.isNumeric(req.params.page) ||
-      !isObjectId(req.params.cid)
+  if (!isObjectId(req.params.cid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
