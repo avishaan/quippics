@@ -233,7 +233,9 @@ exports.spec = function(domain, callback){
       .get(domainv2 + '/challenges/' + challenge1._id + '/submissions')
       .expectStatus(200)
       .afterJSON(function(body){
+        var challenge = body;
         var submissions = body.submissions;
+        expect(challenge.title).toBeDefined();
         expect(submissions.length).toEqual(2);
         expect(submissions[0].thumbnail).not.toBeDefined();
         expect(submissions[0]._id).toBeDefined();
