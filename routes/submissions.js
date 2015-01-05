@@ -262,17 +262,16 @@ exports.readAllV2 = function(req, res){
       path: 'submissions',
       select: '_id id challenge owner comments'
     })
-    .populate({
-      path: 'submissions.owner',
-      select: 'username',
-      model: User
-    })
-    .lean()
     .exec(function(err, challenge){
       // istanbul ignore else: db error
       if (!err){
         if (challenge && challenge.submissions.length){
-          return res.send(200, challenge);
+          Submission.populate(challenge.submissions, {
+            path: 'owner',
+            select: 'username'
+          }, function(err, submissions){
+            return res.send(200, challenge);
+          });
         } else {
           return res.send(404, {clientMsg: "No Submissions in Challenge Found"});
         }
