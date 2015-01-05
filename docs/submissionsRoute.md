@@ -184,6 +184,16 @@ response:
 
 ```
 
+####Return submission image via exposed route
+#####_Status: Not Developed, Not Tested
+GET /v2/submissions/:sid/image
+
+Example Response
+```
+response: 
+  *pending*
+```
+
 ####Flag an submission as inappropriate
 #####_Status: Developed, Not Tested
 POST /v1/challenges/:cid/submissions/:sid/flags
