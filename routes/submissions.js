@@ -219,13 +219,13 @@ exports.readImage = function(req, res){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
   Submission
-    .findOne({id: req.params.sid})
-    .populate('image')
+    .findOne({_id: req.params.sid})
     .exec(function(err, submission){
       // istanbul ignore else: db error
       if (!err){
         if (submission){
-          return res.send(200, submission);
+          res.writeHead(200, {'Content-Type': submission.image.contentType});
+          return res.end(submission.image.data);
         } else {
           return res.send(404, {clientMsg: "No Submissions in Challenge Found"});
         }
