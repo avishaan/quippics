@@ -290,8 +290,9 @@ exports.spec = function(domain, callback){
       .create("Get image data from specific submission using url")
       .get(domainv2 + '/submissions/' + submission1._id + '/image.png')
       .expectStatus(200)
+      .expectHeader('Content-Type', 'image/png')
       //.inspectJSON()
-      .afterJSON(function(submission){
+      .after(function(res){
         //full tests here
         cb(null);
       })
