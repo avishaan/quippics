@@ -15,8 +15,11 @@ var submissionSchema = new mongoose.Schema({
   createdOn: { type: Date, default: Date.now },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   //these are users who are invited at the creation of the submission
-  image:
-  { data: Buffer, contentType: String },
+  image: {
+    data: Buffer,
+    contentType: String,
+    url: { type: String, get: urlFormatter }
+  },
   thumbnail:
   { data: Buffer, contentType: String },
   ballots: [Ballot.schema],
@@ -421,6 +424,15 @@ submissionSchema.methods.addImage = function(req, next){
   } else {
     next();
   }
+};
+// smart url formatting, if external resource exists use that otherwise pull from db
+function urlFormatter (url) {
+  var submission = this;
+  if (!url) {
+    // no url, use the default route for the image url based on submission id
+    url = 'http://' + config.apiURL + ':' + config.expressPort + '/api/v2/submissions/' + submission.id + '/image.png';
+  }
+  return url;
 };
 //Build the submission model
 var Submission = mongoose.model('Submission', submissionSchema);

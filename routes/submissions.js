@@ -282,7 +282,7 @@ exports.readAllV2 = function(req, res){
     .select('submissions title')
     .populate({
       path: 'submissions',
-      select: '_id id challenge owner comments'
+      select: '_id id challenge owner comments image.url'
     })
     .exec(function(err, challenge){
       // istanbul ignore else: db error
@@ -293,7 +293,8 @@ exports.readAllV2 = function(req, res){
             select: 'username'
           }, function(err, submissions){
             if (!err) {
-              return res.send(200, challenge);
+              console.log(challenge.submissions[0].image.url);
+              return res.send(200, challenge.toJSON({getters: true}));
             } else {
               return res.send(500, err);
             }
