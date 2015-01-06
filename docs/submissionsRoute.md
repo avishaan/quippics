@@ -185,8 +185,8 @@ response:
 ```
 
 ####Return submission image via exposed route
-#####_Status: Not Developed, Not Tested
-GET /v2/submissions/:sid/image
+#####_Status: Partially Developed, Partially Tested
+GET /v2/submissions/:sid/image.png
 
 Example Response
 ```
