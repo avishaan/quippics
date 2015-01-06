@@ -288,7 +288,7 @@ exports.spec = function(domain, callback){
       //get image data via url from specific submission
       frisby
       .create("Get image data from specific submission using url")
-      .get(domainv2 + '/submissions/' + submission1._id + '/image')
+      .get(domainv2 + '/submissions/' + submission1._id + '/image.png')
       .expectStatus(200)
       //.inspectJSON()
       .afterJSON(function(submission){
