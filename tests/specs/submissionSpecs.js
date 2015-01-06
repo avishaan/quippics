@@ -244,7 +244,8 @@ exports.spec = function(domain, callback){
         expect(submissions[0].owner).toBeDefined();
         expect(submissions[0].challenge).toBeDefined();
         expect(submissions[0].comments).toBeDefined();
-        expect(submissions[0].imageURL).toBeDefined();
+        expect(submissions[0].image.url).toBeDefined();
+        expect(submissions[0].image.url).toEqual("http://localhost:8081/api/v2/submissions/" + submissions[0]._id + "/image.png");
         cb(null);
       })
       .toss();
