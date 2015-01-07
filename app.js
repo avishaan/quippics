@@ -137,10 +137,9 @@ app.post('/api/v1/challenges/:cid/hidden', apiAuth(), challenges.hideChallenge);
 //submission routes
 // TODO remove in production for #86
 if (config.env === 'dev'){
-  app.get('/api/v2/submissions/:sid/image.png', submissions.readImage); //read the submission specified
-} else {
-  app.get('/api/v2/submissions/:sid/image.png', apiAuth(), submissions.readImage); //read the submission specified
+  app.get('/api/dev/submissions/:sid/image.png', submissions.readImage); //read the submission specified
 }
+app.get('/api/v2/submissions/:sid/image.png', apiAuth(), submissions.readImage); //read the submission specified
 app.get('/api/v2/submissions/:sid', apiAuth(), submissions.readOne); //read the submission specified
 app.get('/api/v1/challenges/:cid/submissions/:sid/remove', apiAuth(), submissions.removeFlagged); //remove existing flagged submission
 app.post('/api/v1/challenges/:cid/submissions/:sid/flags', apiAuth(), submissions.flag); //flag existing submission
