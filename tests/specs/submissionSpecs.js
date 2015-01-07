@@ -366,6 +366,9 @@ exports.spec = function(domain, callback){
         expect(submissions[0].comments.length).toEqual(1);
         expect(submissions[0].comments[0].id).toBeDefined();
         expect(submissions[0].comments[0].comment).not.toBeDefined();
+        expect(submissions[0].comments[0].modelType).not.toBeDefined();
+        expect(submissions[0].comments[0].date).not.toBeDefined();
+        expect(submissions[0].comments[0].commenter).not.toBeDefined();
         expect(submissions[0].image.url).toBeDefined();
         expect(submissions[0].image.url).toEqual("http://localhost:8081/api/v2/submissions/" + submissions[0]._id + "/image.png");
         cb(null);
