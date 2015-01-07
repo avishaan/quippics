@@ -21,6 +21,7 @@ var user3 = {
 var challenge1 = {};
 var submission1 = {}; //not widely accepted submission
 var submission2 = {}; //great submission
+var domainv2 = 'http://admin:admin@localhost:8081/api/v2';
 exports.spec = function(domain, callback){
   jasmine.getEnv().defaultTimeoutInterval = 1000;
   async.series([
@@ -178,6 +179,38 @@ exports.spec = function(domain, callback){
         expect(comments[0].comment).toBeDefined();
         expect(comments[0].commenter.username).toEqual('nerd314');
         expect(comments[0].commenter.thumbnail).toBeDefined();
+        expect(comments[0].date).toBeDefined();
+
+        //test getting a specific comment (we have a list at this point)
+        frisby
+        .create("Get a specific comment")
+        .get(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/comments/' + comments[0]._id)
+        .expectStatus(200)
+        .afterJSON(function(comment){
+          expect(comment.comment).toBeDefined();
+          expect(comment.commenter).toBeDefined();
+          expect(comment._id).toBeDefined();
+          expect(comment.modelType).toBeDefined();
+          expect(comment.date).toBeDefined();
+          cb(null);
+        })
+        .toss();
+      })
+      .toss();
+    },
+    function(cb){
+      //get all the comments for a specific submission
+      frisby
+      .create("Get a list comments from a submission")
+      .get(domainv2 + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/comments/page/1')
+      .expectStatus(200)
+      .afterJSON(function(comments){
+        //full range of tests here
+        expect(comments.length).toEqual(1);
+        expect(comments[0]._id).toBeDefined();
+        expect(comments[0].comment).toBeDefined();
+        expect(comments[0].commenter.username).toEqual('nerd314');
+        expect(comments[0].commenter.thumbnail).not.toBeDefined();
         expect(comments[0].date).toBeDefined();
 
         //test getting a specific comment (we have a list at this point)
