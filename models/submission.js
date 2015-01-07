@@ -110,7 +110,11 @@ submissionSchema.post('new', function(){
           body: {
             'type': 'submission',
             '_id': submission._id,
-            'title': submission.challenge.title
+            'title': submission.challenge.title,
+            'challenge': {
+              'id': submission.challenge.id,
+              'title': submission.challenge.title
+            }
           }
         }
       }, function(err){
