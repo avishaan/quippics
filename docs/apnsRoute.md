@@ -103,6 +103,11 @@ response:
 { 
   _id: '52fc632f2c769a7503000003',
   type: 'submission',
+  title: 'challenge title'
+  challenge: {
+    id: '52fc632f2c769a7503000003',
+    title: 'challenge title'
+  },
   alert: {
     body: 'There was a new submission!',
     action-loc-key: 'rate submission!'
