@@ -356,11 +356,14 @@ exports.spec = function(domain, callback){
             expect(User.sendNotifications.mostRecentCall.args[0].payload.body.type).toEqual('submission');
             expect(User.sendNotifications.mostRecentCall.args[0].payload.body._id).toBeDefined();
             expect(User.sendNotifications.mostRecentCall.args[0].payload.body.title).toBeDefined();
+            expect(User.sendNotifications.mostRecentCall.args[0].payload.body.challenge.id).toEqual(challenge1.id);
+            expect(User.sendNotifications.mostRecentCall.args[0].payload.body.challenge.title).toEqual(challenge1.title);
             expect(agent.send.mostRecentCall.args[0].aps.body).toBeDefined();
             expect(agent.send.mostRecentCall.args[0].aps["action-loc-key"]).toBeDefined();
             expect(agent.send.mostRecentCall.args[0].payload.type).toEqual('submission');
             expect(agent.send.mostRecentCall.args[0].payload._id).toBeDefined();
-            expect(agent.send.mostRecentCall.args[0].payload.title).toBeDefined();
+            expect(agent.send.mostRecentCall.args[0].payload.challenge.id).toEqual(challenge1.id);
+            expect(agent.send.mostRecentCall.args[0].payload.challenge.title).toEqual(challenge1.title);
             //make sure the correct device was sent to
             expect(agent.send.mostRecentCall.args[0].meta.device.token).toEqual(new Device(user1.uuid).toString());
             //console.log("first call", agent.send.mostRecentCall.args);
