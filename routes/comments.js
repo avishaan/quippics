@@ -7,6 +7,34 @@ var isObjectId = require('valid-objectid').isValid;
 
 
 //Read all the comments for a specific submission
+exports.readAllV2 = function(req, res){
+  // istanbul ignore if: bad request
+  if (!isObjectId(req.params.sid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  Submission
+    .findOne({_id: req.params.sid})
+    .select('comments')
+    .populate({
+      path: 'comments.commenter',
+      select: 'username'
+    })
+    .exec(function(err, submission){
+      // istanbul ignore else: db error
+      if (!err){
+        if (submission){
+          return res.send(200, submission.comments);
+        } else {
+          return res.send(404, {clientMsg: "Could not find a submission with that id"});
+        }
+      } else {
+        return res.send(500, err);
+      }
+    });
+};
+
+//Read all the comments for a specific submission
 exports.readAll = function(req, res){
   // istanbul ignore if: bad request
   if (!isObjectId(req.params.sid)

@@ -121,6 +121,7 @@ app.del('/api/v1/users', apiAuth(), users.logout); //logout user
 app.post('/api/v1/users/:uid/device', apiAuth(), users.registerDevice); //register the user's device
 //comment routes
 app.post('/api/v1/challenges/:cid/submissions/:sid/comments', apiAuth(), comments.create); //post a comment to a submission
+app.get('/api/v2/challenges/:cid/submissions/:sid/comments/page/:page', apiAuth(), comments.readAllV2); //get all of the comments
 app.get('/api/v1/challenges/:cid/submissions/:sid/comments/page/:page', apiAuth(), comments.readAll); //get all of the comments
 app.get('/api/v1/challenges/:cid/submissions/:sid/comments/:comid', apiAuth(), comments.readOne); //get one of the comments
 //challenges routes
