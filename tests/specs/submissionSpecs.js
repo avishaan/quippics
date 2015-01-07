@@ -227,30 +227,6 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      //get list of the submissions for a challenge v2
-      frisby
-      .create("Get (v2) list of submissions for a challenge")
-      .get(domainv2 + '/challenges/' + challenge1._id + '/submissions')
-      .expectStatus(200)
-      .afterJSON(function(body){
-        var challenge = body;
-        var submissions = body.submissions;
-        expect(challenge.title).toBeDefined();
-        expect(submissions.length).toEqual(2);
-        expect(submissions[0].thumbnail).not.toBeDefined();
-        expect(submissions[0]._id).toBeDefined();
-        expect(submissions[0].owner.username).toBeDefined();
-        expect(submissions[0].owner.password).not.toBeDefined();
-        expect(submissions[0].owner).toBeDefined();
-        expect(submissions[0].challenge).toBeDefined();
-        expect(submissions[0].comments).toBeDefined();
-        expect(submissions[0].image.url).toBeDefined();
-        expect(submissions[0].image.url).toEqual("http://localhost:8081/api/v2/submissions/" + submissions[0]._id + "/image.png");
-        cb(null);
-      })
-      .toss();
-    },
-    function(cb){
       //get my submission in the challenge, aka nerdy's submission
       frisby
       .create("Get mine aka nerdy's submission in a challenge")
@@ -348,6 +324,52 @@ exports.spec = function(domain, callback){
         expect(submission.nextSubmission).toEqual(submission2._id);
         expect(submission.prevSubmission).toEqual(null);
         cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //have nerdy comment on submission1
+      // we need this to make sure the comment array in the next route is correct
+      frisby
+      .create("Post a new comment to submission1")
+      .post(domain + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/comments',{
+        commenter: user2._id,
+        comment: 'This is a comment by nerdy'
+      })
+      .expectStatus(200)
+      //.inspectJSON()
+      .afterJSON(function(comment){
+        expect(comment.commenter).toBeDefined();
+        expect(comment.date).toBeDefined();
+        cb(null);
+      })
+      .toss();
+    },
+    function(cb){
+      //get list of the submissions for a challenge v2
+      frisby
+      .create("Get (v2) list of submissions for a challenge")
+      .get(domainv2 + '/challenges/' + challenge1._id + '/submissions')
+      .expectStatus(200)
+      .afterJSON(function(body){
+        var challenge = body;
+        var submissions = body.submissions;
+        expect(challenge.title).toBeDefined();
+        expect(submissions.length).toEqual(2);
+        expect(submissions[0].thumbnail).not.toBeDefined();
+        expect(submissions[0]._id).toBeDefined();
+        expect(submissions[0].owner.username).toBeDefined();
+        expect(submissions[0].owner.password).not.toBeDefined();
+        expect(submissions[0].owner).toBeDefined();
+        expect(submissions[0].challenge).toBeDefined();
+        expect(submissions[0].comments).toBeDefined();
+        expect(submissions[0].comments.length).toEqual(1);
+        expect(submissions[0].comments[0].id).toBeDefined();
+        expect(submissions[0].comments[0].comment).not.toBeDefined();
+        expect(submissions[0].image.url).toBeDefined();
+        expect(submissions[0].image.url).toEqual("http://localhost:8081/api/v2/submissions/" + submissions[0]._id + "/image.png");
+        cb(null);
+        console.log(submissions[0].comments);
       })
       .toss();
     },
