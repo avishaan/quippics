@@ -434,7 +434,13 @@ function urlFormatter (url) {
   var submission = this;
   if (!url) {
     // no url, use the default route for the image url based on submission id
-    url = 'http://' + config.apiURL + ':' + config.expressPort + '/api/v2/submissions/' + submission.id + '/image.png';
+    // url changes based on env type
+    if (config.env === 'local'){
+      url = 'http://' + config.apiURL + ':' + config.expressPort + '/api/v2/submissions/' + submission.id + '/image.png';
+    } else {
+      // not local, don't include the port
+      url = 'http://' + config.apiURL + '/api/v2/submissions/' + submission.id + '/image.png';
+    }
   }
   return url;
 };
