@@ -365,6 +365,7 @@ exports.spec = function(domain, callback){
         expect(submissions[0].comments).toBeDefined();
         expect(submissions[0].comments.length).toEqual(1);
         expect(submissions[0].comments[0].id).toBeDefined();
+        expect(submissions[0].comments[0]._id).toBeDefined();
         expect(submissions[0].comments[0].comment).not.toBeDefined();
         expect(submissions[0].comments[0].modelType).not.toBeDefined();
         expect(submissions[0].comments[0].date).not.toBeDefined();
