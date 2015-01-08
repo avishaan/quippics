@@ -279,7 +279,7 @@ exports.readAllV2 = function(req, res){
   Challenge
     .findById(req.params.cid)
     .sort('createdOn')
-    .select('submissions title')
+    .select('submissions title tags')
     .populate({
       path: 'submissions',
       select: '_id id challenge owner comments.id comments._id image.url'
