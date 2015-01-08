@@ -167,6 +167,7 @@ Example Response
 ```
 response: 
   title: 'Challenge Title',
+  tags: ['tag1', 'tag2', 'tag3'],
   submissions: [{
     "__v": 4,
     "_id": "535071535897f4b97500000f",
