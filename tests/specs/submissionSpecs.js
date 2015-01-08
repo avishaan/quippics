@@ -355,6 +355,7 @@ exports.spec = function(domain, callback){
         var challenge = body;
         var submissions = body.submissions;
         expect(challenge.title).toBeDefined();
+        expect(challenge.tags).toBeDefined();
         expect(submissions.length).toEqual(2);
         expect(submissions[0].thumbnail).not.toBeDefined();
         expect(submissions[0]._id).toBeDefined();
