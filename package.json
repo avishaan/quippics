@@ -37,7 +37,8 @@
     "winston": "^0.7.3"
   },
   "engines": {
-    "node": "0.10.26"
+    "node": "0.10.26",
+    "npm": "2.1.x"
   },
   "devDependencies": {
     "jasmine-node": "^1.14.5",
