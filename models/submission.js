@@ -437,9 +437,6 @@ function urlFormatter (url) {
     // url changes based on env type
     if (config.env === 'local'){
       url = 'http://' + config.apiURL + ':' + config.expressPort + '/api/v2/submissions/' + submission.id + '/image.png';
-    } else if (config.env === 'dev'){
-      // in dev, send them the link to the unauthenticated routes
-      url = 'http://' + config.apiURL + '/api/dev/submissions/' + submission.id + '/image.png';
     } else {
       // not local, don't include the port
       url = 'http://' + config.apiURL + '/api/v2/submissions/' + submission.id + '/image.png';
