@@ -85,7 +85,6 @@ exports.spec = function(domain, callback){
       .get(domain + "/users/" + user2.id + '/follows/page/1')
       .end(function(res){
         var follows = res.body;
-        console.log(follows);
         expect(follows.length).toEqual(1);
         expect(follows[0]._id).toEqual(user1.id);
         expect(follows[0].username).toEqual(user1.username);
@@ -144,8 +143,10 @@ exports.spec = function(domain, callback){
       superagent
       .get(domain + "/users/" + user1.id + '/followers/page/1')
       .end(function(res){
-        var body = res.body;
-        console.log(body);
+        var followers = res.body;
+        expect(followers.length).toEqual(1);
+        expect(followers[0]._id).toEqual(user2.id)
+        expect(followers[0].username).toEqual(user2.username)
         expect(res.status).toEqual(200);
         done();
       });
