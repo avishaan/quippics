@@ -41,16 +41,7 @@ response:{
          data: 'iVBORw0KGgoAAAANSUhEUgAAAFoAAABaAQAAAAAQ03yvAAI=' 
        } 
       }, {}, {} 
-    ],
-   followers:
-    [ { _id: '5351fc22740f0fc97f000005',
-      username: 'jack1985739000update',
-      thumbnail:
-       { contentType: 'image/png',
-         data: 'iVBORw0KGgoAAAANSUhEUgAAAFoAAABaAQAAAAAQ03yvAAI=' 
-       } 
-      }, {}, {} 
-    ],
+    ]
   }
 ```
 
