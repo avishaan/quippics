@@ -470,6 +470,43 @@ exports.requestFriend = function(req, res){
   });
 };
 
+// list of people the user is following
+exports.listFollows = function(req, res){
+  //if the page number was not passed, go ahead and default to page one for backward compatibility
+  req.params.page = req.params.page || 1;
+  var skip = perPage * (req.params.page - 1);
+
+  // istanbul ignore if: bad request
+  if (!validator.isNumeric(req.params.page) ||
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  User.findOne({_id: req.params.uid})
+    .select('follows')
+    .populate({
+      path: 'follows', //connect the id in the follows array to the full user information
+      select: 'username thumbnail _id lastLogin', //but only return the username from the full user information
+      options: {
+        limit: perPage,
+        sort: 'username',
+        skip: skip
+      }
+    })
+    .lean()
+    .exec(function(err, user){
+      // istanbul ignore else: db error
+      if (!err){
+        if (user) {
+          return res.send(200, user); //return the list of users you follow
+        } else {
+          return res.send(404, {clientMsg: "Couldn't find user"});
+        }
+      } else {
+        return res.send(500, err);
+      }
+    });
+};
 //get list of friends of the user
 exports.listFriends = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
