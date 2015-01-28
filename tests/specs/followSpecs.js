@@ -66,7 +66,7 @@ exports.spec = function(domain, callback){
       });
     });
   });
-  describe('Following', function(){
+  describe('Follows', function(){
     //this image is appropriate, the moderator will not confirm this image is bad
     it('should be allowed by a user', function(done){
       superagent
