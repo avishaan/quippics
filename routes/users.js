@@ -312,6 +312,45 @@ exports.declinedRequests = function(req, res){
       });
     // istanbul ignore else: db error
     } else if(!err){
+      return res.send(404, {clientMsg: "Couldn't find user, check user id"});
+    } else {
+      return res.send(500, err);
+    }
+  });
+};
+// stop following a user
+exports.stopFollow = function(req, res){
+  //find the decliner of the request (resource who is doing the declining)
+  //User
+  //.update({_id: req.params.uid},
+  //        { $pull: {friendRequests: {_id: req.body.user}}}, function(err, num, raw){
+  //          res.send(200);
+  //        });
+  // istanbul ignore if: bad request
+  if (!isObjectId(req.body.user) ||
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  User
+  .findOne({_id: req.params.uid})
+  .select('_id follows')
+  .exec(function(err, user){
+    if (!err && user){
+      //remove the initiator from the friendRequests of the decliner
+      user.follows.pull(req.body.user);
+      user.save(function(err, user){
+        if (!err && user){
+          return res.send(200, {clientMsg: "Friend request declined"});
+        // istanbul ignore else: db error
+        } else if (!err && !user){
+          return res.send(500, {clientMsg: "Could not stop following user"});
+        } else {
+          return res.send(500, err);
+        }
+      });
+    // istanbul ignore else: db error
+    } else if(!err){
       return res.send(404, {clientMsg: "Couldn't find user, check user id"})
     } else {
       return res.send(500, err);
