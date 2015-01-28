@@ -85,12 +85,26 @@ exports.spec = function(domain, callback){
       .get(domain + "/users/" + user2.id + '/follows/page/1')
       .end(function(res){
         var body = res.body;
-        console.log(body);
         expect(body.follows).toBeDefined();
         expect(body.follows.length).toEqual(1);
         expect(body.follows[0]._id).toEqual(user1.id);
         expect(res.status).toEqual(200);
         done();
+      });
+    });
+    it('should not matter if you do it a second time', function(done){
+      superagent
+      .post(domain + "/users/" + user2.id + '/follows')
+      .send({
+        user: user1.id,
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        User.findOne({_id: user2.id})
+        .exec(function(err, user){
+          expect(user.follows.length).toEqual(1);
+          done();
+        });
       });
     });
   });
