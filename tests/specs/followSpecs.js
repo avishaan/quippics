@@ -70,11 +70,25 @@ exports.spec = function(domain, callback){
     //this image is appropriate, the moderator will not confirm this image is bad
     it('should be allowed by a user', function(done){
       superagent
-      .post(domain + "/users/" + user2.id + '/followers')
+      .post(domain + "/users/" + user2.id + '/follows')
       .send({
         user: user1.id,
       })
       .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    // check that the user shows up in the follows list of user2
+    it('should allow you to see that user2 is following user1', function(done){
+      superagent
+      .get(domain + "/users/" + user2.id + '/follows/page/1')
+      .end(function(res){
+        var body = res.body;
+        console.log(body);
+        expect(body.follows).toBeDefined();
+        expect(body.follows.length).toEqual(1);
+        expect(body.follows[0]._id).toEqual(user1.id);
         expect(res.status).toEqual(200);
         done();
       });
