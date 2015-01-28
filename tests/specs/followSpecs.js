@@ -107,6 +107,21 @@ exports.spec = function(domain, callback){
         });
       });
     });
+    it('should allow you to stop following a user', function(done){
+      superagent
+      .del(domain + "/users/" + user2.id + '/follows')
+      .send({
+        user: user1.id,
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        User.findOne({_id: user2.id})
+        .exec(function(err, user){
+          expect(user.follows.length).toEqual(0);
+          done();
+        });
+      });
+    });
   });
   xdescribe('Flagging of a submission2', function(){
     it('should be allowed by a user', function(done){
