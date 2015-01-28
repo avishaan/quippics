@@ -82,10 +82,28 @@ request.body: {
 }
 ```
 
-####Block a user who is following you
-#####_Status: Not Developed, Not Tested
+####Stop following a user
+#####_Status: Developed, Not Tested
 Note: If you are following this user, you will stop following them.
 DELETE /v1/users/:uid/follows
+
+Example Request
+```
+request.body: {
+  user: 52e73b76ca1c1f8202000008
+}
+```
+Example Response
+```
+request.body: {
+  clientMsg: User blocked!
+}
+```
+
+####Block a user who is following you
+#####_Status: Not Developed, Not Tested
+Note: if you are following a user, pass in the user you want to block and they will stop following you
+DELETE /v1/users/:uid/followers
 
 Example Request
 ```
