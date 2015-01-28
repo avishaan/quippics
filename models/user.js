@@ -27,6 +27,9 @@ var userSchema = new mongoose.Schema({
   }],
   allowNotifications: {type: Boolean, default: true}, //whether or not to send the user notifications
   email: {type: String, unique: true},
+  follows: [
+    {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
+  ],
   friends: [
     {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
   ],
