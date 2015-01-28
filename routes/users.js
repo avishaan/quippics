@@ -514,6 +514,7 @@ exports.listFollowers = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   var skip = perPage * (req.params.page - 1);
+  var followers;
 
   // istanbul ignore if: bad request
   if (!validator.isNumeric(req.params.page) ||
@@ -534,17 +535,15 @@ exports.listFollowers = function(req, res){
     //    skip: skip
     //  }
     //})
-    //.lean()
-    .exec(function(err, user){
+    .lean()
+    .exec(function(err, users){
       // istanbul ignore else: db error
-      debugger;
       if (!err){
-        if (user) {
-          return res.send(200, user.toObject({
-            transform: function(doc, obj, options) {
-              debugger;
-            }
-          })); //return the list of users you follow
+        if (users && users.length) {
+          followers = users.map(function(user){
+            return user;
+          });
+          return res.send(200, followers); //return the list of users you follow
         } else {
           return res.send(404, {clientMsg: "Couldn't find user"});
         }
