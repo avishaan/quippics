@@ -15,77 +15,84 @@ var commentSpec = require('./specs/commentSpecs.js');
 var notificationSpec = require('./specs/notificationSpecs.js');
 var submissionFlagSpec = require('./specs/submissionFlagSpecs.js');
 var challengePersistSpec = require('./specs/challengePersistSpecs.js');
+var followSpec = require('./specs/followSpecs.js');
 //var superSpec = require('./specs/superTest.js');
 var async = require('async');
 
 
 async.series([
+   function(cb){
+     console.log("Calling User Specs");
+     userSpec.spec(domain, function(){
+       cb(null);
+     });
+   },
   function(cb){
-    console.log("Calling User Specs");
-    userSpec.spec(domain, function(){
+    console.log("Calling Follow Specs");
+    followSpec.spec(domain, function(){
       cb(null);
     });
   },
-  function(cb){
-    console.log("Calling Interaction Specs");
-    interactionSpec.spec(domain, function(){
-      cb(null);
-    });
-  },
-  function(cb){
-    console.log("Calling Challenge Specs");
-    challengeSpec.spec(domain, function(){
-      cb(null);
-    });
-  },
-  function(cb){
-    console.log("Calling Submission Specs");
-    submissionSpec.spec(domain, function(){
-      cb(null);
-    });
-  },
-  function(cb){
-    console.log("Calling Ballot Specs");
-    ballotSpec.spec(domain, function(){
-      cb(null);
-    });
-  },
-  function(cb){
-    console.log("Calling Activity Filter Specs");
-    activityFilterSpec.spec(domain, function(){
-      cb(null);
-    });
-  },
-  function(cb){
-    console.log("Calling Activity Specs");
-    activitySpec.spec(domain, function(){
-      cb(null);
-    });
-  },
-  function(cb){
-    console.log("Calling Comment Specs");
-    commentSpec.spec(domain, function(){
-      cb(null);
-    });
-  },
-  function(cb){
-    console.log("Calling Persisted Challenge Specs");
-    challengePersistSpec.spec(domain, function(){
-      cb(null);
-    });
-  },
-  function(cb){
-    console.log("Calling Notification Specs");
-    notificationSpec.spec(domain, function(){
-      cb(null);
-    });
-  },
-  function(cb){
-    console.log("Calling Submission Flag Specs");
-    submissionFlagSpec.spec(domain, function(){
-      cb(null);
-    });
-  }
+   function(cb){
+     console.log("Calling Interaction Specs");
+     interactionSpec.spec(domain, function(){
+       cb(null);
+     });
+   },
+   function(cb){
+     console.log("Calling Challenge Specs");
+     challengeSpec.spec(domain, function(){
+       cb(null);
+     });
+   },
+   function(cb){
+     console.log("Calling Submission Specs");
+     submissionSpec.spec(domain, function(){
+       cb(null);
+     });
+   },
+   function(cb){
+     console.log("Calling Ballot Specs");
+     ballotSpec.spec(domain, function(){
+       cb(null);
+     });
+   },
+   function(cb){
+     console.log("Calling Activity Filter Specs");
+     activityFilterSpec.spec(domain, function(){
+       cb(null);
+     });
+   },
+   function(cb){
+     console.log("Calling Activity Specs");
+     activitySpec.spec(domain, function(){
+       cb(null);
+     });
+   },
+   function(cb){
+     console.log("Calling Comment Specs");
+     commentSpec.spec(domain, function(){
+       cb(null);
+     });
+   },
+   function(cb){
+     console.log("Calling Persisted Challenge Specs");
+     challengePersistSpec.spec(domain, function(){
+       cb(null);
+     });
+   },
+   function(cb){
+     console.log("Calling Notification Specs");
+     notificationSpec.spec(domain, function(){
+       cb(null);
+     });
+   },
+   function(cb){
+     console.log("Calling Submission Flag Specs");
+     submissionFlagSpec.spec(domain, function(){
+       cb(null);
+     });
+   }
 
 ],
   function(err, results){
