@@ -103,6 +103,9 @@ app.post('/api/v1/apns/debug', apns.debugPush); //debug push notifcations
 app.post('/api/v1/apns/challenges/debug', apns.debugChallenge); //debug push notifcations for challenges
 app.post('/api/v1/apns/submissions/debug', apns.debugSubmission); //debug push notifcations for submissions
 
+//follows routes
+app.post('/api/v1/users/:uid/follows', apiAuth(), users.follow);
+app.get('/api/v1/users/:uid/follows/page/:page', apiAuth(), users.follows);
 //friends routes
 app.post('/api/v1/users/:uid/declinedRequests', apiAuth(), users.declinedRequests);
 app.get('/api/v1/users/:uid/friendRequests/page/:page', apiAuth(), users.friendRequests);
