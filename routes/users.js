@@ -524,7 +524,7 @@ exports.listFollowers = function(req, res){
   var leaderID = req.params.uid;
   // get any user that is follows the user in the req paramater
   User.find({follows: {$in: [leaderID]}})
-    .select('follows')
+    .select('username thumbnail')
     //.populate({
     //  path: 'follows', //connect the id in the follows array to the full user information
     //  select: 'username thumbnail _id lastLogin', //but only return the username from the full user information
@@ -534,13 +534,17 @@ exports.listFollowers = function(req, res){
     //    skip: skip
     //  }
     //})
-    .lean()
+    //.lean()
     .exec(function(err, user){
       // istanbul ignore else: db error
       debugger;
       if (!err){
         if (user) {
-          return res.send(200, user); //return the list of users you follow
+          return res.send(200, user.toObject({
+            transform: function(doc, obj, options) {
+              debugger;
+            }
+          })); //return the list of users you follow
         } else {
           return res.send(404, {clientMsg: "Couldn't find user"});
         }
@@ -554,6 +558,8 @@ exports.listFollows = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   var skip = perPage * (req.params.page - 1);
+  // list of people following to return
+  var follows;
 
   // istanbul ignore if: bad request
   if (!validator.isNumeric(req.params.page) ||
@@ -576,8 +582,11 @@ exports.listFollows = function(req, res){
     .exec(function(err, user){
       // istanbul ignore else: db error
       if (!err){
-        if (user) {
-          return res.send(200, user); //return the list of users you follow
+        if (user && user.follows) {
+          follows = user.follows.map(function(user){
+            return user;
+          });
+          return res.send(200, follows); //return the list of users you follow
         } else {
           return res.send(404, {clientMsg: "Couldn't find user"});
         }
