@@ -67,7 +67,7 @@ response:{
 #####_Status: Not Developed, Not Tested
 The user defined here is the user who is doing the following. The user in the request
 body is the user you want to follow.
-POST /v1/users/:uid/followers
+POST /v1/users/:uid/follows
 
 Example Request
 ```
@@ -85,7 +85,7 @@ request.body: {
 ####Block a user who is following you
 #####_Status: Not Developed, Not Tested
 Note: If you are following this user, you will stop following them.
-DELETE /v1/users/:uid/followers
+DELETE /v1/users/:uid/follows
 
 Example Request
 ```
