@@ -84,10 +84,11 @@ exports.spec = function(domain, callback){
       superagent
       .get(domain + "/users/" + user2.id + '/follows/page/1')
       .end(function(res){
-        var body = res.body;
-        expect(body.follows).toBeDefined();
-        expect(body.follows.length).toEqual(1);
-        expect(body.follows[0]._id).toEqual(user1.id);
+        var follows = res.body;
+        console.log(follows);
+        expect(follows.length).toEqual(1);
+        expect(follows[0]._id).toEqual(user1.id);
+        expect(follows[0].username).toEqual(user1.username);
         expect(res.status).toEqual(200);
         done();
       });
