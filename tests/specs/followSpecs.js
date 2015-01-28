@@ -123,61 +123,29 @@ exports.spec = function(domain, callback){
       });
     });
   });
-  xdescribe('Flagging of a submission2', function(){
-    it('should be allowed by a user', function(done){
+  describe('Followers', function(){
+    it('should set up user2 to follow user1', function(done){
       superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/flags')
+      .post(domain + "/users/" + user2.id + '/follows')
       .send({
-        flagger: user1.id,
+        user: user1.id,
       })
       .end(function(res){
         expect(res.status).toEqual(200);
-        done();
-      });
-    });
-    it('should be allowed by a second user', function(done){
-      superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/flags')
-      .send({
-        flagger: user2.id,
-      })
-      .end(function(res){
-        expect(res.status).toEqual(200);
-        done();
-      });
-    });
-    it('shouldnt be impacted by a user flagging for a second time' , function(done){
-      superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/flags')
-      .send({
-        flagger: user2.id,
-      })
-      .end(function(res){
-        expect(res.status).toEqual(200);
-        Submission
-        .findOne({'_id': submission2.id})
-        .exec(function(err, submission){
-          //find the submission and count the number of flags, make sure only at two
-          expect(submission.flaggers.length).toEqual(2);
+        User.findOne({_id: user2.id})
+        .exec(function(err, user){
+          expect(user.follows.length).toEqual(1);
           done();
         });
       });
     });
-    it('should be allowed by a third user', function(done){
+    it('can be listed', function(done){
       superagent
-      .post(domain + "/challenges/" + challenge1.id + '/submissions/' + submission2.id + '/flags')
-      .send({
-        flagger: user3.id,
-      })
+      .get(domain + "/users/" + user1.id + '/followers/page/1')
       .end(function(res){
+        var body = res.body;
+        console.log(body);
         expect(res.status).toEqual(200);
-        Submission
-        .findOne({'_id': submission2.id})
-        .exec(function(err, submission){
-          //find the submission and count the number of flags, make sure only at two
-          expect(submission.flaggers.length).toEqual(3);
-          done();
-        });
         done();
       });
     });
