@@ -319,6 +319,77 @@ exports.declinedRequests = function(req, res){
   });
 };
 //make a friend request from user in body to user in the :uid
+exports.follow = function(req, res){
+  // istanbul ignore if: bad request
+  if (!isObjectId(req.params.uid) ||
+      !isObjectId(req.body.user)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  var followerId = req.params.uid; // person who wants to follow
+  var leaderId = req.body.user; // the person who is being followed
+  var follower; // we will store our returned model here so we can save it later
+  var leader; // we will store our returned model here so we can save it later
+  async.series([
+    function(cb){
+    // find the user who wants to follow req.body.user
+      User
+      .findOne({_id: followerId})
+      .select('_id follows username')
+      .exec(function(err, user){
+        // istanbul ignore else: db error
+        if (!err && user) {
+          // assign returned user as the follower
+          follower = user;
+          // make sure we found the user who wants to follow
+          // now that we have this user, go ahead and confirm that they are requesting to follow
+          // a user that exists
+          cb(null);
+        } else {
+          return cb({err: err, clientMsg: 'Could not find follower'});
+        }
+      });
+      //if the user has made this request before, don't let him make it again, else add to the initators requestedFriends (prevent multiple requests)
+    },
+    function(cb){
+      // find the user who is being followed, they would be the leader in this case
+      User
+      .findOne({ _id: leaderId })
+      .select('_id username')
+      .exec(function(err, user){
+        if (!err && user){
+          // assign returned user as leader incase we need for soemthing else
+          leader = user;
+          // next step
+          cb(null);
+        // istanbul ignore else: db error
+        } else {
+          return cb({ err: err, clientMsg: 'Could not find leader' });
+        }
+      });
+    },
+    function(cb){
+      // go ahead and add the follower to the leader and save
+      follower.follows.addToSet(leaderId);
+      follower.save(function(err, user){
+        if (!err && user){
+          cb(null);
+        } else {
+          return cb({err: err, clientMsg: 'Could not follow the leader'});
+        }
+      });
+    }
+  ],
+  function(err, results){
+    if (err){
+      return res.send(500, err);
+    } else {
+      //no error, send ok status to front end
+      return res.send(200, {clientMsg: "Friend requested successfully"});
+    }
+  });
+};
+//make a friend request from user in body to user in the :uid
 exports.requestFriend = function(req, res){
   // istanbul ignore if: bad request
   if (!isObjectId(req.params.uid) ||
