@@ -1,6 +1,7 @@
 var frisby = require('frisby');
 var superagent = require('superagent');
 var async = require('async');
+var domainV2 = 'http://admin:admin@localhost:8081/api/v2';
 
 var user1 = {
   username: 'popular123',
@@ -117,7 +118,7 @@ exports.spec = function(domain, callback){
       };
       frisby
       .create("Have that user create a challenge")
-      .post(domain + '/challenges', challenge1)
+      .post(domainV2 + '/challenges', challenge1)
       .expectStatus(200)
       .afterJSON(function(challenge){
         expect(challenge._id).toBeDefined();
@@ -241,7 +242,7 @@ exports.spec = function(domain, callback){
       };
       frisby
       .create("Have that nerdy create a challenge and invite popular")
-      .post(domain + '/challenges', challenge2)
+      .post(domainV2 + '/challenges', challenge2)
       .expectStatus(200)
       .afterJSON(function(challenge){
         expect(challenge._id).toBeDefined();
@@ -342,7 +343,7 @@ exports.spec = function(domain, callback){
       };
       frisby
       .create("Have nerdy create an expired challenge")
-      .post(domain + '/challenges', challenge3)
+      .post(domainV2 + '/challenges', challenge3)
       .expectStatus(200)
       .afterJSON(function(challenge){
         expect(challenge._id).toBeDefined();
