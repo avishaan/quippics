@@ -277,6 +277,20 @@ userSchema.methods.hashPassword = function(cb){
     }
   });
 };
+// get followers of a user
+userSchema.methods.getFollowers = function(cb){
+  var user = this;
+  var err = null;
+  var followers = [];
+  User
+  .find({follows: {$in: [user._id]}})
+  .select('_id username')
+  .lean()
+  .exec(function(err, users){
+    followers = users;
+    cb(err, followers);
+  });
+};
 //check user password
 userSchema.methods.checkPassword = function(testPassword, cb){
   var user = this;
