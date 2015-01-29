@@ -24,6 +24,42 @@ response: [ { __v: 1,
     inviteStatus: 'invited'
 }, {}, {}, ]
 ```
+####Create a new challenge V2
+#####_Status: Not Developed, Not Tested 
+POST '/v2/challenges'
+
+if privacy is public then followers will constantly be added as they follow no need
+to invite people manually
+if privacy is private then only those in the invites array will be invited
+
+Example Request
+```
+request.body:
+{
+  title: 'sampleChallenge',
+  owner: '52f548514f8c88b137000113',
+  tags: [ 'tag1', 'tag2', 'tag3' ],
+  persisted: true,
+  privacy: 'public',
+  expiration: new Date(2014, 10, 15),
+  description: 'Description for challenge',
+  invites: [ '530ae320b5e51b420300010f' ]
+}
+```
+Example Response
+```
+{ __v: 0,
+  title: 'sampleChallenge',
+  owner: '52f548514f8c88b137000113',
+  _id: '52f548514f8c88b137000116',
+  submissions: [],
+  createdOn: '2014-02-07T20:55:45.259Z',
+  tags: [ 'tag1', 'tag2', 'tag3' ],
+  expiration: '2014-04-15T04:00:00.000Z',
+  description: 'Description for challenge',
+  invites: [ '530ae320b5e51b420300010f' ]
+}
+
 ####Create a new challenge
 #####_Status: Developed, Partially Tested 
 POST '/v1/challenges'
