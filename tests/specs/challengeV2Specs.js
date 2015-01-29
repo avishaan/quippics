@@ -1,6 +1,7 @@
 var frisby = require('frisby');
 var superagent = require('superagent');
 var async = require('async');
+var Challenge = require('../../models/challenge.js');
 var domainV2 = 'http://admin:admin@localhost:8081/api/v2';
 
 var user1 = {
@@ -28,6 +29,7 @@ var challenge1 = {};
 var challenge2 = {};
 var challenge3 = {};
 var challenge4 = {};
+var challenge5 = {};
 
 var submission1 = {};
 var submission2 = {};
@@ -643,7 +645,63 @@ exports.spec = function(domain, callback){
         cb(null);
       })
       .toss();
-    }
+    },
+    function(cb){
+      // everyone is going to follow popular and we will make sure public challenges work as a result
+      describe('Public challenges', function(){
+        it('needs to have user2 follow user1', function(done){
+          superagent
+          .post(domain + "/users/" + user2._id + '/follows')
+          .send({
+            user: user1._id,
+          })
+          .end(function(res){
+            expect(res.status).toEqual(200);
+            done();
+          });
+        });
+        it('can be created by user1 for his followers', function(done){
+          // setup challenge
+          challenge5 = {
+            title: 'Public Challenge Test',
+            description: 'Public Challenge Description',
+            tags: ['tag1', 'tag2', 'tag3'],
+            owner: user1._id,
+            privacy: 'public',
+            expiration: new Date(2015, 3, 14)
+          };
+          superagent
+          .post(domainV2 + "/challenges")
+          .send(challenge5)
+          .end(function(res){
+            expect(res.status).toEqual(200);
+            // save the challenge id for future use
+            challenge5._id = res.body._id;
+            done();
+          });
+        });
+        it('should have user2 as participant in challenge5', function(done){
+          Challenge
+          .findOne({_id: challenge5._id})
+          .exec(function(err, challenge){
+            expect(challenge.participants.some(function(participant, index, array){
+              console.log('participants %s vs %s', participant._id, user2._id);
+              return participant._id === user2._id;
+            })).toBeTruthy();
+
+            expect(challenge.participants.indexOf(user2._id)).not.toEqual(-1);
+            expect(challenge.participants.indexOf(user3._id)).toEqual(-1);
+            console.log(challenge.participants);
+            //console.log(challenge.participants.indexOf(user2._id));
+            done();
+          });
+        });
+        it('should trigger the next async', function(done){
+          cb(null);
+          done();
+        });
+      });
+    },
   ],
   function(err, results){
     callback(null);
