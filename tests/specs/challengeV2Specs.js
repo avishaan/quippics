@@ -219,7 +219,8 @@ exports.spec = function(domain, callback){
         expect(challenges[0].title).toBeDefined();
         expect(challenges[0].unscored).toBeDefined();
         expect(challenges[0].numParticipants).toBeDefined();
-        expect(challenges[0].inviteStatus).toEqual('invited'); //right now everyone is only invited
+        // expect as of gh#107 everyone defaults to accepted
+        expect(challenges[0].inviteStatus).toEqual('accepted');
         cb(null);
       })
       .toss();
@@ -288,6 +289,7 @@ exports.spec = function(domain, callback){
         expect(challenges.length).toEqual(2);
         challenges.forEach(function(challenge, index){
           if (challenge.owner === user1._id){
+            // TODO, consider simplifying and not worrying about owner #117
             expect(challenge.inviteStatus).toEqual('owner');
             expect(challenge.participants).toBeUndefined();
           } else {
