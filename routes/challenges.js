@@ -329,7 +329,7 @@ exports.createV2 = function(req, res){
   //add each of the invited users onto the participants list as status=invited
   if (req.body.invites && (req.body.invites.length>0)){
     req.body.invites.forEach(function(value, index, array){
-      // as of gh#107 we assume the user is invited
+      // as of gh#107 we assume the user has accepted
       newChallenge.participants.push({user: value, inviteStatus: 'accepted'});
     });
   }
