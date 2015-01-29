@@ -224,21 +224,21 @@ exports.spec = function(domain, callback){
       })
       .toss();
     },
-    function(cb){
-      // TODO assume that the user doesn't need to accept anymore but test as if they have #116 #107
-      //have nerdy accept the invitation frisby
-      frisby
-      .create("Have nerdy accept the invitation")
-      .post(domain + '/challenges/' + challenge1._id + '/accepts', {
-        user: user2._id
-      })
-      .expectStatus(200)
-      .afterJSON(function(res){
-        expect(res.clientMsg).toBeDefined();
-        cb(null);
-      })
-      .toss();
-    },
+    // function(cb){
+    //   // TODO assume that the user doesn't need to accept anymore but test as if they have #116 #107
+    //   //have nerdy accept the invitation frisby
+    //   frisby
+    //   .create("Have nerdy accept the invitation")
+    //   .post(domain + '/challenges/' + challenge1._id + '/accepts', {
+    //     user: user2._id
+    //   })
+    //   .expectStatus(200)
+    //   .afterJSON(function(res){
+    //     expect(res.clientMsg).toBeDefined();
+    //     cb(null);
+    //   })
+    //   .toss();
+    // },
     function(cb){
       //now see how nerdy's list of challenges look after accepting the challenge
       frisby
