@@ -68,7 +68,7 @@ exports.spec = function(domain, callback){
   });
   describe('Follows', function(){
     //this image is appropriate, the moderator will not confirm this image is bad
-    it('should be allowed by a user', function(done){
+    it('should allow user2 to follow user1', function(done){
       superagent
       .post(domain + "/users/" + user2.id + '/follows')
       .send({
