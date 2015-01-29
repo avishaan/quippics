@@ -329,7 +329,8 @@ exports.createV2 = function(req, res){
   //add each of the invited users onto the participants list as status=invited
   if (req.body.invites && (req.body.invites.length>0)){
     req.body.invites.forEach(function(value, index, array){
-      newChallenge.participants.push({user: value, inviteStatus: 'invited'});
+      // as of gh#107 we assume the user is invited
+      newChallenge.participants.push({user: value, inviteStatus: 'accepted'});
     });
   }
   async.series([
@@ -351,7 +352,7 @@ exports.createV2 = function(req, res){
             if (!err && users && users.length){
               users.forEach(function(user, index){
                 //update the participants array
-                newChallenge.participants.push({user: user._id, inviteStatus: 'invited'});
+                newChallenge.participants.push({user: user._id, inviteStatus: 'accepted'});
                 //update the invites array also
                 newChallenge.invites.push(user._id);
               });
