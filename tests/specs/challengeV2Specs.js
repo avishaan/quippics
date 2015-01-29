@@ -291,7 +291,7 @@ exports.spec = function(domain, callback){
             expect(challenge.inviteStatus).toEqual('owner');
             expect(challenge.participants).toBeUndefined();
           } else {
-            expect(challenge.inviteStatus).toEqual('invited');
+            expect(challenge.inviteStatus).toEqual('accepted');
           }
         });
         cb(null);
