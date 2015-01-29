@@ -19,6 +19,11 @@ var user3 = {
   password: 'password',
   email: 'user3@gmail.com'
 };
+var user4 = {
+  username: 'nerdy',
+  password: 'password',
+  email: 'nerdy@gmail.com'
+};
 var challenge1 = {};
 var challenge2 = {};
 var challenge3 = {};
@@ -99,6 +104,26 @@ exports.spec = function(domain, callback){
             expect(res.status).toEqual(200);
             expect(res.body).toBeDefined();
             user3._id = res.body._id;
+            done();
+            cb(null);
+          });
+        });
+      });
+    },
+    function(cb){
+      describe("Register User", function(){
+        it("should register another nerdy user", function(done){
+          superagent
+          .post(domain + '/register')
+          .type('form')
+          .attach('image', './tests/specs/images/defaultProfile.png')
+          .field('username', user4.username)
+          .field('password', user4.password)
+          .field('email', user4.email)
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body).toBeDefined();
+            user4._id = res.body._id;
             done();
             cb(null);
           });
@@ -200,6 +225,7 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
+      // TODO assume that the user doesn't need to accept anymore but test as if they have #116 #107
       //have nerdy accept the invitation frisby
       frisby
       .create("Have nerdy accept the invitation")
