@@ -305,6 +305,88 @@ exports.myChallenges = function(req, res){
       }
     });
 };
+//make a new challenge V2
+exports.createV2 = function(req, res){
+  // istanbul ignore if: bad request
+  if (!validator.isAscii(req.body.title) ||
+      !validator.isAscii(req.body.description) ||
+      !isObjectId(req.body.owner)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  var newChallenge = new Challenge({
+    title: req.body.title,
+    description: req.body.description,
+    tags: req.body.tags,
+    owner: req.body.owner,
+    invites: req.body.invites || [], //this is the list of friends you want to invite
+    privacy: req.body.privacy,
+    expiration: req.body.expiration,
+    participants: []
+  });
+  //add owner to the array as accepted for simplicity sake
+  newChallenge.participants.push({user: req.body.owner, inviteStatus: 'owner'});
+  //add each of the invited users onto the participants list as status=invited
+  if (req.body.invites && (req.body.invites.length>0)){
+    req.body.invites.forEach(function(value, index, array){
+      newChallenge.participants.push({user: value, inviteStatus: 'invited'});
+    });
+  }
+  async.series([
+    function(cb){
+    //check if the user is the persistAdmin, in which case set the challenge type accordingly
+      User.isPersistUser(req.body.owner, function(err, match){
+        if (!err && match){
+          // if the user that created the challenge is the persistUser
+          newChallenge.persisted = true;
+          // persisted challenges should add all existing users to the challenge
+          User
+          .find()
+          .where('username').ne('admin')
+          .limit(5000)
+          .sort({joinDate: 'descending'})
+          .select('_id')
+          .lean()
+          .exec(function(err, users){
+            if (!err && users && users.length){
+              users.forEach(function(user, index){
+                //update the participants array
+                newChallenge.participants.push({user: user._id, inviteStatus: 'invited'});
+                //update the invites array also
+                newChallenge.invites.push(user._id);
+              });
+              // update the number of invites as well
+            }
+            cb(null);
+          });
+        } else {
+          // just move on to the next bit of code
+          cb(null);
+        }
+      });
+    },
+    function(cb){
+      newChallenge.numParticipants = newChallenge.invites.length;
+      cb(null);
+    }
+  ],
+  function(err, results){
+    newChallenge.save(function(err, challenge){
+      // istanbul ignore else: db error
+      if (!err){
+        if (challenge){
+          //a good save means we should add an activity 
+          require("../models/activity.js").create(challenge);
+          return res.send(200, challenge);
+        } else {
+          return res.send(500, {clientMsg: "Could not save challenge at this time"});
+        }
+      } else {
+        return res.send(500, err);
+      }
+    });
+  });
+};
 //make a new challenge
 exports.create = function(req, res){
   // istanbul ignore if: bad request
