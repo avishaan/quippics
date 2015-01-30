@@ -693,6 +693,31 @@ exports.spec = function(domain, callback){
             done();
           });
         });
+        it('needs to have user3 follow user1', function(done){
+          // we need to now follow user1 after he creates his public challenge
+          superagent
+          .post(domain + "/users/" + user3._id + '/follows')
+          .send({
+            user: user1._id,
+          })
+          .end(function(res){
+            expect(res.status).toEqual(200);
+            done();
+          });
+        });
+        it('should automatically add user3 to challenge5 even though he follows after the fact', function(done){
+          Challenge
+          .findOne({_id: challenge5._id})
+          .exec(function(err, challenge){
+            //console.log(challenge.participants);
+            expect(challenge.participants.some(function(participant, index, array){
+              // console.log('participants %s vs %s', participant.user, user3._id);
+              return participant.user == user3._id;
+            })).toBeTruthy();
+            //console.log(challenge.participants.indexOf(user3._id));
+            done();
+          });
+        });
         it('should trigger the next async', function(done){
           cb(null);
           done();
