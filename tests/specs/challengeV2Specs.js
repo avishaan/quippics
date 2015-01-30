@@ -786,6 +786,20 @@ exports.spec = function(domain, callback){
             done();
           });
         });
+        it('should not add user3 to the challenge again', function(done){
+          // make sure user3 didn't get added to challenge5 after following again
+          Challenge
+          .findOne({_id: challenge5._id})
+          .exec(function(err, challenge){
+            //console.log(challenge.participants);
+            // see how many elements match user3, there should only be 2
+            expect(challenge.participants.filter(function(participant, index, array){
+              console.log('participants %s vs %s', participant.user, user3._id);
+              return participant.user == user3._id;
+            }).length).toEqual(1);
+            done();
+          });
+        });
         it('should trigger the next async', function(done){
           cb(null);
           done();
