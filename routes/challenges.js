@@ -335,6 +335,30 @@ exports.createV2 = function(req, res){
   }
   async.series([
     function(cb){
+      // if the challenge privacy is public then automatically add all the followers of that user
+      if (newChallenge.privacy === 'public'){
+        // find all the followers of the creator of the challenge and add them as participants
+        User
+        .findOne({_id: newChallenge.owner})
+        .select('_id')
+        .exec(function(err, user){
+          user.getFollowers(function(err, followers){
+            if (!err && followers && followers.length){
+              // take each of the followers and add to participants
+              followers.forEach(function(value, index, array){
+                newChallenge.participants.push({user: value._id, inviteStatus: 'accepted'});
+              });
+              cb(null);
+            } else {
+              cb(err);
+            }
+          });
+        });
+      } else {
+        cb(null);
+      }
+    },
+    function(cb){
     //check if the user is the persistAdmin, in which case set the challenge type accordingly
       User.isPersistUser(req.body.owner, function(err, match){
         if (!err && match){
