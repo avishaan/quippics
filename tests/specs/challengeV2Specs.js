@@ -684,14 +684,11 @@ exports.spec = function(domain, callback){
           Challenge
           .findOne({_id: challenge5._id})
           .exec(function(err, challenge){
+            //console.log(challenge.participants);
             expect(challenge.participants.some(function(participant, index, array){
-              console.log('participants %s vs %s', participant._id, user2._id);
-              return participant._id === user2._id;
+              // console.log('participants %s vs %s', participant.user, user2._id);
+              return participant.user == user2._id;
             })).toBeTruthy();
-
-            expect(challenge.participants.indexOf(user2._id)).not.toEqual(-1);
-            expect(challenge.participants.indexOf(user3._id)).toEqual(-1);
-            console.log(challenge.participants);
             //console.log(challenge.participants.indexOf(user2._id));
             done();
           });
