@@ -342,17 +342,21 @@ exports.createV2 = function(req, res){
         .findOne({_id: newChallenge.owner})
         .select('_id')
         .exec(function(err, user){
-          user.getFollowers(function(err, followers){
-            if (!err && followers && followers.length){
-              // take each of the followers and add to participants
-              followers.forEach(function(value, index, array){
-                newChallenge.participants.push({user: value._id, inviteStatus: 'accepted'});
-              });
-              cb(null);
-            } else {
-              cb(err);
-            }
-          });
+          if (user){
+            user.getFollowers(function(err, followers){
+              if (!err && followers && followers.length){
+                // take each of the followers and add to participants
+                followers.forEach(function(value, index, array){
+                  newChallenge.participants.push({user: value._id, inviteStatus: 'accepted'});
+                });
+                cb(null);
+              } else {
+                cb(err);
+              }
+            });
+          } else {
+            cb(err);
+          }
         });
       } else {
         cb(null);
