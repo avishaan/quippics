@@ -524,33 +524,31 @@ exports.listFollowers = function(req, res){
   }
   var leaderID = req.params.uid;
   // get any user that is follows the user in the req paramater
-  User.find({follows: {$in: [leaderID]}})
-    .select('username thumbnail')
-    //.populate({
-    //  path: 'follows', //connect the id in the follows array to the full user information
-    //  select: 'username thumbnail _id lastLogin', //but only return the username from the full user information
-    //  options: {
-    //    limit: perPage,
-    //    sort: 'username',
-    //    skip: skip
-    //  }
-    //})
-    .lean()
-    .exec(function(err, users){
-      // istanbul ignore else: db error
-      if (!err){
-        if (users && users.length) {
-          followers = users.map(function(user){
-            return user;
-          });
-          return res.send(200, followers); //return the list of users you follow
+  // find the user we want to get the followers for
+  User
+  .findOne({_id: leaderID})
+  .select('_id')
+  .exec(function(err, leader){
+    if (!err && leader){
+      leader.getFollowers(function(err, users){
+        // istanbul ignore else: db error
+        if (!err){
+          if (users && users.length) {
+            followers = users.map(function(user){
+              return user;
+            });
+            return res.send(200, followers); //return the list of users you follow
+          } else {
+            return res.send(404, {clientMsg: "Couldn't find user"});
+          }
         } else {
-          return res.send(404, {clientMsg: "Couldn't find user"});
+          return res.send(500, err);
         }
-      } else {
-        return res.send(500, err);
-      }
-    });
+      });
+    } else {
+      return res.send(500, err);
+    }
+  });
 };
 // list of people the user is following
 exports.listFollows = function(req, res){
