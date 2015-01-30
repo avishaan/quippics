@@ -13,6 +13,7 @@ var isObjectId = require('valid-objectid').isValid;
 var Device = require('apnagent').Device;
 var _ = require('underscore');
 var logger = require('../logger/logger.js');
+var mongoose = require('mongoose');
 
 // istanbul ignore next: this function doesn't do anything
 exports.list = function(req, res){
@@ -415,6 +416,43 @@ exports.follow = function(req, res){
           cb(null);
         } else {
           return cb({err: err, clientMsg: 'Could not follow the leader'});
+        }
+      });
+    },
+    function(cb){
+      // after adding the follower, see if the leader has any public challenges, if so add the follower to the leaders public challenges
+      // get all the challenges the leader is the owner of and not expired
+      Challenge
+      .find({ owner: leaderId })
+      .where('expiration').gt(Date.now())
+      .select('participants')
+      .exec(function(err, challenges){
+        if (!err && challenges && challenges.length){
+          // get each challenge and add the follower as an accepted party to the challenge
+          challenges.forEach(function(challenge, index){
+            // first check if followerId is already participating in the challenge
+            var participating = challenge.participants.some(function(participant, index){
+              return participant.user.toString() == followerId;
+            });
+            // var participating = _.findWhere(challenge.participants, {user: mongoose.Types.ObjectId(leaderId)});
+            // if it doesn't, we add. if it does we ignore
+            if (!participating){
+              // add the follower to the leader's challenge, don't worry about whether it worked or not
+              Challenge.update({ _id: challenge._id }, { $addToSet: { participants:{
+                user: followerId,
+                inviteStatus: 'accepted'
+              }}},{upsert: false}, function(err, num){
+                // right now we don't care if there is an error since we want this to be fast or fail
+              });
+              // challenges[index].participants.addToSet({
+              //   user: leaderId,
+              //   inviteStatus: 'accepted'
+              // });
+            }
+          });
+          cb(null);
+        } else {
+          cb(err);
         }
       });
     }
