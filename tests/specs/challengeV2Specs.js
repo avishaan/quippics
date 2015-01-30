@@ -649,6 +649,62 @@ exports.spec = function(domain, callback){
     function(cb){
       // everyone is going to follow popular and we will make sure public challenges work as a result
       describe('Public challenges', function(){
+        it('delete the database again', function(done){
+          superagent
+          .del(domain + "/server")
+          .end(function(res){
+            expect(res.status).toEqual(200);
+            done();
+          });
+        });
+        it("should register popular", function(done){
+          superagent
+          .post(domain + '/register')
+          .type('form')
+          .attach('image', './tests/specs/images/defaultProfile.png')
+          .field('username', user1.username)
+          .field('password', user1.password)
+          .field('email', user1.email)
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body).toBeDefined();
+            user1._id = res.body._id;
+            done();
+            cb(null);
+          });
+        });
+        it("should register nerdy", function(done){
+          superagent
+          .post(domain + '/register')
+          .type('form')
+          .attach('image', './tests/specs/images/defaultProfile.png')
+          .field('username', user2.username)
+          .field('password', user2.password)
+          .field('email', user2.email)
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body).toBeDefined();
+            user2._id = res.body._id;
+            done();
+            cb(null);
+          });
+        });
+        it("should register generic", function(done){
+          superagent
+          .post(domain + '/register')
+          .type('form')
+          .attach('image', './tests/specs/images/defaultProfile.png')
+          .field('username', user3.username)
+          .field('password', user3.password)
+          .field('email', user3.email)
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body).toBeDefined();
+            user3._id = res.body._id;
+            done();
+            cb(null);
+          });
+        });
         it('needs to have user2 follow user1', function(done){
           superagent
           .post(domain + "/users/" + user2._id + '/follows')
@@ -715,6 +771,18 @@ exports.spec = function(domain, callback){
               return participant.user == user3._id;
             })).toBeTruthy();
             //console.log(challenge.participants.indexOf(user3._id));
+            done();
+          });
+        });
+        it('needs to have user3 follow user1 again', function(done){
+          // we will have user3 follower user 1 again to make sure that duplicate participants aren't created in the challenge
+          superagent
+          .post(domain + "/users/" + user3._id + '/follows')
+          .send({
+            user: user1._id,
+          })
+          .end(function(res){
+            expect(res.status).toEqual(200);
             done();
           });
         });
