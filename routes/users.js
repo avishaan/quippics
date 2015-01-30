@@ -537,16 +537,16 @@ exports.listFollowers = function(req, res){
             followers = users.map(function(user){
               return user;
             });
-            return res.send(200, followers); //return the list of users you follow
+            res.send(200, followers); //return the list of users you follow
           } else {
-            return res.send(404, {clientMsg: "Couldn't find user"});
+            res.send(404, {clientMsg: "Couldn't find user"});
           }
         } else {
-          return res.send(500, err);
+          res.send(500, err);
         }
       });
     } else {
-      return res.send(500, err);
+      res.send(500, err);
     }
   });
 };
