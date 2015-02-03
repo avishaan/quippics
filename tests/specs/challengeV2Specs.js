@@ -796,7 +796,7 @@ exports.spec = function(domain, callback){
             //console.log(challenge.participants);
             // see how many elements match user3, there should only be 2
             expect(challenge.participants.filter(function(participant, index, array){
-              console.log('participants %s vs %s', participant.user, user3._id);
+              //console.log('participants %s vs %s', participant.user, user3._id);
               return participant.user == user3._id;
             }).length).toEqual(1);
             done();
