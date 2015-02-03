@@ -97,6 +97,30 @@ challengeSchema.virtual('scored').set(function(uid){
       //unscored is how many submissions there are minus the number you have voted for
       this.unscored = this.submissions.length - votedSubmissions.length;
 });
+// add user to participant list
+challengeSchema.methods.addParticipant = function(options, cb){
+  var challenge = this;
+  var participant = options.participant;
+  var inviteStatus = options.inviteStatus;
+  var participating;
+  var err = null;
+  // first check if the follower is already a participant in the challenge
+  participating = challenge.participants.some(function(participant, index){
+    return participant.user.toString() == participant;
+  });
+  // if it doesn't, we add. if it does we ignore
+  if (!participating){
+    // add the follower to the leader's challenge, don't worry about whether it worked or not
+    Challenge.update({ _id: challenge._id }, { $addToSet: { participants:{
+      user: participant,
+      inviteStatus: 'accepted'
+    }}},{ upsert: false }, function(err, num){
+      cb(err, num);
+    });
+  } else {
+    cb(null, 0);
+  }
+};
 //find the top submission in a challenge
 challengeSchema.methods.topSubmission = function(challenge, cb){
   //find the top submission in the array of submission from the challenge

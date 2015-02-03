@@ -422,6 +422,9 @@ exports.follow = function(req, res){
     function(cb){
       // after adding the follower, see if the leader has any public challenges, if so add the follower to the leaders public challenges
       // get all the challenges the leader is the owner of and not expired
+      // we don't care if adding a participant works since it is not important to this
+      // TODO, this should happen pre creating a new user, not in this route.
+      cb(null);
       Challenge
       .find({ owner: leaderId })
       .where('expiration').gt(Date.now())
@@ -438,21 +441,11 @@ exports.follow = function(req, res){
             // if it doesn't, we add. if it does we ignore
             if (!participating){
               // add the follower to the leader's challenge, don't worry about whether it worked or not
-              Challenge.update({ _id: challenge._id }, { $addToSet: { participants:{
-                user: followerId,
-                inviteStatus: 'accepted'
-              }}},{upsert: false}, function(err, num){
-                // right now we don't care if there is an error since we want this to be fast or fail
+              challenge.addParticipant({ participant: followerId, inviteStatus: 'accepted' }, function(err, num){
+                // since we don't care if this happens, move on to the next step.
               });
-              // challenges[index].participants.addToSet({
-              //   user: leaderId,
-              //   inviteStatus: 'accepted'
-              // });
             }
           });
-          cb(null);
-        } else {
-          cb(err);
         }
       });
     }
