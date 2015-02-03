@@ -169,7 +169,50 @@ exports.readTop = function(req, res){
       }
     });
 };
-//read challenge of a specific user
+//read submission of a specific user
+exports.userSubmissionV2 = function(req, res){
+  //make sure we are looking at the right challenge, we only want to know for a specific challenge
+  // istanbul ignore if: bad request
+  if (!isObjectId(req.params.cid) ||
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  Challenge
+    .findOne({_id: req.params.cid})
+    .populate({
+      path: 'submissions',
+      select: ''
+    })
+    .exec(function(err, challenge){
+      if (!err && challenge){
+        challenge.submissions.some(function(submission, index, submissions){
+          //go through all the submission owners until you find my submission
+          //return that and stop the some (vs forEach) by returning something true
+          if (submission.owner.toString() === req.params.uid){
+            submission.getRank(function(rank){
+              //need to make json object since we can't add rank directly to model
+              //TODO need to fix this
+              var submissionObj = submission.toJSON();
+              submissionObj.rank = rank;
+              submissionObj.commentCount = submissionObj.comments.length;
+              return res.send(200, submissionObj);
+            });
+            return true; //this will stop 'some' from running otherwise eventually the elseif will still hit
+          } else if ((index + 1) === submissions.length){
+            //if we get to the end of the array and didn't find a match, send a not found back
+            return res.send(404, {clientMsg: "This user doesn't have a submission here"});
+          }
+        });
+      // istanbul ignore else: db error
+      } else if (!challenge){
+        return res.send(404, {clientMsg: "This user doesn't have a submission here"});
+      } else {
+        return res.send(500, err);
+      }
+    });
+};
+//read submission of a specific user
 exports.userSubmission = function(req, res){
   //make sure we are looking at the right challenge, we only want to know for a specific challenge
   // istanbul ignore if: bad request

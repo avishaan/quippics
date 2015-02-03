@@ -150,6 +150,7 @@ app.post('/api/v2/challenges/:cid/submissions', apiAuth(), submissions.createV2)
 app.get('/api/v2/challenges/:cid/submissions', apiAuth(), submissions.readAllV2); //read all the submissions in a specific challenge
 app.get('/api/v1/challenges/:cid/submissions/page/:page', apiAuth(), submissions.readAll); //read all the submissions in a specific challenge
 app.get('/api/v1/challenges/:cid/submissions/users/:uid', apiAuth(), submissions.userSubmission); //read the submission for a specific user
+app.get('/api/v2/challenges/:cid/submissions/users/:uid', apiAuth(), submissions.userSubmissionV2); //read the submission for a specific user
 app.get('/api/v1/challenges/:cid/submissions/top', apiAuth(), submissions.readTop); //read the top submission in the challenge
 app.get('/api/v1/challenges/:cid/submissions/:sid', apiAuth(), submissions.readOne); //read the submission specified
 //ballot routes
