@@ -309,7 +309,6 @@ exports.myChallenges = function(req, res){
 exports.createV2 = function(req, res){
   // istanbul ignore if: bad request
   if (!validator.isAscii(req.body.title) ||
-      !validator.isAscii(req.body.description) ||
       !isObjectId(req.body.owner)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
