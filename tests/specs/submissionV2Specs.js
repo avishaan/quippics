@@ -171,5 +171,25 @@ exports.spec = function(domain, callback){
         done();
       });
     });
+    it("can allow you to get only one of Nerdy (user2) submission", function(done){
+      // this will make sure that a user can submit multiple submissions gh#104
+      agent
+      .get(domainV2 + '/challenges/' + challenge1._id + '/submissions/users/' + user2._id)
+      .end(function(err, res){
+        var submission = res.body;
+        //expect 200 response
+        expect(res.status).toEqual(200);
+        expect(submission).toBeDefined();
+        expect(submission._id).toBeDefined();
+        expect(submission.thumbnail).toBeDefined();
+        expect(submission.owner).toBeDefined();
+        expect(submission.score).toBeDefined();
+        expect(submission.rank).toBeDefined();
+        expect(submission.image).toBeDefined();
+        expect(submission.commentCount).toBeDefined();
+        expect(submission.commentCount).toEqual(0);
+        done();
+      });
+    });
   });
 };
