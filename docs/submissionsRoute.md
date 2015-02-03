@@ -3,6 +3,41 @@ Submission
 ----------------------
 Routes here are related to creating, reading submissions
 
+####Create a new submission V2 (multipart-form)
+#####_Status: Developed, Tested
+#####_Notes: will allow multiple submission
+POST '/v2/challenges/:cid/submissions'
+
+Example Request
+```
+request.body:
+{ 
+  owner: '52f548514f8c88b137000113',                
+}
+request.files:
+{
+  images: 
+    { contentType: 'png',
+      data: '010100001111000100100…'
+      filename: 'name.png'
+    }
+}
+```
+Example Response
+```
+response:
+{
+ __v: 0,
+  owner: '52f548514f8c88b137000113',
+  _id: '52f548514f8c88b137000118',
+  ballots: [],
+  createdOn: '2014-02-07T20:55:45.282Z',
+  image: 
+  {
+     buffer: '0101011111…'
+  } 
+}
+```
 ####Create a new submission (multipart-form)
 #####_Status: Developed, Tested
 POST '/v1/challenges/:cid/submissions'
