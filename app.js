@@ -146,6 +146,7 @@ app.get('/api/v2/submissions/:sid', apiAuth(), submissions.readOne); //read the 
 app.get('/api/v1/challenges/:cid/submissions/:sid/remove', apiAuth(), submissions.removeFlagged); //remove existing flagged submission
 app.post('/api/v1/challenges/:cid/submissions/:sid/flags', apiAuth(), submissions.flag); //flag existing submission
 app.post('/api/v1/challenges/:cid/submissions', apiAuth(), submissions.create); //create a new submission
+app.post('/api/v2/challenges/:cid/submissions', apiAuth(), submissions.createV2); //create a new submission
 app.get('/api/v2/challenges/:cid/submissions', apiAuth(), submissions.readAllV2); //read all the submissions in a specific challenge
 app.get('/api/v1/challenges/:cid/submissions/page/:page', apiAuth(), submissions.readAll); //read all the submissions in a specific challenge
 app.get('/api/v1/challenges/:cid/submissions/users/:uid', apiAuth(), submissions.userSubmission); //read the submission for a specific user

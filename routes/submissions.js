@@ -308,6 +308,76 @@ exports.readAllV2 = function(req, res){
     });
 };
 //Submit submission for specific challenge
+exports.createV2 = function(req, res){
+  //see if the owner already has submitted a challenge here
+  // istanbul ignore if: bad request
+  if (!isObjectId(req.params.cid) ||
+      !isObjectId(req.body.owner)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  Challenge
+    .findOne({_id: req.params.cid})
+    .populate({
+      path: 'submissions',
+      select: 'owner',
+      match: {owner: req.body.owner}
+    })
+    .exec(function(err, challenge){
+      if (!err) { //user hasn't submitted, go ahead and let him make his submission
+        //find the challenge
+        Challenge
+          .findOne({_id: req.params.cid})
+          .exec(function(err, challenge){
+            // istanbul ignore else: db error
+            if (!err){
+              if (challenge){
+                //we found the challenge, let's create the new submission from the passed in parameters
+                var newSubmission = new Submission();
+                //add the challenge id to the submission
+                newSubmission.challenge = challenge.id;
+                //populate the image of the submission
+                //we need to get the image information into our model
+                //get one of the files uploaded //todo, there should only be one
+                //if a file wasn't uploaded //todo, take out for production
+                newSubmission.addImage(req, function(){
+                  //get the owner information
+                  newSubmission.owner = req.body.owner;
+                  //save the submission first, we need to get the id back from the save so we can store it in our list of submissions in the challenge model
+                  newSubmission.save(function(err, submission){
+                    // istanbul ignore else: image error
+                    if (!err){
+                      //put the submission id in our array of submissions
+                      challenge.submissions.push(submission._id);
+                      //now we have to save the challenge
+                      challenge.save(function(err, challenge){
+                        // istanbul ignore else: db error
+                        if (!err){
+                          //add a related submission activity
+                          require('../models/activity.js').create(submission);
+                          return res.send(200, submission);
+                        } else {
+                          return res.send(500, err);
+                        }
+                      });
+                    } else {
+                      return res.send(500, err);
+                    }
+                  });
+                });
+              } else { //no challenge was returned
+                return res.send(404, {clientMsg: "Could not find a challenge at this id"});
+              }
+            } else {
+              return res.send(500, err);
+            }
+          });
+      } else {
+        return res.send(500, err);
+      }
+    });
+};
+//Submit submission for specific challenge
 exports.create = function(req, res){
   //see if the owner already has submitted a challenge here
   // istanbul ignore if: bad request
