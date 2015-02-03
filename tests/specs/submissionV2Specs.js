@@ -89,5 +89,87 @@ exports.spec = function(domain, callback){
         done();
       });
     });
+    it('should prepare a challenge', function(done){
+      // setup challenge
+      challenge1 = {
+        title: 'Challenge 1 test',
+        tags: ['tag1', 'tag2', 'tag3'],
+        owner: user1._id,
+        privacy: 'private',
+        expiration: new Date(2015, 3, 14)
+      };
+      agent
+      .post(domainV2 + "/challenges")
+      .send(challenge1)
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        // save the challenge id for future use
+        challenge1._id = res.body._id;
+        done();
+      });
+    });
+  });
+  describe('Submissions', function(){
+    it("can be submitted by a User (Nerdy) into challenge 1", function(done){
+      agent
+      .post(domain + "/challenges/" + challenge1._id + "/submissions")
+      .type('form')
+      .attach("image", "./tests/specs/images/onepixel.png")
+      .field("owner", user2._id)
+      .end(function(err, res){
+        var submission = res.body;
+        //make sure something was returned in the response body
+        expect(submission).toBeDefined();
+        //make sure the id in the response body was returned
+        expect(submission._id).toBeDefined();
+        //expect 200 response
+        expect(res.status).toEqual(200);
+        submission1._id = submission._id;
+        //console.log("here is the returned superagent submission");
+        //console.log(submission);
+        done();
+      });
+    });
+    it("can be submitted by a User (Popular) into challenge 1", function(done){
+      agent
+      .post(domain + "/challenges/" + challenge1._id + "/submissions")
+      .type('form')
+      .attach("image", "./tests/specs/images/onepixel.png")
+      .field("owner", user1._id)
+      .end(function(err, res){
+        var submission = res.body;
+        //make sure something was returned in the response body
+        expect(submission).toBeDefined();
+        //make sure the id in the response body was returned
+        expect(submission._id).toBeDefined();
+        //expect 200 response
+        expect(res.status).toEqual(200);
+        submission2._id = submission._id;
+        //console.log("here is the returned superagent submission");
+        //console.log(submission);
+        done();
+      });
+    });
+    it("can be submitted again by a User (Nerdy) into challenge 1", function(done){
+      // this will make sure that a user can submit multiple submissions gh#104
+      agent
+      .post(domainV2 + "/challenges/" + challenge1._id + "/submissions")
+      .type('form')
+      .attach("image", "./tests/specs/images/onepixel.png")
+      .field("owner", user2._id)
+      .end(function(err, res){
+        var submission = res.body;
+        //make sure something was returned in the response body
+        expect(submission).toBeDefined();
+        //make sure the id in the response body was returned
+        expect(submission._id).toBeDefined();
+        //expect 200 response
+        expect(res.status).toEqual(200);
+        submission1._id = submission._id;
+        //console.log("here is the returned superagent submission");
+        //console.log(submission);
+        done();
+      });
+    });
   });
 };
