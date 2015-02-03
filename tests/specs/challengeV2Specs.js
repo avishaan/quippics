@@ -212,6 +212,7 @@ exports.spec = function(domain, callback){
       .get(domain + '/users/' + user2._id + '/challenges/page/1')
       .expectStatus(200)
       .afterJSON(function(challenges){
+        console.log(challenges);
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(1);
         expect(challenges[0].submissions.length).toEqual(1);
@@ -223,6 +224,8 @@ exports.spec = function(domain, callback){
         expect(challenges[0].numParticipants).toBeDefined();
         // expect as of gh#107 everyone defaults to accepted
         expect(challenges[0].inviteStatus).toEqual('accepted');
+        // want username gh#106
+        expect(challenges[0].owner.username).toBeDefined();
         cb(null);
       })
       .toss();
