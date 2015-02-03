@@ -423,7 +423,7 @@ exports.follow = function(req, res){
       // after adding the follower, see if the leader has any public challenges, if so add the follower to the leaders public challenges
       // get all the challenges the leader is the owner of and not expired
       // we don't care if adding a participant works since it is not important to this
-      // TODO, this should happen pre creating a new user, not in this route.
+      // TODO, this should happen post following a user, that means to look in the follows array for a change
       cb(null);
       Challenge
       .find({ owner: leaderId })
