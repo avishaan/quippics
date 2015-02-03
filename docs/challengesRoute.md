@@ -13,7 +13,7 @@ Example Response
 ```
 response: [ { __v: 1,
     _id: '52fc632f2c769a7503000006',
-    owner: '52fc632f2c769a7503000003',
+    owner: { username: 'popular123', _id: '54d03237d8c94aec14c4d6b5' },
     title: 'Frisby Challenge 2',
     submissions: 
           [{thumbnail: '01021fda0sfs0fdsadsfdf0eefe0' }],
