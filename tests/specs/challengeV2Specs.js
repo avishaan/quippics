@@ -720,7 +720,6 @@ exports.spec = function(domain, callback){
           // setup challenge
           challenge5 = {
             title: 'Public Challenge Test',
-            description: 'Public Challenge Description',
             tags: ['tag1', 'tag2', 'tag3'],
             owner: user1._id,
             privacy: 'public',
