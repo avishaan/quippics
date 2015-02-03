@@ -261,6 +261,10 @@ exports.myChallenges = function(req, res){
     .select('_id owner title submissions createdOn expiration invites participants')
     //.slice('submissions', 1) //only get one submission for each challenge
     .populate({
+      path: 'owner',
+      select: 'username'
+    })
+    .populate({
       path: 'submissions',
       select: 'thumbnail owner ballots'
     })
