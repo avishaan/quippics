@@ -315,7 +315,6 @@ exports.createV2 = function(req, res){
   }
   var newChallenge = new Challenge({
     title: req.body.title,
-    description: req.body.description,
     tags: req.body.tags,
     owner: req.body.owner,
     invites: req.body.invites || [], //this is the list of friends you want to invite
