@@ -196,15 +196,20 @@ exports.spec = function(domain, callback){
       agent
       .get(domainV2 + '/challenges/' + challenge1._id + '/users/' + user2._id + '/submissions/page/1')
       .end(function(err, res){
-        var submissions = res.body;
+        var challenge = res.body;
+        var submissions = challenge.submissions;
         //expect 200 response
-        console.log(submissions);
+        console.log(challenge);
         expect(res.status).toEqual(200);
         expect(submissions.length).toEqual(2);
         expect(submissions[0].thumbnail).toBeDefined();
         expect(submissions[0]._id).toBeDefined();
         submissions.forEach(function(submission){
-          expect(submission.owner).toEqual(user2._id);
+          expect(submission.thumbnail).toBeDefined();
+          expect(submission.image).toBeDefined();
+          expect(submission.owner.username).toBeDefined();
+          expect(submission.owner._id).toBeDefined();
+          expect(submission.owner._id).toEqual(user2._id);
         });
         done();
       });
