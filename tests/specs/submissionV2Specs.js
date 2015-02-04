@@ -191,5 +191,23 @@ exports.spec = function(domain, callback){
         done();
       });
     });
+    it("can get a list of submissions in a challenge which the user has submitted", function(done){
+      // make sure all the users submissions for a challenge can be returned gh #120
+      agent
+      .get(domainV2 + '/challenges/' + challenge1._id + '/users/' + user2._id + '/submissions/page/1')
+      .end(function(err, res){
+        var submissions = res.body;
+        //expect 200 response
+        console.log(submissions);
+        expect(res.status).toEqual(200);
+        expect(submissions.length).toEqual(2);
+        expect(submissions[0].thumbnail).toBeDefined();
+        expect(submissions[0]._id).toBeDefined();
+        submissions.forEach(function(submission){
+          expect(submission.owner).toEqual(user2._id);
+        });
+        done();
+      });
+    });
   });
 };
