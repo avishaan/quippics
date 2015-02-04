@@ -216,7 +216,7 @@ response: [ {
 ####Read all the submissions for a specific challenge for a specific user gh #120
 #####_Status: Developed, Partially Tested
 #####_Notes: should match route that returns information for all submissions into a challenge.
-GET /v2/challenges/:cid/users/:uid/submissions/page/:page
+GET /v2/challenges/:cid/users/:uid/submissions
 
 Example Response
 ```
