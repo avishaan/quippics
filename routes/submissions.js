@@ -169,6 +169,32 @@ exports.readTop = function(req, res){
       }
     });
 };
+//read all submissions of specific user in a challenge
+exports.readUserSubmissions = function(req, res){
+  //make sure we are looking at the right challenge, we only want to know for a specific challenge
+  // istanbul ignore if: bad request
+  if (!isObjectId(req.params.cid) ||
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  Challenge
+    .findOne({_id: req.params.cid})
+    .populate({
+      path: 'submissions',
+      select: 'owner thumbnail _id',
+      match: { owner: req.params.uid }
+    })
+    .lean()
+    .exec(function(err, challenge){
+      if (!err && challenge && challenge.submissions && challenge.submissions.length){
+        // send the submissions back to the front end.
+        res.send(200, challenge.submissions);
+      } else {
+        res.send(404, {clientMsg: 'Could not find user\'s submissions'});
+      }
+    });
+};
 //read submission of a specific user
 exports.userSubmissionV2 = function(req, res){
   //make sure we are looking at the right challenge, we only want to know for a specific challenge
