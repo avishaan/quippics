@@ -180,16 +180,25 @@ exports.readUserSubmissions = function(req, res){
   }
   Challenge
     .findOne({_id: req.params.cid})
+    .select('submissions title tags')
     .populate({
       path: 'submissions',
-      select: 'owner thumbnail _id',
+      select: 'owner thumbnail _id id challenge owner comments.id comments._id image.url',
       match: { owner: req.params.uid }
     })
-    .lean()
     .exec(function(err, challenge){
       if (!err && challenge && challenge.submissions && challenge.submissions.length){
         // send the submissions back to the front end.
-        res.send(200, challenge.submissions);
+          Submission.populate(challenge.submissions, {
+            path: 'owner',
+            select: 'username'
+          }, function(err, submissions){
+            if (!err) {
+              return res.send(200, challenge.toJSON({getters: true}));
+            } else {
+              return res.send(500, err);
+            }
+          });
       } else {
         res.send(404, {clientMsg: 'Could not find user\'s submissions'});
       }
