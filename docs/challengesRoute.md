@@ -59,6 +59,7 @@ Example Response
   description: 'Description for challenge',
   invites: [ '530ae320b5e51b420300010f' ]
 }
+```
 
 ####Create a new challenge
 #####_Status: Developed, Partially Tested 
