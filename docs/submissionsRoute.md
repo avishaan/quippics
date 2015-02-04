@@ -213,6 +213,34 @@ response: [ {
   }, {}, {}, {}]
 ```
 
+####Read all the submissions for a specific challenge for a specific user gh #120
+#####_Status: Developed, Partially Tested
+#####_Notes: should match route that returns information for all submissions into a challenge.
+GET /v2/challenges/:cid/users/:uid/submissions/page/:page
+
+Example Response
+```
+response: 
+  title: 'Challenge Title',
+  tags: ['tag1', 'tag2', 'tag3'],
+  submissions: [{
+    "__v": 4,
+    "_id": "535071535897f4b97500000f",
+    "challenge": "535071535897f4b97500000b",
+    owner: {
+      username: 'jack1234',
+      _id: '53c9978c8c5808246f6c0453'
+    },
+  comments: [{
+    _id: '53c9978c8c5808246f6c0453',
+    },{
+    _id: '53c9978c8c5808246f6c0453',
+    }
+  ],
+  "image": "www.quippics-prod.com/submissions/535071535897f4b97500000f.jpg",
+  },{...},{...},{...}]
+
+```
 ####Read all the submissions for a specific challenge (v2) issue #86
 #####_Status: Partially Developed, Partially Tested
 GET /v2/challenges/:cid/submissions
