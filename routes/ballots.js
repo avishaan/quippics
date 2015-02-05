@@ -117,7 +117,7 @@ exports.vote = function(req, res){
   },
   function(submission, votes, cb){
     // if the user has voted, remove ballot, otherwise ignore
-    if (votes){
+    if (votes && votes.length){
       // incase there are multiple votes for this one user
       // go into the database and remove each occurance
       Submission
