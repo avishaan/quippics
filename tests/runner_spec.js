@@ -31,18 +31,18 @@ async.series([
   //     cb(null);
   //   });
   // },
-  // function(cb){
-  //   console.log("Calling ChallengeV2 Specs");
-  //   challengeV2Spec.spec(domain, function(){
-  //     cb(null);
-  //   });
-  // },
-  // function(cb){
-  //   console.log("Calling Follow Specs");
-  //   followSpec.spec(domain, function(){
-  //     cb(null);
-  //   });
-  // },
+  //  function(cb){
+  //    console.log("Calling ChallengeV2 Specs");
+  //    challengeV2Spec.spec(domain, function(){
+  //      cb(null);
+  //    });
+  //  },
+  //  function(cb){
+  //    console.log("Calling Follow Specs");
+  //    followSpec.spec(domain, function(){
+  //      cb(null);
+  //    });
+  //  },
   // function(cb){
   //   console.log("Calling Interaction Specs");
   //   interactionSpec.spec(domain, function(){
@@ -61,24 +61,24 @@ async.series([
   //      cb(null);
   //    });
   //  },
-  // function(cb){
-  //   console.log("Calling SubmissionV2 Specs");
-  //   submissionV2Spec.spec(domain, function(){
-  //     cb(null);
-  //   });
-  // },
-   function(cb){
-     console.log("Calling Ballot Specs V2");
-     ballotV2Spec.spec(domain, function(){
-       cb(null);
-     });
-   },
   //  function(cb){
-  //    console.log("Calling Ballot Specs");
-  //    ballotSpec.spec(domain, function(){
+  //    console.log("Calling SubmissionV2 Specs");
+  //    submissionV2Spec.spec(domain, function(){
   //      cb(null);
   //    });
   //  },
+    function(cb){
+      console.log("Calling Ballot Specs V2");
+      ballotV2Spec.spec(domain, function(){
+        cb(null);
+      });
+    },
+  //   function(cb){
+  //     console.log("Calling Ballot Specs");
+  //     ballotSpec.spec(domain, function(){
+  //       cb(null);
+  //     });
+  //   },
   // function(cb){
   //   console.log("Calling Activity Filter Specs");
   //   activityFilterSpec.spec(domain, function(){
