@@ -224,7 +224,7 @@ exports.spec = function(domain, callback){
         //we expect to be in first since nerdy is the only vote and he voted us a 10
         expect(submission.rank).toEqual(1);
         expect(submission.score).toEqual(10);
-        expect(submission.sum).toEqual(10);
+        expect(submission.sum).toEqual(3);
         done();
       });
     });
@@ -267,7 +267,7 @@ exports.spec = function(domain, callback){
           expect(submission.ballots.length).toEqual(2);
           expect(submission.ballots[0].score).toEqual(9);
           console.log(submission);
-          expect(submission.sum).toEqual(18);
+          expect(submission.sum).toEqual(6);
           expect(submission.score).toEqual(9);
           expect(res).toBeDefined();
           done();
