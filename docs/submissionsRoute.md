@@ -90,7 +90,8 @@ response.body:
 }
 ```
 ####Read all the submissions the user has voted
-#####_Status: Developed, Tested
+#####_Status: Developed, Tested, Depreciated
+#####_Note: As of release v2.6 this will be uncessary and have unknown results when used
 GET '/v1/users/:uid/submissions/voted'
 
 Example Response
