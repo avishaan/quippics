@@ -1,5 +1,6 @@
 //set this to your testing domain
 var domain = 'http://admin:admin@localhost:8081/api/v1';
+var domainV2 = 'http://admin:admin@localhost:8081/api/v2';
 
 //var inviteSpec = require('./specs/inviteSpecs.js');
 //var epicSpec = require('./specs/epicSpecs.js');
@@ -16,83 +17,97 @@ var notificationSpec = require('./specs/notificationSpecs.js');
 var submissionFlagSpec = require('./specs/submissionFlagSpecs.js');
 var challengePersistSpec = require('./specs/challengePersistSpecs.js');
 var followSpec = require('./specs/followSpecs.js');
+var challengeV2Spec = require('./specs/challengeV2Specs.js');
+var submissionV2Spec = require('./specs/submissionV2Specs.js');
 //var superSpec = require('./specs/superTest.js');
 var async = require('async');
 
 
 async.series([
-   function(cb){
-     console.log("Calling User Specs");
-     userSpec.spec(domain, function(){
-       cb(null);
-     });
-   },
-  function(cb){
-    console.log("Calling Follow Specs");
-    followSpec.spec(domain, function(){
-      cb(null);
-    });
-  },
-   function(cb){
-     console.log("Calling Interaction Specs");
-     interactionSpec.spec(domain, function(){
-       cb(null);
-     });
-   },
-   function(cb){
-     console.log("Calling Challenge Specs");
-     challengeSpec.spec(domain, function(){
-       cb(null);
-     });
-   },
+  // function(cb){
+  //   console.log("Calling User Specs");
+  //   userSpec.spec(domain, function(){
+  //     cb(null);
+  //   });
+  // },
+  // function(cb){
+  //   console.log("Calling ChallengeV2 Specs");
+  //   challengeV2Spec.spec(domain, function(){
+  //     cb(null);
+  //   });
+  // },
+  // function(cb){
+  //   console.log("Calling Follow Specs");
+  //   followSpec.spec(domain, function(){
+  //     cb(null);
+  //   });
+  // },
+  // function(cb){
+  //   console.log("Calling Interaction Specs");
+  //   interactionSpec.spec(domain, function(){
+  //     cb(null);
+  //   });
+  // },
+  // function(cb){
+  //   console.log("Calling Challenge Specs");
+  //   challengeSpec.spec(domain, function(){
+  //     cb(null);
+  //   });
+  // },
    function(cb){
      console.log("Calling Submission Specs");
      submissionSpec.spec(domain, function(){
        cb(null);
      });
    },
-   function(cb){
-     console.log("Calling Ballot Specs");
-     ballotSpec.spec(domain, function(){
-       cb(null);
-     });
-   },
-   function(cb){
-     console.log("Calling Activity Filter Specs");
-     activityFilterSpec.spec(domain, function(){
-       cb(null);
-     });
-   },
-   function(cb){
-     console.log("Calling Activity Specs");
-     activitySpec.spec(domain, function(){
-       cb(null);
-     });
-   },
-   function(cb){
-     console.log("Calling Comment Specs");
-     commentSpec.spec(domain, function(){
-       cb(null);
-     });
-   },
-   function(cb){
-     console.log("Calling Persisted Challenge Specs");
-     challengePersistSpec.spec(domain, function(){
-       cb(null);
-     });
-   },
-   function(cb){
-     console.log("Calling Notification Specs");
-     notificationSpec.spec(domain, function(){
-       cb(null);
-     });
-   },
-   function(cb){
-     console.log("Calling Submission Flag Specs");
-     submissionFlagSpec.spec(domain, function(){
-       cb(null);
-     });
-   }
+  function(cb){
+    console.log("Calling SubmissionV2 Specs");
+    submissionV2Spec.spec(domain, function(){
+      cb(null);
+    });
+  },
+  // function(cb){
+  //   console.log("Calling Ballot Specs");
+  //   ballotSpec.spec(domain, function(){
+  //     cb(null);
+  //   });
+  // },
+  // function(cb){
+  //   console.log("Calling Activity Filter Specs");
+  //   activityFilterSpec.spec(domain, function(){
+  //     cb(null);
+  //   });
+  // },
+  // function(cb){
+  //   console.log("Calling Activity Specs");
+  //   activitySpec.spec(domain, function(){
+  //     cb(null);
+  //   });
+  // },
+  // function(cb){
+  //   console.log("Calling Comment Specs");
+  //   commentSpec.spec(domain, function(){
+  //     cb(null);
+  //   });
+  // },
+  // function(cb){
+  //   console.log("Calling Persisted Challenge Specs");
+  //   challengePersistSpec.spec(domain, function(){
+  //     cb(null);
+  //   });
+  // },
+  // function(cb){
+  //   console.log("Calling Notification Specs");
+  //   notificationSpec.spec(domain, function(){
+  //     cb(null);
+  //   });
+  // },
+  // function(cb){
+  //   console.log("Calling Submission Flag Specs");
+  //   submissionFlagSpec.spec(domain, function(){
+  //     cb(null);
+  //   });
+  // }
 
 ],
   function(err, results){
