@@ -45,8 +45,23 @@ submissionSchema.pre('save', function(next){ //right before saving a new submiss
     });
     //calculate and store the score in the document //TODO, this should be done only when a ballot is added, not just a submission
     this.score = tot/this.ballots.length;
-    // save the sum for later
-    this.sum = tot;
+
+    var sum = 0;
+    //calculate the sum by remapping scores
+    this.ballots.forEach(function(element){
+      // we need to map 0-10 -> 1-3 as per gh #109
+      if (element.score <= 3){
+        sum += 1;
+      } else if (element.score > 3 && element.score <= 6){
+        sum += 2;
+      } else if (element.score > 6 && element.score <= 10){
+        sum += 3;
+      } else {
+        // default case incase it doesn't fit above
+        sum += 3;
+      }
+    });
+    this.sum = sum;
     next();
   } else {
     next();
