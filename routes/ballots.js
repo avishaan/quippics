@@ -161,10 +161,13 @@ exports.vote = function(req, res){
     require("../models/activity.js").create(submission.ballots.id(newBallot.id));
     cb(null, newBallot);
   },
-  ], function(err, results){
+  ], function(err, ballot){
     // respond to the front end
     if (!err){
-      res.send(200, results);
+      res.send(200, {
+        score: ballot.score,
+        voter: ballot.voter.toJSON()
+      });
     } else {
       logger.error(err);
       res.send(500, err);
