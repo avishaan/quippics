@@ -199,7 +199,6 @@ exports.spec = function(domain, callback){
         var challenge = res.body;
         var submissions = challenge.submissions;
         //expect 200 response
-        console.log(challenge);
         expect(res.status).toEqual(200);
         expect(submissions.length).toEqual(2);
         expect(submissions[0].thumbnail).toBeDefined();
