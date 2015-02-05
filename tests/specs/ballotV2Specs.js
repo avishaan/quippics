@@ -158,6 +158,8 @@ exports.spec = function(domain, callback){
       })
       .end(function(res){
         expect(res.status).toEqual(200);
+        expect(res.body.score).toEqual(1);
+        expect(res.body.voter).toEqual(user2._id);
         done();
       });
     });
