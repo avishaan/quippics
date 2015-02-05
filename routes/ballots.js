@@ -6,6 +6,7 @@ var validator = require('validator');
 var isObjectId = require('valid-objectid').isValid;
 var fs = require('fs');
 var logger = require('../logger/logger.js');
+var async = require('async');
 
 //function for some debugging when necessary
 // istanbul ignore next: unofficial debug route
@@ -78,6 +79,97 @@ exports.userVoted = function(req, res){
         return res.send(500, err);
       }
     });
+};
+//Submit vote for specific submission V2 allowing revotes
+exports.vote = function(req, res){
+  //find the challenge
+  // istanbul ignore if: incorrect input
+  if (!isObjectId(req.body.voter) ||
+      !validator.isNumeric(req.body.score) ||
+      !isObjectId(req.params.sid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  async.waterfall([
+  function(cb){
+    // find the submission we are voting on
+    Submission
+    .findOne({ _id: req.params.sid })
+    .lean()
+    .exec(function(err, submission){
+      if (!err && submission){
+        cb(null, submission);
+      } else {
+        cb({ err: err, clientMsg: 'Could not find submission' });
+      }
+    });
+  },
+  function(submission, cb){
+    var ballots = submission.ballots;
+    var votes = null; // array which stores existing ballot if we have already voted
+    // check if the user has already voted
+    if (ballots.length){
+      votes = ballots.filter(function(ballot){
+        return req.body.voter === ballot.voter.toJSON();
+      });
+    }
+    cb(null, submission, votes);
+  },
+  function(submission, votes, cb){
+    // if the user has voted, remove ballot, otherwise ignore
+    if (votes){
+      // incase there are multiple votes for this one user
+      // go into the database and remove each occurance
+      Submission
+      .findOneAndUpdate(
+        { _id: req.params.sid },
+        { $pull: { ballots: { _id: votes[0]._id }}},
+        function(err, updated){
+          // setImmediate(cb, err, submission);
+          // cb(err, submission);
+          cb(err, submission);
+        });
+    } else {
+      cb(null, submission);
+    }
+  },
+  function(submission, cb){
+    // go into database and add new ballot to submission
+    var newBallot = new Ballot({
+      voter: req.body.voter,
+      score: req.body.score
+    });
+    Submission
+    .findOne({ _id: req.params.sid }, function(err, submission){
+      if (!err && submission){
+        submission.ballots.push(newBallot);
+        submission.save(function(err, submission){
+          if (!err && submission){
+            cb(null, submission, newBallot);
+          } else {
+            cb({ err: err, clientMsg: 'Could not add ballot'});
+          }
+        });
+      } else {
+        cb({ err: err, clientMsg: 'Could not add ballot'});
+      }
+    });
+  },
+  function(submission, newBallot, cb){
+    // add the activity
+    // in order for the activity create to work, we need mongoose ballot document
+    require("../models/activity.js").create(submission.ballots.id(newBallot.id));
+    cb(null, newBallot);
+  },
+  ], function(err, results){
+    // respond to the front end
+    if (!err){
+      res.send(200, results[0]);
+    } else {
+      logger.error(err);
+      res.send(500, err);
+    }
+  });
 };
 //Submit vote for specific submission
 exports.create = function(req, res){

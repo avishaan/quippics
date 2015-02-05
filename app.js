@@ -155,6 +155,7 @@ app.get('/api/v2/challenges/:cid/submissions/users/:uid', apiAuth(), submissions
 app.get('/api/v1/challenges/:cid/submissions/top', apiAuth(), submissions.readTop); //read the top submission in the challenge
 app.get('/api/v1/challenges/:cid/submissions/:sid', apiAuth(), submissions.readOne); //read the submission specified
 //ballot routes
+app.post('/api/v2/challenges/:cid/submissions/:sid/ballots', apiAuth(), ballots.vote); //submit a ballot that can be revoted on later
 app.post('/api/v1/challenges/:cid/submissions/:sid/ballots', apiAuth(), ballots.create); //submit a ballot effectively casting your vote on a submission
 app.get('/api/v1/users/:uid/submissions/voted', apiAuth(), ballots.userVotedSubmissions); //list of submissions the user has already voted on
 app.get('/api/v1/challenges/:cid/submissions/users/:uid/voted', apiAuth(), ballots.userVoted); //list of submissions the user has already voted on

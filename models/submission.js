@@ -29,6 +29,7 @@ var submissionSchema = new mongoose.Schema({
   comments: [Comment.schema],
   score: { type: Number, default: 0}, //we calculate this in the pre save
   rank: { type: Number, default: 0}, //this should be calculated before every ballot added
+  sum: { type: Number, default: 0}, // running sum for the ballots received
   challenge: { type: mongoose.Schema.Types.ObjectId, ref: "Challenge"} //we save the challenge id of each submission for easy querying
 });
 
@@ -44,6 +45,8 @@ submissionSchema.pre('save', function(next){ //right before saving a new submiss
     });
     //calculate and store the score in the document //TODO, this should be done only when a ballot is added, not just a submission
     this.score = tot/this.ballots.length;
+    // save the sum for later
+    this.sum = tot;
     next();
   } else {
     next();
