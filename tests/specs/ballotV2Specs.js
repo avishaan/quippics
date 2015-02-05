@@ -226,6 +226,28 @@ exports.spec = function(domain, callback){
         done();
       });
     });
+    // TODO do not allow self vote
+    it('can allow nerdy to vote on nerdy submission', function(done){
+      agent
+      .post(domainV2 + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/ballots/')
+      .send({
+        score: 9,
+        voter: user2._id
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        // get the ballot directly from the datbase and make sure the value is 10
+        Submission
+        .findOne({ _id: submission1._id })
+        .select('ballots')
+        .exec(function(err, submission){
+          expect(submission.ballots.length).toEqual(1);
+          expect(submission.ballots[0].score).toEqual(9);
+          expect(res).toBeDefined();
+          done();
+        });
+      });
+    });
   });
   async.series([
     function(cb){
