@@ -123,7 +123,7 @@ exports.vote = function(req, res){
       Submission
       .findOneAndUpdate(
         { _id: req.params.sid },
-        { $pull: { ballots: { _id: votes[0]._id }}},
+        { $pull: { ballots: { _id: votes[0]._id, score: votes[0].score }}},
         function(err, updated){
           // setImmediate(cb, err, submission);
           // cb(err, submission);
@@ -164,7 +164,7 @@ exports.vote = function(req, res){
   ], function(err, results){
     // respond to the front end
     if (!err){
-      res.send(200, results[0]);
+      res.send(200, results);
     } else {
       logger.error(err);
       res.send(500, err);
