@@ -214,4 +214,9 @@ exports.spec = function(domain, callback){
       });
     });
   });
+  describe('it can move to the next test', function(){
+    // we need this here so that it moves to the next test in the specRunner since
+    // every test invoked requires a callback
+    callback(null);
+  });
 };
