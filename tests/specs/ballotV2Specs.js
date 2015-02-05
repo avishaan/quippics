@@ -250,6 +250,30 @@ exports.spec = function(domain, callback){
         });
       });
     });
+    it('can allow popular to vote on nerdy submission', function(done){
+      agent
+      .post(domainV2 + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/ballots/')
+      .send({
+        score: 9,
+        voter: user1._id
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        // get the ballot directly from the datbase and make sure the value is 10
+        Submission
+        .findOne({ _id: submission1._id })
+        .select('ballots sum score')
+        .exec(function(err, submission){
+          expect(submission.ballots.length).toEqual(2);
+          expect(submission.ballots[0].score).toEqual(9);
+          console.log(submission);
+          expect(submission.sum).toEqual(18);
+          expect(submission.score).toEqual(9);
+          expect(res).toBeDefined();
+          done();
+        });
+      });
+    });
   });
   describe('it can move to the next test', function(){
     // we need this here so that it moves to the next test in the specRunner since
