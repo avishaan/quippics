@@ -771,7 +771,7 @@ exports.spec = function(domain, callback){
             expect(challenge.participants.some(function(participant, index, array){
               // console.log('participants %s vs %s', participant.user, user3._id);
               return participant.user == user3._id;
-            })).toBeTruthy();
+            })).toBeTruthy(); // this seems to sometimes fail, look into
             //console.log(challenge.participants.indexOf(user3._id));
             done();
           });
