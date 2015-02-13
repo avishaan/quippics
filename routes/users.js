@@ -545,7 +545,11 @@ exports.listPeeps = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   var skip = perPage * (req.params.page - 1);
-  var leaderID = req.params.uid;
+  // want to be able to access the user obj from anywhere
+  var user;
+  var followers;
+  var follows;
+  var peeps;
 
   // istanbul ignore if: bad request
   if (!validator.isNumeric(req.params.page) ||
@@ -553,30 +557,54 @@ exports.listPeeps = function(req, res){
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
   }
-  // find the user we want to get the peeps for
-  User
-  .findOne({_id: leaderID})
-  .select('_id')
-  .exec(function(err, leader){
-    if (!err && leader){
-      leader.getFollowers(function(err, users){
-        // istanbul ignore else: db error
-        if (!err){
-          if (users && users.length) {
-            followers = users.map(function(user){
-              return user;
-            });
-            res.send(200, followers); //return the list of users you follow
-          } else {
-            res.send(404, {clientMsg: "Couldn't find user"});
-          }
-        } else {
-          res.send(500, err);
-        }
+  async.series([
+  function(cb){
+    // find the user we want to get the peeps for
+    User
+    .findOne({_id: req.params.uid})
+    .select('_id, username')
+    .exec(function(err, doc){
+      user = doc;
+      cb(null);
+    });
+  },
+  function(cb){
+    // find the followers
+    user.getFollowers(function(err, docs){
+      followers = docs;
+      // keep only the ids
+      followers = followers.map(function(item){
+        return item._id.toString();
       });
-    } else {
-      res.send(500, err);
-    }
+      cb(null);
+    });
+  },
+  function(cb){
+    // find our follows
+    user.getFollows(function(err, docs){
+      follows = docs;
+      // keep only the ids
+      follows = follows.map(function(item){
+        return item._id.toString();
+      });
+      cb(null);
+    });
+  },
+  function(cb){
+    // combine array remove dups
+    
+    // sort in order
+    // get the correct number from the array (splice)
+    debugger;
+  },
+  function(cb){
+    // populate this list of ids
+  },
+  function(cb){
+    // create the object response, either via transform or manually
+  }
+  ], function(err, results){
+
   });
 };
 // list your followers
