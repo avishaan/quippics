@@ -277,6 +277,27 @@ userSchema.methods.hashPassword = function(cb){
     }
   });
 };
+// get follows of a user
+userSchema.methods.getFollows = function(cb){
+  var user = this;
+  var err = null;
+  var follows = [];
+  User
+  .findOne({_id: this.id})
+  .select('follows')
+    .populate({
+      path: 'follows', //connect the id in the follows array to the full user information
+      select: 'username _id', //but only return the username from the full user information
+      options: {
+        sort: '_id'
+      }
+    })
+  .lean()
+  .exec(function(err, user){
+    follows = user.follows;
+    cb(err, follows);
+  });
+};
 // get followers of a user
 userSchema.methods.getFollowers = function(cb){
   var user = this;
