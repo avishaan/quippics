@@ -82,6 +82,7 @@ request.body: {
 #####_Status: Developed, Partially Tested
 Note: If you are following this user, you will stop following them.
 DELETE /v1/users/:uid/follows
+POST /v1/users/:uid/stop/follows (alias, untested, depreciated)
 
 Example Request
 ```
@@ -100,6 +101,7 @@ request.body: {
 #####_Status: Developed, Partially Tested
 Note: if you are following a user, pass in the user you want to block and they will stop following you
 DELETE /v1/users/:uid/followers
+POST /v1/users/:uid/block/followers (alias, untested, depreciated)
 
 Example Request
 ```
