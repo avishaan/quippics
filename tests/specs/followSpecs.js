@@ -152,6 +152,95 @@ exports.spec = function(domain, callback){
       });
     });
   });
+  describe('Peeps setup and testing', function(){
+    describe('Reset for peeps testing', function(){
+      it('should be able to delete the database', function(done){
+        superagent
+        .del(domain + "/server")
+        .end(function(res){
+          expect(res.status).toEqual(200);
+          console.log("Done deleting db");
+          done();
+        });
+      });
+      it('should create a user', function(done){
+        console.log('after delete');
+        User.create({
+          username: user1.username,
+          password: user1.password,
+          email: user1.email
+        }, function(err, user){
+          expect(user).toBeDefined();
+          user1.id = user.id;
+          done();
+        });
+      });
+      it('should create another user', function(done){
+        User.create({
+          username: user2.username,
+          password: user2.password,
+          email: user2.email
+        }, function(err, user){
+          expect(user).toBeDefined();
+          user2.id = user.id;
+          done();
+        });
+      });
+      it('should create another user', function(done){
+        User.create({
+          username: user3.username,
+          password: user3.password,
+          email: user3.email
+        }, function(err, user){
+          expect(user).toBeDefined();
+          user3.id = user.id;
+          done();
+        });
+      });
+    });
+  describe('Peeps', function(){
+    // setup as follows user2 follows user1, user3 follows user1, user1 follows user3
+    // then look from user1 perspective
+    it('should allow user2 to follow user1', function(done){
+      superagent
+      .post(domain + "/users/" + user2.id + '/follows')
+      .send({
+        user: user1.id,
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+  });
+    it('should set up user2 to follow user1', function(done){
+      superagent
+      .post(domain + "/users/" + user2.id + '/follows')
+      .send({
+        user: user1.id,
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        User.findOne({_id: user2.id})
+        .exec(function(err, user){
+          expect(user.follows.length).toEqual(1);
+          done();
+        });
+      });
+    });
+    it('can be listed', function(done){
+      superagent
+      .get(domain + "/users/" + user1.id + '/followers/page/1')
+      .end(function(res){
+        var followers = res.body;
+        expect(followers.length).toEqual(1);
+        expect(followers[0]._id).toEqual(user2.id)
+        expect(followers[0].username).toEqual(user2.username)
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+  });
   xdescribe('A submission deemed acceptable by a moderator', function(){
     it('simulates the moderator keeping submission1, not emailing the user anything', function(done){
       spyOn(mailers, 'mailUserTerms');
