@@ -74,7 +74,7 @@ response:
 ```
 
 ####Read the top rated submission in a challenge; the one with the highest score
-#####_Status: Developed, Tested
+#####_Status: Developed, Partially Tested
 GET '/v1/challenges/:cid/submissions/top'
 
 Example Response
@@ -85,6 +85,7 @@ response.body:
   _id: '52fec7b4cb9c788b1b00001c',
   owner: 'Jack1234',
   score: 9,
+  sum: 12,
   createdOn: '2014-02-15T01:49:40.564Z',
   image: '01021000sf0fs0er0ew0rqgfsgaffdasfeq'
 }
