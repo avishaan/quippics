@@ -248,9 +248,21 @@ exports.spec = function(domain, callback){
       .get(domain + "/users/" + user2.id + '/peeps/page/1')
       .end(function(res){
         var peeps = res.body;
-        expect(follows.length).toEqual(1);
-        expect(follows[0]._id).toEqual(user1.id);
-        expect(follows[0].username).toEqual(user1.username);
+        peeps.forEach(function(peep){
+          if (peep._id == user3.id){
+            expect(peep.isFollow).toEqual(true);
+            expect(peep.isFollower).toEqual(true);
+          } else if (peep._id == user1.id){
+            expect(peep.isFollow).toEqual(true);
+            expect(peep.isFollower).toEqual(false);
+          } else if (peep._id == user2.id){
+            // should not happen, there is no user interaction here
+            expect(true).toEqual(false);
+          } else {
+            // should not happen, all cases should be accounted for
+            expect(true).toEqual(false);
+          }
+        });
         expect(res.status).toEqual(200);
         done();
       });
