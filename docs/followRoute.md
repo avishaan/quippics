@@ -21,6 +21,26 @@ response:{
   }
 ```
 
+####Get list of peeps (followers and follows) for a specific user id (:uid) at a specific page#(:page)
+#####_Status: Not Developed, Not Tested
+GET '/v1/users/:uid/peeps/page/:page'
+
+Example Response
+```
+response:{
+    [ { _id: '5351fc22740f0fc97f000005',
+      username: 'jack1985739000update',
+      isFollower: true,
+      isFollows: false
+      thumbnail:
+       { contentType: 'image/png',
+         data: 'iVBORw0KGgoAAAANSUhEUgAAAFoAAABaAQAAAAAQ03yvAAI=' 
+       } 
+      }, {}, {} 
+    ],
+  }
+```
+
 ####Get list of users you are following for a specific user id (:uid) at a specific page#(:page)
 #####_Status: Not Developed, Not Tested
 GET '/v1/users/:uid/follows/page/:page'
