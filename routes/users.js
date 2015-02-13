@@ -540,6 +540,45 @@ exports.requestFriend = function(req, res){
   });
 };
 
+// list any peeps (users that you follow or are followers)
+exports.listPeeps = function(req, res){
+  //if the page number was not passed, go ahead and default to page one for backward compatibility
+  req.params.page = req.params.page || 1;
+  var skip = perPage * (req.params.page - 1);
+  var leaderID = req.params.uid;
+
+  // istanbul ignore if: bad request
+  if (!validator.isNumeric(req.params.page) ||
+      !isObjectId(req.params.uid)
+     ){
+    return res.send(400, {clientMsg: "Malformed Request"});
+  }
+  // find the user we want to get the peeps for
+  User
+  .findOne({_id: leaderID})
+  .select('_id')
+  .exec(function(err, leader){
+    if (!err && leader){
+      leader.getFollowers(function(err, users){
+        // istanbul ignore else: db error
+        if (!err){
+          if (users && users.length) {
+            followers = users.map(function(user){
+              return user;
+            });
+            res.send(200, followers); //return the list of users you follow
+          } else {
+            res.send(404, {clientMsg: "Couldn't find user"});
+          }
+        } else {
+          res.send(500, err);
+        }
+      });
+    } else {
+      res.send(500, err);
+    }
+  });
+};
 // list your followers
 exports.listFollowers = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
