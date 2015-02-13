@@ -591,6 +591,10 @@ exports.listPeeps = function(req, res){
     });
   },
   function(cb){
+    // if the array has nothing in it, do an error
+    if (!follows.length || !followers.length){
+      cb({clientMsg: 'No followers and following no one '});
+    }
     // combine array
     peeps = follows.concat(followers);
     // remove dups
@@ -609,17 +613,39 @@ exports.listPeeps = function(req, res){
     // populate this list of ids
     User
     .find({_id: {$in: peeps}})
-    .select('username, _id, thumbnail')
+    .select('username _id thumbnail')
     .lean()
     .exec(function(err, users){
-      debugger;
+      peeps = users;
+      cb(err);
     });
   },
   function(cb){
     // create the object response, either via transform or manually
+    peeps = peeps.map(function(peep){
+      // if the follows array contains this id, this peep follows the user
+      if (_.intersection(follows, [peep._id.toString()]).length) {
+        peep.isFollow = true;
+      } else {
+        peep.isFollow = false;
+      }
+      // if the followers array contains this id, this peep is a follower of the user
+      if (_.intersection(followers, [peep._id.toString()]).length) {
+        peep.isFollower = true;
+      } else {
+        peep.isFollower = false;
+      }
+      return peep;
+    });
+    cb(null);
   }
   ], function(err, results){
-
+    if (err){
+      logger.error(err);
+      res.send(400, {err: err, clientMsg: 'Couldnt find user list'});
+    } else {
+      res.send(200, peeps);
+    }
   });
 };
 // list your followers
