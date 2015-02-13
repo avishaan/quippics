@@ -105,6 +105,7 @@ app.post('/api/v1/apns/submissions/debug', apns.debugSubmission); //debug push n
 
 //follows routes
 app.post('/api/v1/users/:uid/follows', apiAuth(), users.follow);
+app.post('/api/v1/users/:uid/stop/follows', apiAuth(), users.stopFollow);
 app.delete('/api/v1/users/:uid/follows', apiAuth(), users.stopFollow);
 app.get('/api/v1/users/:uid/peeps/page/:page', apiAuth(), users.listPeeps);
 app.get('/api/v1/users/:uid/follows/page/:page', apiAuth(), users.listFollows);
