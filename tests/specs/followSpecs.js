@@ -151,6 +151,22 @@ exports.spec = function(domain, callback){
         done();
       });
     });
+    it('should allow user1 to block user2', function(done){
+      superagent
+      .del(domain + "/users/" + user1.id + '/followers')
+      .send({
+        user: user2.id,
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        // see who user2 follows and expect it to be no one now
+        User.findOne({_id: user2.id})
+        .exec(function(err, user){
+          expect(user.follows.length).toEqual(0);
+          done();
+        });
+      });
+    });
   });
   describe('Peeps setup and testing', function(){
     describe('Reset for peeps testing', function(){
