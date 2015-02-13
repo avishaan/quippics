@@ -591,14 +591,29 @@ exports.listPeeps = function(req, res){
     });
   },
   function(cb){
-    // combine array remove dups
-    
+    // combine array
+    peeps = follows.concat(followers);
+    // remove dups
+    peeps = _.uniq(peeps);
     // sort in order
-    // get the correct number from the array (splice)
-    debugger;
+    peeps.sort(function(item1, item2){
+      return item1 > item2;
+    });
+    // skip array elements based on skip
+    peeps = _.last(peeps, peeps.length - skip);
+    // return the correct number from the front
+    peeps = _.first(peeps, perPage);
+    cb(null);
   },
   function(cb){
     // populate this list of ids
+    User
+    .find({_id: {$in: peeps}})
+    .select('username, _id, thumbnail')
+    .lean()
+    .exec(function(err, users){
+      debugger;
+    });
   },
   function(cb){
     // create the object response, either via transform or manually
