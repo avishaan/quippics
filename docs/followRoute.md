@@ -31,7 +31,7 @@ response:{
     [ { _id: '5351fc22740f0fc97f000005',
       username: 'jack1985739000update',
       isFollower: true,
-      isFollows: false
+      isFollow: false
       thumbnail:
        { contentType: 'image/png',
          data: 'iVBORw0KGgoAAAANSUhEUgAAAFoAAABaAQAAAAAQ03yvAAI=' 
