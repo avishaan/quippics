@@ -200,7 +200,7 @@ exports.spec = function(domain, callback){
     });
   describe('Peeps', function(){
     // setup as follows user2 follows user1, user3 follows user2, user2 follows user3
-    // then look from user1 perspective
+    // then look from user2 perspective
     it('should allow user2 to follow user1', function(done){
       superagent
       .post(domain + "/users/" + user2.id + '/follows')
@@ -241,6 +241,18 @@ exports.spec = function(domain, callback){
           expect(user.follows.length).toEqual(2);
           done();
         });
+      });
+    });
+    it('should get the peeps from user1 perspective', function(done){
+      superagent
+      .get(domain + "/users/" + user2.id + '/peeps/page/1')
+      .end(function(res){
+        var peeps = res.body;
+        expect(follows.length).toEqual(1);
+        expect(follows[0]._id).toEqual(user1.id);
+        expect(follows[0].username).toEqual(user1.username);
+        expect(res.status).toEqual(200);
+        done();
       });
     });
   });
