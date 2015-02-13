@@ -199,7 +199,7 @@ exports.spec = function(domain, callback){
       });
     });
   describe('Peeps', function(){
-    // setup as follows user2 follows user1, user3 follows user1, user1 follows user3
+    // setup as follows user2 follows user1, user3 follows user2, user2 follows user3
     // then look from user1 perspective
     it('should allow user2 to follow user1', function(done){
       superagent
@@ -213,31 +213,34 @@ exports.spec = function(domain, callback){
       });
     });
   });
-    it('should set up user2 to follow user1', function(done){
+    it('should set up user3 to follow user2', function(done){
       superagent
-      .post(domain + "/users/" + user2.id + '/follows')
+      .post(domain + "/users/" + user3.id + '/follows')
       .send({
-        user: user1.id,
+        user: user2.id,
       })
       .end(function(res){
         expect(res.status).toEqual(200);
-        User.findOne({_id: user2.id})
+        User.findOne({_id: user3.id})
         .exec(function(err, user){
           expect(user.follows.length).toEqual(1);
           done();
         });
       });
     });
-    it('can be listed', function(done){
+    it('should set up user2 to follow user3', function(done){
       superagent
-      .get(domain + "/users/" + user1.id + '/followers/page/1')
+      .post(domain + "/users/" + user2.id + '/follows')
+      .send({
+        user: user3.id,
+      })
       .end(function(res){
-        var followers = res.body;
-        expect(followers.length).toEqual(1);
-        expect(followers[0]._id).toEqual(user2.id)
-        expect(followers[0].username).toEqual(user2.username)
         expect(res.status).toEqual(200);
-        done();
+        User.findOne({_id: user2.id})
+        .exec(function(err, user){
+          expect(user.follows.length).toEqual(2);
+          done();
+        });
       });
     });
   });
