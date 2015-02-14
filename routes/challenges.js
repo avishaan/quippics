@@ -338,7 +338,7 @@ exports.createV2 = function(req, res){
   async.series([
     function(cb){
       // if the challenge privacy is public then automatically add all the followers of that user
-      if (newChallenge.privacy === 'public'){
+      if (newChallenge.privacy === 'followers'){
         // find all the followers of the creator of the challenge and add them as participants
         User
         .findOne({_id: newChallenge.owner})
