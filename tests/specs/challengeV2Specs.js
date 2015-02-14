@@ -738,7 +738,7 @@ exports.spec = function(domain, callback){
             title: 'Public Challenge Test',
             tags: ['tag1', 'tag2', 'tag3'],
             owner: user1._id,
-            privacy: 'public',
+            privacy: 'followers',
             expiration: new Date(2015, 3, 14)
           };
           superagent
@@ -787,7 +787,7 @@ exports.spec = function(domain, callback){
               expect(challenge.participants.some(function(participant, index, array){
                 // console.log('participants %s vs %s', participant.user, user3._id);
                 return participant.user == user3._id;
-              })).toBeTruthy(); // TODO this seems to sometimes fail, look into
+              })).toBeTruthy();
               //console.log(challenge.participants.indexOf(user3._id));
               done();
             });
