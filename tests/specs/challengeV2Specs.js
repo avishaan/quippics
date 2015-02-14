@@ -776,19 +776,21 @@ exports.spec = function(domain, callback){
             done();
           });
         });
-        it('[fail] should automatically add user3 to challenge5 even though he follows after the fact', function(done){
-          // NOTE: this sometimes fail because we don't wait to add the participant before ending the route
-          Challenge
-          .findOne({_id: challenge5._id})
-          .exec(function(err, challenge){
-            //console.log(challenge.participants);
-            expect(challenge.participants.some(function(participant, index, array){
-              // console.log('participants %s vs %s', participant.user, user3._id);
-              return participant.user == user3._id;
-            })).toBeTruthy(); // TODO this seems to sometimes fail, look into
-            //console.log(challenge.participants.indexOf(user3._id));
-            done();
-          });
+        it('should automatically add user3 to challenge5 even though he follows after the fact', function(done){
+          // we need a little time since adding a user above after a follow is async and doesn't wait to give an success response
+          setTimeout(function(){
+            Challenge
+            .findOne({_id: challenge5._id})
+            .exec(function(err, challenge){
+              console.log(challenge.participants.length);
+              expect(challenge.participants.some(function(participant, index, array){
+                // console.log('participants %s vs %s', participant.user, user3._id);
+                return participant.user == user3._id;
+              })).toBeTruthy(); // TODO this seems to sometimes fail, look into
+              //console.log(challenge.participants.indexOf(user3._id));
+              done();
+            });
+          }, 150);
         });
         it('needs to have user3 follow user1 again', function(done){
           // we will have user3 follower user 1 again to make sure that duplicate participants aren't created in the challenge
