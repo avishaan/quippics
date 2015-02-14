@@ -25,102 +25,101 @@ var async = require('async');
 
 
 async.series([
-  // function(cb){
-  //   console.log("Calling User Specs");
-  //   userSpec.spec(domain, function(){
-  //     cb(null);
-  //   });
-  // },
-  //  function(cb){
-  //    console.log("Calling ChallengeV2 Specs");
-  //    challengeV2Spec.spec(domain, function(){
-  //      cb(null);
-  //    });
-  //  },
-  //  function(cb){
-  //    console.log("Calling Follow Specs");
-  //    followSpec.spec(domain, function(){
-  //      cb(null);
-  //    });
-  //  },
-  // function(cb){
-  //   console.log("Calling Interaction Specs");
-  //   interactionSpec.spec(domain, function(){
-  //     cb(null);
-  //   });
-  // },
-  // function(cb){
-  //   console.log("Calling Challenge Specs");
-  //   challengeSpec.spec(domain, function(){
-  //     cb(null);
-  //   });
-  // },
-  //  function(cb){
-  //    console.log("Calling Submission Specs");
-  //    submissionSpec.spec(domain, function(){
-  //      cb(null);
-  //    });
-  //  },
-  //  function(cb){
-  //    console.log("Calling SubmissionV2 Specs");
-  //    submissionV2Spec.spec(domain, function(){
-  //      cb(null);
-  //    });
-  //  },
-    function(cb){
-      console.log("Calling Ballot Specs V2");
-      ballotV2Spec.spec(domain, function(){
-        cb(null);
-      });
-    },
-  //   function(cb){
-  //     console.log("Calling Ballot Specs");
-  //     ballotSpec.spec(domain, function(){
-  //       cb(null);
-  //     });
-  //   },
-  // function(cb){
-  //   console.log("Calling Activity Filter Specs");
-  //   activityFilterSpec.spec(domain, function(){
-  //     cb(null);
-  //   });
-  // },
-  // function(cb){
-  //   console.log("Calling Activity Specs");
-  //   activitySpec.spec(domain, function(){
-  //     cb(null);
-  //   });
-  // },
-  // function(cb){
-  //   console.log("Calling Comment Specs");
-  //   commentSpec.spec(domain, function(){
-  //     cb(null);
-  //   });
-  // },
-  // function(cb){
-  //   console.log("Calling Persisted Challenge Specs");
-  //   challengePersistSpec.spec(domain, function(){
-  //     cb(null);
-  //   });
-  // },
-  // function(cb){
-  //   console.log("Calling Notification Specs");
-  //   notificationSpec.spec(domain, function(){
-  //     cb(null);
-  //   });
-  // },
-  // function(cb){
-  //   console.log("Calling Submission Flag Specs");
-  //   submissionFlagSpec.spec(domain, function(){
-  //     cb(null);
-  //   });
-  // }
-
+// function(cb){
+//   console.log("Calling User Specs");
+//   userSpec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
+// function(cb){
+//   console.log("Calling Challenge Specs");
+//   challengeSpec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
+// function(cb){
+//   console.log("Calling ChallengeV2 Specs");
+//   challengeV2Spec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
+// function(cb){
+//   console.log("Calling Follow Specs");
+//   followSpec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
+//  function(cb){
+//    console.log("Calling Interaction/Public Challenge Specs");
+//    interactionSpec.spec(domain, function(){
+//      cb(null);
+//    });
+//  },
+// function(cb){
+//   console.log("Calling Submission Specs");
+//   submissionSpec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
+// function(cb){
+//   console.log("Calling SubmissionV2 Specs");
+//   submissionV2Spec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
+// function(cb){
+//   console.log("Calling Ballot Specs V2");
+//   ballotV2Spec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
+// function(cb){
+//   console.log("Calling Ballot Specs");
+//   ballotSpec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
+// function(cb){
+//   console.log("Calling Activity Filter Specs");
+//   activityFilterSpec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
+// function(cb){
+//   console.log("Calling Activity Specs");
+//   activitySpec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
+// function(cb){
+//   console.log("Calling Comment Specs");
+//   commentSpec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
+//  function(cb){
+//    console.log("Calling Persisted Challenge Specs");
+//    challengePersistSpec.spec(domain, function(){
+//      cb(null);
+//    });
+//  },
+// function(cb){
+//   console.log("Calling Notification Specs");
+//   notificationSpec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
+// function(cb){
+//   console.log("Calling Submission Flag Specs");
+//   submissionFlagSpec.spec(domain, function(){
+//     cb(null);
+//   });
+// }
 ],
-  function(err, results){
-    //epicSpec.spec(domain); //we run this one last because this set of tests is meant to run last and has no way for a callback
-  }
-);
+function(err, results){
+  //epicSpec.spec(domain); //we run this one last because this set of tests is meant to run last and has no way for a callback
+}
+            );
 //require('./specs/basic_spec.js'); //basic spec
 //require('./specs/userAPI_spec.js').spec(domain);
 //var prepare = require('./specs/mongooseSeed.js').cleanUp();
