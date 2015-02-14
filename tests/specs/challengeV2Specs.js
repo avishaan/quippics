@@ -762,7 +762,7 @@ exports.spec = function(domain, callback){
             done();
           });
         });
-        it('should automatically add user3 to challenge5 even though he follows after the fact', function(done){
+        it('[fail] should automatically add user3 to challenge5 even though he follows after the fact', function(done){
           // NOTE: this sometimes fail because we don't wait to add the participant before ending the route
           Challenge
           .findOne({_id: challenge5._id})
@@ -771,7 +771,7 @@ exports.spec = function(domain, callback){
             expect(challenge.participants.some(function(participant, index, array){
               // console.log('participants %s vs %s', participant.user, user3._id);
               return participant.user == user3._id;
-            })).toBeTruthy(); // this seems to sometimes fail, look into
+            })).toBeTruthy(); // TODO this seems to sometimes fail, look into
             //console.log(challenge.participants.indexOf(user3._id));
             done();
           });
