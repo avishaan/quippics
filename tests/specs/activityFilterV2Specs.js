@@ -8,29 +8,46 @@ var Challenge = require('../../models/challenge.js');
 var user1 = {
   username: 'popular123',
   password: '123',
-  email: 'popular123@gmail.com'
+  email: 'popular123@gmail.com',
 };
 
 var user2 = {
   username: 'nerd314',
   password: '314',
-  email: 'nerd314@gmail.com'
+  email: 'nerd314@gmail.com',
 };
+
 var user3 = {
   username: 'user3',
   password: 'password',
-  email: 'user3@gmail.com'
+  email: 'user3@gmail.com',
 };
+
 var user4 = {
   username: 'friendly',
   password: 'password',
-  email: 'friendly@gmail.com'
+  email: 'friendly@gmail.com',
 };
+
 var challenge1 = {};
 var challenge2 = {};
 var challenge3 = {};
 var submission1 = {}; //not widely accepted submission
 var submission2 = {}; //great submission
+// summary of what is going on so I can keep this straight
+// popular creates a challenge1
+// popular submits to challenge1
+// friendly checks activity, sees nothing
+// nerdy checks activity, sees nothing
+// Popular follows nerdy
+// Nerdy should not see any activity when popular is following nerdy
+// Nerdy follows popular
+// Nerdy checks activity, see's populars activities
+// Friendly creates challenge2 (only popular invited)
+// popular submits to challenge2
+// Nerdy checks activity, should not see anything regarding challenge2 since Nerdy not invited
+// Nerdy votes on popular submission in challenge1
+// 
 exports.spec = function(domain, callback){
   jasmine.getEnv().defaultTimeoutInterval = 1000;
   describe("The test environment", function() {
@@ -53,7 +70,7 @@ exports.spec = function(domain, callback){
       .end(function(err, res){
         expect(res.status).toEqual(200);
         expect(res.body).toBeDefined();
-        user1._id = res.body._id;
+        user1.id = res.body._id;
         done();
       });
     });
@@ -68,7 +85,7 @@ exports.spec = function(domain, callback){
       .end(function(err, res){
         expect(res.status).toEqual(200);
         expect(res.body).toBeDefined();
-        user2._id = res.body._id;
+        user2.id = res.body._id;
         done();
       });
     });
@@ -83,7 +100,7 @@ exports.spec = function(domain, callback){
       .end(function(err, res){
         expect(res.status).toEqual(200);
         expect(res.body).toBeDefined();
-        user3._id = res.body._id;
+        user3.id = res.body._id;
         done();
       });
     });
@@ -98,20 +115,20 @@ exports.spec = function(domain, callback){
       .end(function(err, res){
         expect(res.status).toEqual(200);
         expect(res.body).toBeDefined();
-        user4._id = res.body._id;
+        user4.id = res.body._id;
         done();
       });
     });
-    it('should prepare a challenge', function(done){
+    it('Popular should prepare a challenge', function(done){
       // setup challenge
       challenge1 = {
         title: 'Challenge1 Title',
         description: 'Challenge1 Description',
         tags: ['tag1', 'tag2', 'tag3'],
-        owner: user1._id,
+        owner: user1.id,
         privacy: 'private',
         expiration: new Date(2015, 3, 14),
-        invites: [user2._id]
+        invites: [user2.id]
       };
       agent
       .post(domainV2 + "/challenges")
@@ -119,7 +136,7 @@ exports.spec = function(domain, callback){
       .end(function(res){
         expect(res.status).toEqual(200);
         // save the challenge id for future use
-        challenge1._id = res.body._id;
+        challenge1.id = res.body._id;
         done();
       });
     });
@@ -127,16 +144,16 @@ exports.spec = function(domain, callback){
     //popular should see this in activity
     it('Can be submitted by user1 (popular) into challenge 1', function(done){
       agent
-      .post(domain + "/challenges/" + challenge1._id + "/submissions")
+      .post(domain + "/challenges/" + challenge1.id + "/submissions")
       .type('form')
       .attach("image", "./tests/specs/images/onepixel.png")
-      .field("owner", user1._id)
+      .field("owner", user1.id)
       .end(function(err, res){
         var submission = res.body;
         expect(submission).toBeDefined();
         expect(submission._id).toBeDefined();
         expect(res.status).toEqual(200);
-        submission1._id = submission._id;
+        submission1.id = submission._id;
         done();
       });
     });
@@ -144,10 +161,130 @@ exports.spec = function(domain, callback){
   describe('Followers Activities', function(){
     it('Friendly user4 should not see activity of non-friend users when he is not in their challenge and not following anyone', function(done){
       agent
-      .get(domainV2 + '/users/' + user4._id + '/friends/activities/page/1')
+      .get(domainV2 + '/users/' + user4.id + '/follows/activities/page/1')
+      .end(function(err, res){
+        expect(res.status).toEqual(500);
+        done();
+      });
+    });
+    it('Nerdy user2 should not see activity of non-friend users who are in his challenges', function(done){
+      agent
+      .get(domainV2 + '/users/' + user2.id + '/follows/activities/page/1')
+      .end(function(err, res){
+        expect(res.status).toEqual(500);
+        done();
+      });
+    });
+    it('Popular can follow nerdy', function(done){
+      superagent
+      .post(domain + "/users/" + user1.id + '/follows')
+      .send({
+        user: user2.id,
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('Nerdy (user2) should not see the activity of popular (users1) when Popular is following Nerdy', function(done){
+      agent
+      .get(domainV2 + '/users/' + user2.id + '/follows/activities/page/1')
+      .end(function(err, res){
+        expect(res.status).toEqual(500);
+        done();
+      });
+    });
+    it('Nerdy will follow popular, thereby being interested in his activity', function(done){
+      superagent
+      .post(domain + "/users/" + user2.id + '/follows')
+      .send({
+        user: user1.id,
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('Nerdy should see activity of popular now that he is following him', function(done){
+      agent
+      .get(domainV2 + '/users/' + user2.id + '/follows/activities/page/1')
+      .end(function(err, res){
+        var activities = res.body;
+        expect(res.status).toEqual(200);
+        expect(activities.length).toEqual(2);
+        done();
+      });
+    });
+    it('Should allow friendly to create a challenge inviting Popular', function(done){
+      challenge2 = {
+        title: 'Challenge2 Title',
+        description: 'Challenge2 Description',
+        tags: ['tag1', 'tag2', 'tag3'],
+        owner: user4.id,
+        privacy: 'private',
+        expiration: new Date(2015, 3, 14),
+        invites: [user1.id]
+      };
+      agent
+      .post(domainV2 + "/challenges")
+      .send(challenge2)
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        // save the challenge id for future use
+        challenge2.id = res.body._id;
+        done();
+      });
+    });
+    it('It can be submitted by a user (Popular) into challenge 2 where Nerdy isnt invited', function(done){
+      agent
+      .post(domain + "/challenges/" + challenge2.id + "/submissions")
+      .type('form')
+      .attach("image", "./tests/specs/images/onepixel.png")
+      .field("owner", user1.id)
       .end(function(err, res){
         var submission = res.body;
-        expect(res.status).toEqual(500);
+        expect(submission).toBeDefined();
+        expect(submission._id).toBeDefined();
+        expect(res.status).toEqual(200);
+        submission2.id = submission._id;
+        done();
+      });
+    });
+    it('Nerdy should not see activities of Popular other challenges even though Nerdy follows Popular', function(done){
+      //share a friendship, not a challenge
+      agent
+      .get(domainV2 + '/users/' + user2.id + '/follows/activities/page/1')
+      .end(function(err, res){
+        var activities = res.body;
+        expect(res.status).toEqual(200);
+        // still should only see 2 activities
+        // TODO, we should do a test other than just based on the number of activities.
+        expect(activities.length).toEqual(2);
+        done();
+      });
+    });
+    it('can allow nerdy to vote on popular submission', function(done){
+      //nerdy vote on popular submission in the challenge
+      //popular and nerdy should see this in activity
+      agent
+      .post(domainV2 + '/challenges/' + challenge1.id + '/submissions/' + submission2.id + '/ballots/')
+      .send({
+        score: 10,
+        voter: user2.id
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('Popular should see activity of people he follows for his submission', function(done){
+      agent
+      .get(domainV2 + '/users/' + user1.id + '/follows/activities/page/1')
+      .end(function(err, res){
+        var activities = res.body;
+        expect(res.status).toEqual(200);
+        // TODO, what should popular see at this point
+        expect(false).toEqual(true);
         done();
       });
     });
