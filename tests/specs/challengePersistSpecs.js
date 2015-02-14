@@ -303,7 +303,7 @@ exports.spec = function(domain, callback){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(2);
         challenges.forEach(function(challenge, index){
-          if (challenge.owner === user1._id){
+          if (challenge.owner._id === user1._id){
             expect(challenge.inviteStatus).toEqual('owner');
             expect(challenge.participants).toBeUndefined();
           } else {
@@ -323,7 +323,14 @@ exports.spec = function(domain, callback){
       .afterJSON(function(challenges){
         expect(challenges).toBeDefined();
         expect(challenges.length).toEqual(2);
-        expect(challenges[0].inviteStatus).toEqual('accepted'); //right now everyone is only invited
+        challenges.forEach(function(challenge, index){
+          if (challenge.owner._id === user2._id){
+            expect(challenge.inviteStatus).toEqual('owner');
+            expect(challenge.participants).toBeUndefined();
+          } else {
+            expect(challenge.inviteStatus).toEqual('accepted');
+          }
+        });
         cb(null);
       })
       .toss();
