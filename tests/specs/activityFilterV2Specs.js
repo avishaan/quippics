@@ -130,7 +130,7 @@ exports.spec = function(domain, callback){
       .post(domain + "/challenges/" + challenge1._id + "/submissions")
       .type('form')
       .attach("image", "./tests/specs/images/onepixel.png")
-      .field("owner", user2._id)
+      .field("owner", user1._id)
       .end(function(err, res){
         var submission = res.body;
         expect(submission).toBeDefined();
@@ -141,30 +141,17 @@ exports.spec = function(domain, callback){
       });
     });
   });
-  xdescribe('Submissions', function(){
-    //have popular submit into a challenge
-    //popular should see this in activity
-    it('Can be submitted by user1 (popular) into challenge 1', function(done){
+  describe('Followers Activities', function(){
+    it('Friendly user4 should not see activity of non-friend users when he is not in their challenge and not following anyone', function(done){
       agent
-      .post(domain + "/challenges/" + challenge1._id + "/submissions")
-      .type('form')
-      .attach("image", "./tests/specs/images/onepixel.png")
-      .field("owner", user2._id)
+      .get(domainV2 + '/users/' + user4._id + '/friends/activities/page/1')
       .end(function(err, res){
         var submission = res.body;
-        //make sure something was returned in the response body
-        expect(submission).toBeDefined();
-        //make sure the id in the response body was returned
-        expect(submission._id).toBeDefined();
-        //expect 200 response
-        expect(res.status).toEqual(200);
-        submission1._id = submission._id;
-        //console.log("here is the returned superagent submission");
-        //console.log(submission);
+        expect(res.status).toEqual(500);
         done();
       });
     });
-    it("can be submitted by a User (Popular) into challenge 1", function(done){
+    xit("can be submitted by a User (Popular) into challenge 1", function(done){
       agent
       .post(domain + "/challenges/" + challenge1._id + "/submissions")
       .type('form')
@@ -184,7 +171,7 @@ exports.spec = function(domain, callback){
         done();
       });
     });
-    it("can be submitted again by a User (Nerdy) into challenge 1", function(done){
+    xit("can be submitted again by a User (Nerdy) into challenge 1", function(done){
       // this will make sure that a user can submit multiple submissions gh#104
       agent
       .post(domainV2 + "/challenges/" + challenge1._id + "/submissions")
@@ -205,7 +192,7 @@ exports.spec = function(domain, callback){
         done();
       });
     });
-    it("can allow you to get only one of Nerdy (user2) submission", function(done){
+    xit("can allow you to get only one of Nerdy (user2) submission", function(done){
       // this will make sure that a user can submit multiple submissions gh#104
       agent
       .get(domainV2 + '/challenges/' + challenge1._id + '/submissions/users/' + user2._id)
@@ -225,7 +212,7 @@ exports.spec = function(domain, callback){
         done();
       });
     });
-    it("can get a list of submissions in a challenge which the user has submitted", function(done){
+    xit("can get a list of submissions in a challenge which the user has submitted", function(done){
       // make sure all the users submissions for a challenge can be returned gh #120
       agent
       .get(domainV2 + '/challenges/' + challenge1._id + '/users/' + user2._id + '/submissions')
