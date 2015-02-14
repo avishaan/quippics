@@ -28,7 +28,7 @@ response: [ { __v: 1,
 #####_Status: Not Developed, Not Tested 
 POST '/v2/challenges'
 
-if privacy is public then followers will constantly be added as they follow no need
+if privacy is followers then followers will constantly be added as they follow no need
 to invite people manually
 if privacy is private then only those in the invites array will be invited
 
@@ -40,7 +40,7 @@ request.body:
   owner: '52f548514f8c88b137000113',
   tags: [ 'tag1', 'tag2', 'tag3' ],
   persisted: true,
-  privacy: 'public',
+  privacy: 'followers',
   expiration: new Date(2014, 10, 15),
   description: 'Description for challenge',
   invites: [ '530ae320b5e51b420300010f' ]
