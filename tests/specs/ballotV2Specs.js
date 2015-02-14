@@ -266,7 +266,6 @@ exports.spec = function(domain, callback){
         .exec(function(err, submission){
           expect(submission.ballots.length).toEqual(2);
           expect(submission.ballots[0].score).toEqual(9);
-          console.log(submission);
           expect(submission.sum).toEqual(6);
           expect(submission.score).toEqual(9);
           expect(res).toBeDefined();
