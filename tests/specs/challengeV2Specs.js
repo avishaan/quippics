@@ -663,8 +663,8 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
-      // everyone is going to follow popular and we will make sure public challenges work as a result
-      describe('Public challenges', function(){
+      // everyone is going to follow popular and we will make sure followers challenges work as a result
+      describe('Followers challenges', function(){
         it('delete the database again', function(done){
           superagent
           .del(domain + "/server")
@@ -765,7 +765,7 @@ exports.spec = function(domain, callback){
           });
         });
         it('needs to have user3 follow user1', function(done){
-          // we need to now follow user1 after he creates his public challenge
+          // we need to now follow user1 after he creates his followers challenge
           superagent
           .post(domain + "/users/" + user3._id + '/follows')
           .send({
@@ -782,7 +782,8 @@ exports.spec = function(domain, callback){
             Challenge
             .findOne({_id: challenge5._id})
             .exec(function(err, challenge){
-              console.log(challenge.participants.length);
+              //console.log(challenge.participants.length);
+              expect(challenge.participants.length).toEqual(3);
               expect(challenge.participants.some(function(participant, index, array){
                 // console.log('participants %s vs %s', participant.user, user3._id);
                 return participant.user == user3._id;
