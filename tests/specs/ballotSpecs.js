@@ -344,13 +344,13 @@ exports.spec = function(domain, callback){
       .create("Get mine aka popular's archived challenges")
       .get(domain + '/users/' + user1._id + '/challenges/archive/page/1')
       .expectStatus(200)
-      .inspectJSON()
+      //.inspectJSON()
       .afterJSON(function(challenges){
         console.log('enter');
         expect(challenges[0].submissions[0].rank).toEqual(1);
         // make sure the id we are checking the rank for matches pop user's id
         expect(challenges[0].submissions[0]._id).toEqual(submission2._id);
-        console.log(submission2._id);
+        //console.log(submission2._id);
         cb(null);
       })
       .toss();
