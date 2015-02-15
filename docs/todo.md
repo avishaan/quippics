@@ -14,5 +14,4 @@
 
 - [ ] 
 -- next item
-keep working on the activity filter v2, follow with the v1 one version, I think I need to
-start following and unfollowing users instead of doing the whole friends thing
+keep working on the activity filter v2, follow with the v1 one version, Need to keep adding test cases
