@@ -235,7 +235,6 @@ exports.myActivities = function(req, res){
     select: 'title owner expiration'
   })
   .exec(function(err, activities){
-    debugger;
     if (!err && activities.length){
       return res.send(200, activities);
       // istanbul ignore else: db error
