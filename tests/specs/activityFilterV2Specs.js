@@ -48,7 +48,7 @@ var submission2 = {}; //great submission
 // popular submits to challenge2
 // Nerdy checks activity, should not see anything regarding challenge2 since Nerdy not invited
 // Nerdy votes on popular submission in challenge1
-// 
+// Popular checks follows activities, should only see Nerdy vote
 exports.spec = function(domain, callback){
   jasmine.getEnv().defaultTimeoutInterval = 1000;
   describe("The test environment", function() {
@@ -269,8 +269,21 @@ exports.spec = function(domain, callback){
         var activities = res.body;
         expect(res.status).toEqual(200);
         // still should only see 2 activities
-        // TODO, we should do a test other than just based on the number of activities.
         expect(activities.length).toEqual(2);
+        // we should only see challenge1 and submission1 since nerdy is only invited to challenge1 and friends with popular
+        activities.forEach(function(activity){
+          console.log(activity);
+          if (activity.modelType === 'Submission'){
+            expect(activity.subject._id).toEqual(user1.id);
+            expect(activity.references.submission._id).toEqual(submission1.id);
+          } else if (activity.modelType === 'Challenge'){
+            expect(activity.subject._id).toEqual(user1.id);
+            expect(activity.references.challenge._id).toEqual(challenge1.id);
+          } else {
+            // only activitites are challenge or submission
+            expect(false).toEqual(true);
+          }
+        });
         done();
       });
     });
@@ -294,8 +307,9 @@ exports.spec = function(domain, callback){
       .end(function(err, res){
         var activities = res.body;
         expect(res.status).toEqual(200);
-        // TODO, what should popular see at this point
-        expect(false).toEqual(true);
+        expect(activities.length).toEqual(1);
+        expect(activities[0].modelType).toEqual("Ballot");
+        expect(activities[0].subject._id).toEqual(user2.id);
         done();
       });
     });
