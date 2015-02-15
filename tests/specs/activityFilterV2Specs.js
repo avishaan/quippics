@@ -36,7 +36,8 @@ var submission1 = {}; //not widely accepted submission
 var submission2 = {}; //great submission
 // summary of what is going on so I can keep this straight
 // popular creates a challenge1
-// popular submits to challenge1
+// popular submits to challenge1 (nerdy2 invite)
+// popular checks own activity, sees stuff 
 // friendly checks activity, sees nothing
 // nerdy checks activity, sees nothing
 // Popular follows nerdy
@@ -158,8 +159,18 @@ exports.spec = function(domain, callback){
       });
     });
   });
-  describe('Followers Activities', function(){
-    it('Friendly user4 should not see activity of non-friend users when he is not in their challenge and not following anyone', function(done){
+  describe('Activities', function(){
+    it('Allow popular to check own activities', function(done){
+      agent
+      .get(domain + '/users/' + user1.id + '/activities/page/1')
+      .end(function(err, res){
+        var activities = res.body;
+        expect(activities.length).toEqual(2);
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('Friendly user4 should not see activity of non-follows users when he is not in their challenge and not following anyone', function(done){
       agent
       .get(domainV2 + '/users/' + user4.id + '/follows/activities/page/1')
       .end(function(err, res){
@@ -167,7 +178,7 @@ exports.spec = function(domain, callback){
         done();
       });
     });
-    it('Nerdy user2 should not see activity of non-friend users who are in his challenges', function(done){
+    it('Nerdy user2 should not see activity of non-follows users who are in his challenges', function(done){
       agent
       .get(domainV2 + '/users/' + user2.id + '/follows/activities/page/1')
       .end(function(err, res){
