@@ -19,6 +19,12 @@ var user3 = {
   password: 'password',
   email: 'user3@gmail.com',
 };
+// old style user4
+var user4 = {
+  username: 'oldModel',
+  password: 'password',
+  email: 'user4@gmail.com',
+};
 exports.spec = function(domain, callback){
   console.log('Running Follow Tests');
   describe('The test setup', function(){
@@ -214,83 +220,115 @@ exports.spec = function(domain, callback){
         });
       });
     });
-  describe('Peeps', function(){
-    // setup as follows user2 follows user1, user3 follows user2, user2 follows user3
-    // then look from user2 perspective
-    it('should show empty when no peeps exist', function(done){
-      superagent
-      .get(domain + "/users/" + user2.id + '/peeps/page/1')
-      //.get(domain + "/users/" + '1' + '/peeps/page/1')
-      .end(function(res){
-        var peeps = res.body;
-        expect(res.status).not.toEqual(200);
-        done();
+    describe('Peeps', function(){
+      // setup as follows user2 follows user1, user3 follows user2, user2 follows user3
+      // then look from user2 perspective
+      it('should show empty when no peeps exist', function(done){
+        superagent
+        .get(domain + "/users/" + user2.id + '/peeps/page/1')
+        //.get(domain + "/users/" + '1' + '/peeps/page/1')
+        .end(function(res){
+          var peeps = res.body;
+          expect(res.status).not.toEqual(200);
+          done();
+        });
       });
-    });
-    it('should allow user2 to follow user1', function(done){
-      superagent
-      .post(domain + "/users/" + user2.id + '/follows')
-      .send({
-        user: user1.id,
-      })
-      .end(function(res){
-        expect(res.status).toEqual(200);
-        done();
+      it('should be able to handle old user models that dont have the follows field set', function(done){
+        superagent
+        .get(domain + "/users/" + user2.id + '/peeps/page/1')
+        //.get(domain + "/users/" + '1' + '/peeps/page/1')
+        .end(function(res){
+          var peeps = res.body;
+          expect(res.status).not.toEqual(200);
+          done();
+        });
       });
-    });
-  });
-    it('should set up user3 to follow user2', function(done){
-      superagent
-      .post(domain + "/users/" + user3.id + '/follows')
-      .send({
-        user: user2.id,
-      })
-      .end(function(res){
-        expect(res.status).toEqual(200);
-        User.findOne({_id: user3.id})
-        .exec(function(err, user){
-          expect(user.follows.length).toEqual(1);
+      it('should allow user2 to follow user1', function(done){
+        superagent
+        .post(domain + "/users/" + user2.id + '/follows')
+        .send({
+          user: user1.id,
+        })
+        .end(function(res){
+          expect(res.status).toEqual(200);
+          done();
+        });
+      });
+      it('should set up user3 to follow user2', function(done){
+        superagent
+        .post(domain + "/users/" + user3.id + '/follows')
+        .send({
+          user: user2.id,
+        })
+        .end(function(res){
+          expect(res.status).toEqual(200);
+          User.findOne({_id: user3.id})
+          .exec(function(err, user){
+            expect(user.follows.length).toEqual(1);
+            done();
+          });
+        });
+      });
+      it('should set up user2 to follow user3', function(done){
+        superagent
+        .post(domain + "/users/" + user2.id + '/follows')
+        .send({
+          user: user3.id,
+        })
+        .end(function(res){
+          expect(res.status).toEqual(200);
+          User.findOne({_id: user2.id})
+          .exec(function(err, user){
+            expect(user.follows.length).toEqual(2);
+            done();
+          });
+        });
+      });
+      it('should get the peeps from user1 perspective', function(done){
+        superagent
+        .get(domain + "/users/" + user2.id + '/peeps/page/1')
+        .end(function(res){
+          var peeps = res.body;
+          peeps.forEach(function(peep){
+            if (peep._id == user3.id){
+              expect(peep.isFollow).toEqual(true);
+              expect(peep.isFollower).toEqual(true);
+            } else if (peep._id == user1.id){
+              expect(peep.isFollow).toEqual(true);
+              expect(peep.isFollower).toEqual(false);
+            } else if (peep._id == user2.id){
+              // should not happen, there is no user interaction here
+              expect(true).toEqual(false);
+            } else {
+              // should not happen, all cases should be accounted for
+              expect(true).toEqual(false);
+            }
+          });
+          expect(res.status).toEqual(200);
           done();
         });
       });
     });
-    it('should set up user2 to follow user3', function(done){
-      superagent
-      .post(domain + "/users/" + user2.id + '/follows')
-      .send({
-        user: user3.id,
-      })
-      .end(function(res){
-        expect(res.status).toEqual(200);
-        User.findOne({_id: user2.id})
-        .exec(function(err, user){
-          expect(user.follows.length).toEqual(2);
+    describe('Peep backward compatibility', function(){
+      // this is to address gh#129 where a user which doesn't have a follows property
+      // due to old schema version causes a crash
+      it('should create a user without a follows property', function(done){
+        var user = new User(user4);
+        user.set('follows', undefined);
+        user.save(function(err, doc){
+          user4.id = doc._id;
+          done();
+        })
+      });
+      it('should be able to get the followers without error gh#129', function(done){
+        superagent
+        .get(domain + "/users/" + user4.id + '/peeps/page/1')
+        //.get(domain + "/users/" + '1' + '/peeps/page/1')
+        .end(function(res){
+          var peeps = res.body;
+          expect(res.status).not.toEqual(200);
           done();
         });
-      });
-    });
-    it('should get the peeps from user1 perspective', function(done){
-      superagent
-      .get(domain + "/users/" + user2.id + '/peeps/page/1')
-      .end(function(res){
-        var peeps = res.body;
-        peeps.forEach(function(peep){
-          if (peep._id == user3.id){
-            expect(peep.isFollow).toEqual(true);
-            expect(peep.isFollower).toEqual(true);
-          } else if (peep._id == user1.id){
-            expect(peep.isFollow).toEqual(true);
-            expect(peep.isFollower).toEqual(false);
-          } else if (peep._id == user2.id){
-            // should not happen, there is no user interaction here
-            expect(true).toEqual(false);
-          } else {
-            // should not happen, all cases should be accounted for
-            expect(true).toEqual(false);
-          }
-        });
-        expect(res.status).toEqual(200);
-        done();
       });
     });
   });
