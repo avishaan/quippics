@@ -20,6 +20,7 @@ var followSpec = require('./specs/followSpecs.js');
 var challengeV2Spec = require('./specs/challengeV2Specs.js');
 var submissionV2Spec = require('./specs/submissionV2Specs.js');
 var ballotV2Spec = require('./specs/ballotV2Specs.js');
+var activityFilterV2Spec = require('./specs/activityFilterV2Specs.js');
 //var superSpec = require('./specs/superTest.js');
 var async = require('async');
 
@@ -85,6 +86,12 @@ async.series([
 //     cb(null);
 //   });
 // },
+ function(cb){
+   console.log("Calling Activity Filter V2 Specs");
+   activityFilterV2Spec.spec(domain, function(){
+     cb(null);
+   });
+ },
 // function(cb){
 //   console.log("Calling Activity Specs");
 //   activitySpec.spec(domain, function(){
