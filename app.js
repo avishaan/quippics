@@ -166,7 +166,7 @@ app.get('/api/v1/challenges/:cid/submissions/users/:uid/voted', apiAuth(), ballo
 //activity routes
 app.get('/api/v1/activities/users/:uid/page/:page', apiAuth(), activities.myActivities); //read all the activities of the user
 app.get('/api/v1/users/:uid/activities/page/:page', apiAuth(), activities.myActivities); //read all the activities of the user
-app.get('/api/v2/users/:uid/activities/page/:page', apiAuth(), activities.myActivities); //read all the activities of the user
+//app.get('/api/v2/users/:uid/activities/page/:page', apiAuth(), activities.myActivities); //read all the activities of the user
 app.get('/api/v1/activities/users/:uid/friends/page/:page', apiAuth(), activities.friendActivities); //read all the activities of the friends of the user
 app.get('/api/v1/users/:uid/friends/activities/page/:page', apiAuth(), activities.friendActivities); //read all the activities of the friends of the user
 app.get('/api/v2/users/:uid/follows/activities/page/:page', apiAuth(), activities.friendActivities); //read all the activities of the friends of the user
