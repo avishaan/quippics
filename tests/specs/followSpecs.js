@@ -217,6 +217,16 @@ exports.spec = function(domain, callback){
   describe('Peeps', function(){
     // setup as follows user2 follows user1, user3 follows user2, user2 follows user3
     // then look from user2 perspective
+    it('should show empty when no peeps exist', function(done){
+      superagent
+      .get(domain + "/users/" + user2.id + '/peeps/page/1')
+      //.get(domain + "/users/" + '1' + '/peeps/page/1')
+      .end(function(res){
+        var peeps = res.body;
+        expect(res.status).not.toEqual(200);
+        done();
+      });
+    });
     it('should allow user2 to follow user1', function(done){
       superagent
       .post(domain + "/users/" + user2.id + '/follows')
