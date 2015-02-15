@@ -169,7 +169,7 @@ app.get('/api/v1/users/:uid/activities/page/:page', apiAuth(), activities.myActi
 //app.get('/api/v2/users/:uid/activities/page/:page', apiAuth(), activities.myActivities); //read all the activities of the user
 app.get('/api/v1/activities/users/:uid/friends/page/:page', apiAuth(), activities.friendActivities); //read all the activities of the friends of the user
 app.get('/api/v1/users/:uid/friends/activities/page/:page', apiAuth(), activities.friendActivities); //read all the activities of the friends of the user
-app.get('/api/v2/users/:uid/follows/activities/page/:page', apiAuth(), activities.friendActivities); //read all the activities of the friends of the user
+app.get('/api/v2/users/:uid/follows/activities/page/:page', apiAuth(), activities.followsActivities); //read all the activities of all the users the user follows
 //misc routes
 //verification routes
 //verify loaderio
