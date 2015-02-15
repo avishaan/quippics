@@ -49,6 +49,10 @@ var submission2 = {}; //great submission
 // Nerdy checks activity, should not see anything regarding challenge2 since Nerdy not invited
 // Nerdy votes on popular submission in challenge1
 // Popular checks follows activities, should only see Nerdy vote
+// Nerdy declines challenge1
+// Nerdy checks activity, should see no activity since was only in challenge1
+// Nerdy blocks Popular
+// Popular checks activity, now since he is not following there will be no activities
 exports.spec = function(domain, callback){
   jasmine.getEnv().defaultTimeoutInterval = 1000;
   describe("The test environment", function() {
@@ -310,6 +314,46 @@ exports.spec = function(domain, callback){
         expect(activities.length).toEqual(1);
         expect(activities[0].modelType).toEqual("Ballot");
         expect(activities[0].subject._id).toEqual(user2.id);
+        done();
+      });
+    });
+    it('Nerdy should decline challenge1', function(done){
+      agent
+      .post(domain + '/challenges/' + challenge1.id + '/declines')
+      .send({
+        user: user2.id
+      })
+      .end(function(err, res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('Nerdy checks activity, sees no activity now that challenge is declined', function(done){
+      agent
+      .get(domainV2 + '/users/' + user2.id + '/follows/activities/page/1')
+      .end(function(err, res){
+        var activities = res.body;
+        expect(res.status).not.toEqual(200);
+        done();
+      });
+    });
+    it('Nerdy blocks Popular', function(done){
+      agent
+      .del(domain + "/users/" + user2.id + '/followers')
+      .send({
+        user: user1.id,
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it('Popular should see activity of people he follows for his submission', function(done){
+      agent
+      .get(domainV2 + '/users/' + user1.id + '/follows/activities/page/1')
+      .end(function(err, res){
+        var activities = res.body;
+        expect(res.status).not.toEqual(200);
         done();
       });
     });
