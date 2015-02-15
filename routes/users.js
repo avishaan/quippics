@@ -610,23 +610,32 @@ exports.listPeeps = function(req, res){
   function(cb){
     // find the followers
     user.getFollowers(function(err, docs){
-      followers = docs;
-      // keep only the ids
-      followers = followers.map(function(item){
-        return item._id.toString();
-      });
-      cb(null);
+      // make sure we get a result incase no followers or old version
+      if (!err && docs && docs.length){
+        followers = docs;
+        // keep only the ids
+        followers = followers.map(function(item){
+          return item._id.toString();
+        });
+        cb(null);
+      } else {
+        cb({err: err, clientMsg: 'Could not find any followers'});
+      }
     });
   },
   function(cb){
     // find our follows
     user.getFollows(function(err, docs){
-      follows = docs;
-      // keep only the ids
-      follows = follows.map(function(item){
-        return item._id.toString();
-      });
-      cb(null);
+      if (!err && docs && docs.length){
+        follows = docs;
+        // keep only the ids
+        follows = follows.map(function(item){
+          return item._id.toString();
+        });
+        cb(null);
+      } else {
+        cb({err: err, clientMsg: 'Could not find anyone following'});
+      }
     });
   },
   function(cb){
