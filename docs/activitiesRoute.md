@@ -3,7 +3,7 @@ Activity
 Routes here are related to viewing activities
 
 ####List activities for all of the user's followers 
-#####_Status: Not Developed, Partially Tested
+#####_Status: Developed, Partially Tested
 GET v2/users/:uid/follows/activities/page/:page
 
 Example Response for Ballots
@@ -143,13 +143,6 @@ Example Response for Challenge
 },
 ```
 
-####List activities specific to the user
-#####_Status: Not Developed, Not Tested
-GET v2/users/:uid/activities/page/:page 
-
-Example Response
-(same as above for activities of all the user's followers)
-[Linky](list-activities-for-all-of-the-user's-followers)
 ####List activities for all of the user's friends
 #####_Status: Developed, Tested
 GET v1/activities/users/:uid/friends/page/:page (depreciated)  
