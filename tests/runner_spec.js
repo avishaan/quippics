@@ -62,12 +62,12 @@ async.series([
 //     cb(null);
 //   });
 // },
-// function(cb){
-//   console.log("Calling SubmissionV2 Specs");
-//   submissionV2Spec.spec(domain, function(){
-//     cb(null);
-//   });
-// },
+ function(cb){
+   console.log("Calling SubmissionV2 Specs");
+   submissionV2Spec.spec(domain, function(){
+     cb(null);
+   });
+ },
 // function(cb){
 //   console.log("Calling Ballot Specs V2");
 //   ballotV2Spec.spec(domain, function(){
@@ -86,12 +86,12 @@ async.series([
 //     cb(null);
 //   });
 // },
- function(cb){
-   console.log("Calling Activity Filter V2 Specs");
-   activityFilterV2Spec.spec(domain, function(){
-     cb(null);
-   });
- },
+// function(cb){
+//   console.log("Calling Activity Filter V2 Specs");
+//   activityFilterV2Spec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
 // function(cb){
 //   console.log("Calling Activity Specs");
 //   activitySpec.spec(domain, function(){
