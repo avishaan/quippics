@@ -194,7 +194,7 @@ exports.spec = function(domain, callback){
     it("can get a list of submissions in a challenge which the user has submitted", function(done){
       // make sure all the users submissions for a challenge can be returned gh #120
       agent
-      .get(domainV2 + '/challenges/' + challenge1._id + '/users/' + user2._id + '/submissions')
+      .get(domainV2 + '/challenges/' + challenge1._id + '/users/' + user2._id + '/submissions/page/1')
       .end(function(err, res){
         var challenge = res.body;
         var submissions = challenge.submissions;
