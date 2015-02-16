@@ -229,7 +229,8 @@ exports.spec = function(domain, callback){
         //.get(domain + "/users/" + '1' + '/peeps/page/1')
         .end(function(res){
           var peeps = res.body;
-          expect(res.status).not.toEqual(200);
+          expect(peeps.length).toEqual(0);
+          expect(res.status).toEqual(404);
           done();
         });
       });
