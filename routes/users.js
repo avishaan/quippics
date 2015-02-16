@@ -604,7 +604,7 @@ exports.listPeeps = function(req, res){
     .select('_id, username')
     .exec(function(err, doc){
       user = doc;
-      cb(null);
+      cb(err);
     });
   },
   function(cb){
@@ -690,7 +690,7 @@ exports.listPeeps = function(req, res){
   ], function(err, results){
     if (err){
       logger.error(err);
-      res.send(400, {err: err, clientMsg: 'Couldnt find user list'});
+      res.send(404, []);
     } else {
       res.send(200, peeps);
     }
