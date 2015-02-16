@@ -184,6 +184,26 @@ response: [{
 }]
 ```
 
+####Perform a text search of the usernames V2
+#####_Status: Not Developed, Not Tested
+GET /v2/users/search/:search
+
+Example Response
+```
+response:{
+    [ { _id: '5351fc22740f0fc97f000005',
+      username: 'jack1985739000update',
+      isFollower: true,
+      isFollow: false
+      thumbnail:
+       { contentType: 'image/png',
+         data: 'iVBORw0KGgoAAAANSUhEUgAAAFoAAABaAQAAAAAQ03yvAAI=' 
+       } 
+      }, {}, {} 
+    ],
+  }
+```
+
 ####Perform a text search of the usernames
 #####_Status: Developed, Tested
 GET /v1/users/search/:search
