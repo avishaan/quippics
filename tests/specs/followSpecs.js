@@ -230,7 +230,7 @@ exports.spec = function(domain, callback){
         .end(function(res){
           var peeps = res.body;
           expect(peeps.length).toEqual(0);
-          expect(res.status).toEqual(404);
+          expect(res.status).toEqual(200);
           done();
         });
       });
