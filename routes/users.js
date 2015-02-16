@@ -690,7 +690,7 @@ exports.listPeeps = function(req, res){
   ], function(err, results){
     if (err){
       logger.error(err);
-      res.send(404, []);
+      res.send(200, []);
     } else {
       res.send(200, peeps);
     }
