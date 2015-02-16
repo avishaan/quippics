@@ -171,9 +171,12 @@ exports.readTop = function(req, res){
 };
 //read all submissions of specific user in a challenge
 exports.readUserSubmissions = function(req, res){
+  //if the page number was not passed, go ahead and default to page one for backward compatibility
+  req.params.page = req.params.page || 1;
   //make sure we are looking at the right challenge, we only want to know for a specific challenge
   // istanbul ignore if: bad request
   if (!isObjectId(req.params.cid) ||
+      !validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
      ){
     return res.send(400, {clientMsg: "Malformed Request"});
@@ -183,7 +186,12 @@ exports.readUserSubmissions = function(req, res){
     .select('submissions title tags')
     .populate({
       path: 'submissions',
-      select: 'owner thumbnail _id id challenge owner comments.id comments._id image.url',
+      select: 'owner thumbnail _id id challenge owner comments.id comments._id image.url createdOn',
+      options: {
+        sort: 'createdOne',
+        skip: perPage * (req.params.page -1 ),
+        limit: (perPage)
+      },
       match: { owner: req.params.uid }
     })
     .exec(function(err, challenge){
