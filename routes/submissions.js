@@ -208,7 +208,10 @@ exports.readUserSubmissions = function(req, res){
             }
           });
       } else {
-        res.send(404, {clientMsg: 'Could not find user\'s submissions'});
+        // as per gh#120 send empty array
+        res.send(404, {
+          submissions: []
+        });
       }
     });
 };

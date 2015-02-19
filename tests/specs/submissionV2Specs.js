@@ -110,6 +110,19 @@ exports.spec = function(domain, callback){
     });
   });
   describe('Submissions', function(){
+    it("expect an empty array when user hasn't submitted anything", function(done){
+      // when a user has no submission in a challenge it should return an empty array
+      agent
+      .get(domainV2 + '/challenges/' + challenge1._id + '/users/' + user2._id + '/submissions/page/1')
+      .end(function(err, res){
+        var challenge = res.body;
+        var submissions = challenge.submissions;
+        //expect 200 response
+        expect(res.status).toEqual(404);
+        expect(submissions.length).toEqual(0);
+        done();
+      });
+    });
     it("can be submitted by a User (Nerdy) into challenge 1", function(done){
       agent
       .post(domain + "/challenges/" + challenge1._id + "/submissions")
@@ -192,7 +205,7 @@ exports.spec = function(domain, callback){
       });
     });
     it("can get a list of submissions in a challenge which the user has submitted", function(done){
-      // make sure all the users submissions for a challenge can be returned gh #120
+      // make sure all the user's submissions for a challenge can be returned gh #120
       agent
       .get(domainV2 + '/challenges/' + challenge1._id + '/users/' + user2._id + '/submissions/page/1')
       .end(function(err, res){
