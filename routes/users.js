@@ -712,28 +712,56 @@ exports.listFollowers = function(req, res){
   var leaderID = req.params.uid;
   // get any user that is follows the user in the req paramater
   // find the user we want to get the followers for
-  User
-  .findOne({_id: leaderID})
-  .select('_id')
-  .exec(function(err, leader){
-    if (!err && leader){
-      leader.getFollowers(function(err, users){
-        // istanbul ignore else: db error
-        if (!err){
-          if (users && users.length) {
-            followers = users.map(function(user){
-              return user;
-            });
-            res.send(200, followers); //return the list of users you follow
+  async.waterfall([
+  function(cb){
+    User
+    .findOne({ _id: leaderID })
+    .select('_id')
+    .exec(function(err, leader){
+      if (!err && leader){
+        cb(null, leader);
+      } else {
+        cb(err);
+        res.send(500, err);
+      }
+    });
+  },
+  function(leader, cb){
+        leader.getFollowers(function(err, users){
+          // istanbul ignore else: db error
+          if (!err){
+            cb(null, users);
           } else {
-            res.send(404, {clientMsg: "Couldn't find user"});
+            cb(err);
           }
+        });
+  },
+  function(users, cb){
+    if (users && users.length){
+      // get only the ids
+      followers = users.map(function(user){
+        return user._id;
+      });
+      User
+      .find({ _id: { $in: followers } })
+      .select('username _id thumbnail')
+      .lean()
+      .exec(function(err, followers){
+        if (!err){
+          cb(null, followers);
         } else {
-          res.send(500, err);
+          cb(err);
         }
       });
     } else {
+      cb(null, []);
+    }
+  }
+  ], function(err, followers){
+    if (err){
       res.send(500, err);
+    } else {
+      res.send(200, followers);
     }
   });
 };
