@@ -39,24 +39,33 @@ exports.spec = function(domain, callback){
     });
     it('should create a user', function(done){
       console.log('after delete');
-      User.create({
-        username: user1.username,
-        password: user1.password,
-        email: user1.email
-      }, function(err, user){
-        expect(user).toBeDefined();
-        user1.id = user.id;
+      superagent
+      .post(domain + "/register")
+      .type('form')
+      .attach("image", "./tests/specs/images/defaultProfile.png")
+      .field("username", user1.username)
+      .field("password", user1.password)
+      .field("email", user1.email)
+      .end(function(err, res){
+        var user = res.body;
+        expect(res.status).toEqual(200);
+        user1.id = user._id;
         done();
       });
     });
     it('should create another user', function(done){
-      User.create({
-        username: user2.username,
-        password: user2.password,
-        email: user2.email
-      }, function(err, user){
-        expect(user).toBeDefined();
-        user2.id = user.id;
+      console.log('after delete');
+      superagent
+      .post(domain + "/register")
+      .type('form')
+      .attach("image", "./tests/specs/images/defaultProfile.png")
+      .field("username", user2.username)
+      .field("password", user2.password)
+      .field("email", user2.email)
+      .end(function(err, res){
+        var user = res.body;
+        expect(res.status).toEqual(200);
+        user2.id = user._id;
         done();
       });
     });
@@ -151,8 +160,8 @@ exports.spec = function(domain, callback){
       .end(function(res){
         var followers = res.body;
         expect(followers.length).toEqual(1);
-        expect(followers[0]._id).toEqual(user2.id)
-        expect(followers[0].username).toEqual(user2.username)
+        expect(followers[0]._id).toEqual(user2.id);
+        expect(followers[0].username).toEqual(user2.username);
         expect(res.status).toEqual(200);
         done();
       });
