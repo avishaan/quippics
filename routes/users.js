@@ -744,7 +744,7 @@ exports.listFollowers = function(req, res){
       });
       User
       .find({ _id: { $in: followers } })
-      .select('username _id')
+      .select('username _id thumbnail')
       .lean()
       .exec(function(err, followers){
         if (!err){
