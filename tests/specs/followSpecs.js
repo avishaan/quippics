@@ -162,6 +162,7 @@ exports.spec = function(domain, callback){
         expect(followers.length).toEqual(1);
         expect(followers[0]._id).toEqual(user2.id);
         expect(followers[0].username).toEqual(user2.username);
+        expect(followers[0].thumbnail).toBeDefined();
         expect(res.status).toEqual(200);
         done();
       });
