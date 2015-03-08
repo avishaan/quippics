@@ -44,12 +44,12 @@ async.series([
 //     cb(null);
 //   });
 // },
-// function(cb){
-//   console.log("Calling Follow Specs");
-//   followSpec.spec(domain, function(){
-//     cb(null);
-//   });
-// },
+ function(cb){
+   console.log("Calling Follow Specs");
+   followSpec.spec(domain, function(){
+     cb(null);
+   });
+ },
 //  function(cb){
 //    console.log("Calling Interaction/Public Challenge Specs");
 //    interactionSpec.spec(domain, function(){
@@ -62,12 +62,12 @@ async.series([
 //     cb(null);
 //   });
 // },
- function(cb){
-   console.log("Calling SubmissionV2 Specs");
-   submissionV2Spec.spec(domain, function(){
-     cb(null);
-   });
- },
+// function(cb){
+//   console.log("Calling SubmissionV2 Specs");
+//   submissionV2Spec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
 // function(cb){
 //   console.log("Calling Ballot Specs V2");
 //   ballotV2Spec.spec(domain, function(){
