@@ -176,6 +176,9 @@ exports.spec = function(domain, callback){
         expect(submission).toBeDefined();
         //make sure the id in the response body was returned
         expect(submission._id).toBeDefined();
+        // gh #145
+        console.log(res.body);
+        expect(submission.comments).toBeDefined();
         //expect 200 response
         expect(res.status).toEqual(200);
         submission1._id = submission._id;
