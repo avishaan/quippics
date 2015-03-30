@@ -160,10 +160,44 @@ exports.spec = function(domain, callback){
         expect(res.status).toEqual(200);
         expect(res.body.score).toEqual(1);
         expect(res.body.voter).toEqual(user2._id);
-        done();
+        Submission
+        .findOne({ _id: submission2._id })
+        .select('ballots sum')
+        .exec(function(err, submission){
+          expect(submission.ballots.length).toEqual(1);
+          expect(submission.ballots[0].score).toEqual(1);
+          // gh #146 sum property for ballot incorrect
+          expect(submission.sum).toEqual(1);
+          expect(res).toBeDefined();
+          done();
+        });
       });
     });
     it('can allow nerdy to vote again and replace his previous vote', function(done){
+      agent
+      .post(domainV2 + '/challenges/' + challenge1._id + '/submissions/' + submission2._id + '/ballots/')
+      .send({
+        score: 6,
+        voter: user2._id
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        // get the ballot directly from the datbase and make sure the value is 10
+        // make sure the sum is also only 10
+        Submission
+        .findOne({ _id: submission2._id })
+        .select('ballots sum')
+        .exec(function(err, submission){
+          expect(submission.ballots.length).toEqual(1);
+          expect(submission.ballots[0].score).toEqual(6);
+          // gh #146 sum property for ballot incorrect
+          expect(submission.sum).toEqual(2);
+          expect(res).toBeDefined();
+          done();
+        });
+      });
+    });
+    it('can allow nerdy to vote again a third time and replace his previous vote', function(done){
       agent
       .post(domainV2 + '/challenges/' + challenge1._id + '/submissions/' + submission2._id + '/ballots/')
       .send({
@@ -173,12 +207,15 @@ exports.spec = function(domain, callback){
       .end(function(res){
         expect(res.status).toEqual(200);
         // get the ballot directly from the datbase and make sure the value is 10
+        // make sure the sum is also only 10
         Submission
         .findOne({ _id: submission2._id })
-        .select('ballots')
+        .select('ballots sum')
         .exec(function(err, submission){
           expect(submission.ballots.length).toEqual(1);
           expect(submission.ballots[0].score).toEqual(10);
+          // gh #146 sum property for ballot incorrect
+          expect(submission.sum).toEqual(3);
           expect(res).toBeDefined();
           done();
         });
