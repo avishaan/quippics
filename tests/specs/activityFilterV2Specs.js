@@ -314,8 +314,8 @@ exports.spec = function(domain, callback){
         expect(activities.length).toEqual(1);
         expect(activities[0].modelType).toEqual("Ballot");
         expect(activities[0].subject._id).toEqual(user2.id);
-        console.log(activities[0]);
-        //done();
+        expect(activities[0].sentence).toEqual('nerd314 voted on, popular123\'s photo in, Challenge2 Title 3 star(s)');
+        done();
       });
     });
     it('Nerdy should decline challenge1', function(done){
