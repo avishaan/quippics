@@ -22,6 +22,19 @@ ballotSchema.pre('save', function(next){ //right before saving a new ballot, mak
     next();
   }
 });
+// virtual to convert score(1-10) to stars (1-3)
+ballotSchema.virtual('toStars').get(function(){
+  if (this.score <= 3){
+    return 1;
+  } else if (this.score > 3 && this.score <= 6){
+    return 2;
+  } else if (this.score > 6 && this.score <= 10){
+    return 3;
+  } else {
+    // default case incase it doesn't fit above
+    return 3;
+  }
+});
 //Build the Ballot model
 var Ballot = mongoose.model('Ballot', ballotSchema);
 module.exports = Ballot;

@@ -13,6 +13,7 @@ var activitySchema = new mongoose.Schema({
   title: String,
   //sentence: String, //sentence to help the frontend
   score: Number,
+  stars: Number,
   modelType: String,
   reference: {type: mongoose.Schema.Types.ObjectId}, //we purposely didn't give it a reference, we will do that at query time
   references: { //in this situation we have the reference predefined which means that we need to place the reference activity in the correct place
@@ -49,7 +50,7 @@ activitySchema.virtual('sentence').get(function(){
       return(this.subject.username + " commented on, " + this.object.username + "'s photo");
       //break;
     case ("Ballot"):
-      return(this.subject.username + " voted on, " + this.object.username + "'s photo in, " + this.references.challenge.title + " a " + this.score + "/10");
+      return(this.subject.username + " voted on, " + this.object.username + "'s photo in, " + this.references.challenge.title + " " + this.stars + " star(s)");
       //break;
     }
 });
@@ -118,6 +119,7 @@ activitySchema.statics.createBallot = function(ballot){
     activity.references.challenge = challenge._id; //find the challenge title and set the activity title to that.
     activity.modelType = 'Ballot';
     activity.score = ballot.score;
+    activity.stars = ballot.toStars;
     activity.subject = ballot.voter;
     activity.object = ballot.__parent.owner;
     //activity.title = ;
