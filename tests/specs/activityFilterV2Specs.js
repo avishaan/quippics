@@ -276,7 +276,7 @@ exports.spec = function(domain, callback){
         expect(activities.length).toEqual(2);
         // we should only see challenge1 and submission1 since nerdy is only invited to challenge1 and friends with popular
         activities.forEach(function(activity){
-          console.log(activity);
+          //console.log(activity);
           if (activity.modelType === 'Submission'){
             expect(activity.subject._id).toEqual(user1.id);
             expect(activity.references.submission._id).toEqual(submission1.id);
@@ -314,7 +314,8 @@ exports.spec = function(domain, callback){
         expect(activities.length).toEqual(1);
         expect(activities[0].modelType).toEqual("Ballot");
         expect(activities[0].subject._id).toEqual(user2.id);
-        done();
+        console.log(activities[0]);
+        //done();
       });
     });
     it('Nerdy should decline challenge1', function(done){
