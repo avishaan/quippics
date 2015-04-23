@@ -397,7 +397,7 @@ exports.createV2 = function(req, res){
       });
     },
     function(cb){
-      newChallenge.numParticipants = newChallenge.invites.length;
+      newChallenge.numParticipants = newChallenge.participants.length;
       cb(null);
     }
   ],

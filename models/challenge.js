@@ -110,6 +110,8 @@ challengeSchema.methods.addParticipant = function(options, cb){
   });
   // if it doesn't, we add. if it does we ignore
   if (!participating){
+    // update number of participants but don't listen for errors
+    Challenge.update({ _id: challenge._id }, { $inc: { numParticipants: 1 } }, { upsert: false }).exec()
     // add the follower to the leader's challenge, don't worry about whether it worked or not
     Challenge.update({ _id: challenge._id }, { $addToSet: { participants:{
       user: participant,
