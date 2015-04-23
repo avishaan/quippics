@@ -94,7 +94,7 @@ exports.spec = function(domain, callback){
         tags: ['tag1', 'tag2', 'tag3'],
         owner: user1._id,
         privacy: 'private',
-        expiration: new Date(2015, 3, 14),
+        expiration: (new Date()).setMonth(new Date().getMonth()+1),
         invites: [user2._id, user3._id]
       };
       agent
