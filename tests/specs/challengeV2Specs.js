@@ -771,7 +771,7 @@ exports.spec = function(domain, callback){
           .findOne({_id: challenge5._id})
           .exec(function(err, challenge){
             console.log(challenge);
-            expect(challenge.numParticipants).toEqual(3);
+            expect(challenge.numParticipants).toEqual(2);
             //cb(null);
             //done();
           });
