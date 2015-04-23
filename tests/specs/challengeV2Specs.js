@@ -155,6 +155,21 @@ exports.spec = function(domain, callback){
       .toss();
     },
     function(cb){
+      // check the challenge has the correct number of participants
+      describe("A challenge", function(){
+        it("has correct number of participants", function(done){
+          Challenge
+          .findOne({_id: challenge1._id})
+          .exec(function(err, challenge){
+            console.log(challenge);
+            expect(challenge.numParticipants).toEqual(2);
+            cb(null);
+            done();
+          });
+        });
+      });
+    },
+    function(cb){
       //have user1 submit into the challenge
       describe("A Submission", function(){
         it("can be submitted by a User1 into challenge 1", function(done){
@@ -735,7 +750,7 @@ exports.spec = function(domain, callback){
         it('can be created by user1 for his followers', function(done){
           // setup challenge
           challenge5 = {
-            title: 'Public Challenge Test',
+            title: 'Follower Challenge Test',
             tags: ['tag1', 'tag2', 'tag3'],
             owner: user1._id,
             privacy: 'followers',
@@ -749,6 +764,16 @@ exports.spec = function(domain, callback){
             // save the challenge id for future use
             challenge5._id = res.body._id;
             done();
+          });
+        });
+        it("has correct number of participants", function(done){
+          Challenge
+          .findOne({_id: challenge5._id})
+          .exec(function(err, challenge){
+            console.log(challenge);
+            expect(challenge.numParticipants).toEqual(3);
+            //cb(null);
+            //done();
           });
         });
         it('should have user2 as participant in challenge5', function(done){
