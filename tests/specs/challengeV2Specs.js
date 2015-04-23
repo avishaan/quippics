@@ -772,8 +772,8 @@ exports.spec = function(domain, callback){
           .exec(function(err, challenge){
             console.log(challenge);
             expect(challenge.numParticipants).toEqual(2);
-            //cb(null);
-            //done();
+            cb(null);
+            done();
           });
         });
         it('should have user2 as participant in challenge5', function(done){
@@ -817,6 +817,17 @@ exports.spec = function(domain, callback){
               done();
             });
           }, 150);
+        });
+        it("has correct number of participants", function(done){
+          // with another follower, we should see the participants number updated
+          Challenge
+          .findOne({_id: challenge5._id})
+          .exec(function(err, challenge){
+            console.log(challenge);
+            expect(challenge.numParticipants).toEqual(3);
+            cb(null);
+            done();
+          });
         });
         it('needs to have user3 follow user1 again', function(done){
           // we will have user3 follower user 1 again to make sure that duplicate participants aren't created in the challenge
