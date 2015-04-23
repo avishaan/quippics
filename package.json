@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "debugstart": "supervisor --ignore tests,docs,README.md  --debug app.js",
-    "debugbrkstart": "supervisor --ignore tests,docs,README.md  --debug-brk app.js",
+    "debugstart": "supervisor --exec /usr/local/n/versions/0.10.26/bin/node --ignore tests,docs,README.md  --debug app.js",
+    "debugbrkstart": "supervisor --exec /usr/local/n/versions/0.10.26/bin/node --ignore tests,docs,README.md  --debug-brk app.js",
     "cover": "./node_modules/istanbul/lib/cli.js cover --report none app.js",
     "coverUnit": "./node_modules/istanbul/lib/cli.js cover --report none --dir coverage/unit ./node_modules/jasmine-node/bin/jasmine-node -- ./tests/runner_spec.js --verbose --captureExceptions --config NODE_ENV local",
     "report": "./node_modules/istanbul/lib/cli.js report && open ./coverage/lcov-report/index.html",
