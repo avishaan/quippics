@@ -9,9 +9,9 @@
     "cover": "./node_modules/istanbul/lib/cli.js cover --report none app.js",
     "coverUnit": "./node_modules/istanbul/lib/cli.js cover --report none --dir coverage/unit ./node_modules/jasmine-node/bin/jasmine-node -- ./tests/runner_spec.js --verbose --captureExceptions --config NODE_ENV local",
     "report": "./node_modules/istanbul/lib/cli.js report && open ./coverage/lcov-report/index.html",
-    "test": "./node_modules/jasmine-node/bin/jasmine-node --autotest --config NODE_ENV local tests/runner_spec.js --growl --color --watch ./tests/specs --captureExceptions --verbose",
-    "debugtest": "node --debug=5859 node_modules/jasmine-node/lib/jasmine-node/cli.js --verbose --config NODE_ENV local tests/runner_spec.js",
-    "debugbrktest": "node --debug-brk=5859 node_modules/jasmine-node/lib/jasmine-node/cli.js --verbose --captureExceptions --config NODE_ENV local tests/runner_spec.js"
+    "test": "/usr/local/n/versions/0.10.26/bin/node ./node_modules/jasmine-node/bin/jasmine-node --autotest --config NODE_ENV local tests/runner_spec.js --growl --color --watch ./tests/specs --captureExceptions --verbose",
+    "debugtest": "/usr/local/n/versions/0.10.26/bin/node --debug=5859 ./node_modules/jasmine-node/lib/jasmine-node/cli.js --verbose --config NODE_ENV local tests/runner_spec.js",
+    "debugbrktest": "/usr/local/n/versions/0.10.26/bin/node --debug-brk=5859 ./node_modules/jasmine-node/lib/jasmine-node/cli.js --verbose --captureExceptions --config NODE_ENV local tests/runner_spec.js"
   },
   "dependencies": {
     "express": "3.3.5",
