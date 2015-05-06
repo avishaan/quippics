@@ -279,7 +279,7 @@ exports.spec = function(domain, callback){
         tags: ['tag1', 'tag2', 'tag3'],
         owner: user2._id,
         privacy: 'private',
-        expiration: new Date(2015, 3, 14),
+        expiration: (new Date()).setMonth(new Date().getMonth()+1),
         invites: [user1._id, user3._id]
       };
       frisby
@@ -683,7 +683,7 @@ exports.spec = function(domain, callback){
         tags: ['tag1', 'tag2', 'tag3'],
         owner: user4._id,
         privacy: 'private',
-        expiration: new Date(2015, 3, 14),
+        expiration: (new Date()).setMonth(new Date().getMonth()+1),
         invites: []
       };
       frisby
