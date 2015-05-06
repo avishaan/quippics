@@ -596,7 +596,6 @@ exports.spec = function(domain, callback){
         expect(challenge.tags.length).toEqual(challenge1.tags.length);
         expect(challenge.owner).toBeDefined();
         expect(challenge._id).toEqual(challenge1._id);
-        expect(challenge.description).toEqual(challenge1.description);
         expect(challenge.createdOn).toBeDefined();
         expect(challenge.expiration).toBeDefined();
         cb(null);
