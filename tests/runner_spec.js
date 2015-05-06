@@ -16,6 +16,7 @@ var commentSpec = require('./specs/commentSpecs.js');
 var notificationSpec = require('./specs/notificationSpecs.js');
 var submissionFlagSpec = require('./specs/submissionFlagSpecs.js');
 var challengePersistSpec = require('./specs/challengePersistSpecs.js');
+var challengePersistV2Spec = require('./specs/challengePersistV2Specs.js');
 var followSpec = require('./specs/followSpecs.js');
 var challengeV2Spec = require('./specs/challengeV2Specs.js');
 var submissionV2Spec = require('./specs/submissionV2Specs.js');
@@ -68,12 +69,12 @@ async.series([
 //     cb(null);
 //   });
 // },
- function(cb){
-   console.log("Calling Ballot Specs V2");
-   ballotV2Spec.spec(domain, function(){
-     cb(null);
-   });
- },
+// function(cb){
+//   console.log("Calling Ballot Specs V2");
+//   ballotV2Spec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
 // function(cb){
 //   console.log("Calling Ballot Specs");
 //   ballotSpec.spec(domain, function(){
@@ -86,12 +87,12 @@ async.series([
 //     cb(null);
 //   });
 // },
- function(cb){
-   console.log("Calling Activity Filter V2 Specs");
-   activityFilterV2Spec.spec(domain, function(){
-     cb(null);
-   });
- },
+// function(cb){
+//   console.log("Calling Activity Filter V2 Specs");
+//   activityFilterV2Spec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
 // function(cb){
 //   console.log("Calling Activity Specs");
 //   activitySpec.spec(domain, function(){
@@ -104,12 +105,18 @@ async.series([
 //     cb(null);
 //   });
 // },
-//  function(cb){
-//    console.log("Calling Persisted Challenge Specs");
-//    challengePersistSpec.spec(domain, function(){
-//      cb(null);
-//    });
-//  },
+// function(cb){
+//   console.log("Calling Persisted Challenge Specs");
+//   challengePersistSpec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
+  function(cb){
+    console.log("Calling Persisted Challenge V2 Specs");
+    challengePersistV2Spec.spec(domain, function(){
+      cb(null);
+    });
+  },
 // function(cb){
 //   console.log("Calling Notification Specs");
 //   notificationSpec.spec(domain, function(){
