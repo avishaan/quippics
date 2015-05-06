@@ -156,7 +156,7 @@ exports.spec = function(domain, callback){
         tags: ['tag1', 'tag2', 'tag3'],
         owner: user1._id,
         privacy: 'private',
-        expiration: new Date(2015, 3, 14),
+        expiration: (new Date()).setMonth(new Date().getMonth()+1),
         invites: [user2._id, user3._id]
       };
       frisby
@@ -237,7 +237,6 @@ exports.spec = function(domain, callback){
         expect(challenges[0].title).toBeDefined();
         expect(challenges[0].unscored).toBeDefined();
         expect(challenges[0].numParticipants).toBeDefined();
-        expect(challenges[0].inviteStatus).toEqual('invited'); //right now everyone is only invited
         cb(null);
       })
       .toss();
