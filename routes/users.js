@@ -467,6 +467,7 @@ exports.follow = function(req, res){
       Challenge
       .find({ owner: leaderId })
       .where('expiration').gt(Date.now())
+      .where('privacy').equals('followers')
       .select('participants')
       .exec(function(err, challenges){
         if (!err && challenges && challenges.length){
