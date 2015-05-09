@@ -15,3 +15,6 @@
 - [ ] 
 -- next item
 keep working on the activity filter v2, follow with the v1 one version, Need to keep adding test cases
+-- pretend like it is v1, put submissions into challenge
+-- then pretend it is like v2 and put submissions into the challenge which was created in the v1
+
