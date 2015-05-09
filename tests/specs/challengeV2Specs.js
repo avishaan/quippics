@@ -772,7 +772,6 @@ exports.spec = function(domain, callback){
           .exec(function(err, challenge){
             console.log(challenge);
             expect(challenge.numParticipants).toEqual(2);
-            cb(null);
             done();
           });
         });
@@ -825,7 +824,6 @@ exports.spec = function(domain, callback){
           .exec(function(err, challenge){
             console.log(challenge);
             expect(challenge.numParticipants).toEqual(3);
-            cb(null);
             done();
           });
         });
@@ -852,6 +850,186 @@ exports.spec = function(domain, callback){
               //console.log('participants %s vs %s', participant.user, user3._id);
               return participant.user == user3._id;
             }).length).toEqual(1);
+            done();
+          });
+        });
+        it('should trigger the next async', function(done){
+          cb(null);
+          done();
+        });
+      });
+    },
+    function(cb){
+      // this time we pretend popular is making a private challenge. We want to make sure no one is added to his private challenge
+      describe('Followers challenges', function(){
+        it('delete the database again', function(done){
+          superagent
+          .del(domain + "/server")
+          .end(function(res){
+            expect(res.status).toEqual(200);
+            done();
+          });
+        });
+        it("should register popular", function(done){
+          superagent
+          .post(domain + '/register')
+          .type('form')
+          .attach('image', './tests/specs/images/defaultProfile.png')
+          .field('username', user1.username)
+          .field('password', user1.password)
+          .field('email', user1.email)
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body).toBeDefined();
+            user1._id = res.body._id;
+            done();
+          });
+        });
+        it("should register nerdy", function(done){
+          superagent
+          .post(domain + '/register')
+          .type('form')
+          .attach('image', './tests/specs/images/defaultProfile.png')
+          .field('username', user2.username)
+          .field('password', user2.password)
+          .field('email', user2.email)
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body).toBeDefined();
+            user2._id = res.body._id;
+            done();
+          });
+        });
+        it("should register generic", function(done){
+          superagent
+          .post(domain + '/register')
+          .type('form')
+          .attach('image', './tests/specs/images/defaultProfile.png')
+          .field('username', user3.username)
+          .field('password', user3.password)
+          .field('email', user3.email)
+          .end(function(err, res){
+            expect(res.status).toEqual(200);
+            expect(res.body).toBeDefined();
+            user3._id = res.body._id;
+            done();
+          });
+        });
+        it('needs to have user2 follow user1', function(done){
+          superagent
+          .post(domain + "/users/" + user2._id + '/follows')
+          .send({
+            user: user1._id,
+          })
+          .end(function(res){
+            expect(res.status).toEqual(200);
+            done();
+          });
+        });
+        it('can be created by user1 for his friends only, not followers', function(done){
+          // setup challenge
+          challenge5 = {
+            title: 'Follower Challenge Test',
+            tags: ['tag1', 'tag2', 'tag3'],
+            owner: user1._id,
+            privacy: 'private',
+            invites: [], //no one was invited, classic popular
+            expiration: (new Date()).setMonth(new Date().getMonth()+1)
+          };
+          superagent
+          .post(domainV2 + "/challenges")
+          .send(challenge5)
+          .end(function(res){
+            expect(res.status).toEqual(200);
+            // save the challenge id for future use
+            challenge5._id = res.body._id;
+            done();
+          });
+        });
+        it("has correct number of participants", function(done){
+          Challenge
+          .findOne({_id: challenge5._id})
+          .exec(function(err, challenge){
+            console.log(challenge);
+            expect(challenge.numParticipants).toEqual(1);
+            done();
+          });
+        });
+        it('should not have user2 as participant in challenge5', function(done){
+          Challenge
+          .findOne({_id: challenge5._id})
+          .exec(function(err, challenge){
+            //console.log(challenge.participants);
+            expect(challenge.participants.some(function(participant, index, array){
+              // console.log('participants %s vs %s', participant.user, user2._id);
+              return participant.user == user2._id;
+            })).not.toBeTruthy();
+            //console.log(challenge.participants.indexOf(user2._id));
+            done();
+          });
+        });
+        it('needs to have user3 follow user1', function(done){
+          // we need to now follow user1 after he creates his followers challenge
+          superagent
+          .post(domain + "/users/" + user3._id + '/follows')
+          .send({
+            user: user1._id,
+          })
+          .end(function(res){
+            expect(res.status).toEqual(200);
+            done();
+          });
+        });
+        it('should not automatically add user3 to challenge5 since challenge5 is private', function(done){
+          // we need a little time since adding a user above after a follow is async and doesn't wait to give an success response
+          setTimeout(function(){
+            Challenge
+            .findOne({_id: challenge5._id})
+            .exec(function(err, challenge){
+              //console.log(challenge.participants.length);
+              expect(challenge.participants.length).toEqual(1);
+              expect(challenge.participants.some(function(participant, index, array){
+                // console.log('participants %s vs %s', participant.user, user3._id);
+                return participant.user == user3._id;
+              })).not.toBeTruthy();
+              //console.log(challenge.participants.indexOf(user3._id));
+              done();
+            });
+          }, 150);
+        });
+        it("has correct number of participants", function(done){
+          // with another follower, we should see the participants number updated
+          Challenge
+          .findOne({_id: challenge5._id})
+          .exec(function(err, challenge){
+            console.log(challenge);
+            expect(challenge.numParticipants).toEqual(1);
+            done();
+          });
+        });
+        it('needs to have user3 follow user1 again', function(done){
+          // we will have user3 follower user 1 again to make sure that duplicate participants aren't created in the challenge
+          superagent
+          .post(domain + "/users/" + user3._id + '/follows')
+          .send({
+            user: user1._id,
+          })
+          .end(function(res){
+            expect(res.status).toEqual(200);
+            done();
+          });
+        });
+        it('should not add user3 to the challenge again', function(done){
+          // make sure user3 didn't get added to challenge5 after following again
+          Challenge
+          .findOne({_id: challenge5._id})
+          .exec(function(err, challenge){
+            //console.log(challenge.participants);
+            // see how many elements match user3, there should only be 2
+            expect(challenge.participants.filter(function(participant, index, array){
+              //console.log('participants %s vs %s', participant.user, user3._id);
+              return participant.user == user3._id;
+            }).length).not.toEqual(1);
             done();
           });
         });
