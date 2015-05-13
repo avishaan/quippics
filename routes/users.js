@@ -637,7 +637,10 @@ exports.listPeeps = function(req, res){
           return item._id.toString();
         });
         cb(null);
-      } else {
+      } else if (!err && docs) {
+        follows = [];
+        cb(null);
+      }  else {
         cb({err: err, clientMsg: 'Could not find anyone following'});
       }
     });
