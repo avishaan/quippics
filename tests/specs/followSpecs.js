@@ -300,6 +300,27 @@ exports.spec = function(domain, callback){
           done();
         });
       });
+      it('should get the peeps from user1 perspective', function(done){
+        // make sure peeps list shows when user1 is being followed but not following
+        superagent
+        .get(domain + "/users/" + user1.id + '/peeps/page/1')
+        .end(function(res){
+          var peeps = res.body;
+          expect(peeps.length).not.toEqual(0);
+          expect(peeps.length).toBeDefined();
+          peeps.forEach(function(peep){
+            if (peep._id == user2.id){
+              expect(peep.isFollow).toEqual(false);
+              expect(peep.isFollower).toEqual(true);
+            } else {
+              // should not happen, all cases should be accounted for
+              expect(true).toEqual(false);
+            }
+          });
+          expect(res.status).toEqual(200);
+          done();
+        });
+      });
       it('should set up user3 to follow user2', function(done){
         superagent
         .post(domain + "/users/" + user3.id + '/follows')
