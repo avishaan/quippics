@@ -256,6 +256,18 @@ exports.spec = function(domain, callback){
           done();
         });
       });
+      it('should get the peeps from user2 perspective when no following has occured', function(done){
+        // make sure something is returned without an error when no one is being followed
+        superagent
+        .get(domain + "/users/" + user2.id + '/peeps/page/1')
+        .end(function(res){
+          var peeps = res.body;
+          expect(peeps.length).toEqual(0);
+          expect(peeps.length).toBeDefined();
+          expect(res.status).toEqual(200);
+          done();
+        });
+      });
       it('should allow user2 to follow user1', function(done){
         superagent
         .post(domain + "/users/" + user2.id + '/follows')
