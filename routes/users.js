@@ -619,6 +619,9 @@ exports.listPeeps = function(req, res){
           return item._id.toString();
         });
         cb(null);
+      } else if (!err && docs){
+        followers = [];
+        cb(null);
       } else {
         cb({err: err, clientMsg: 'Could not find any followers'});
       }
@@ -641,7 +644,7 @@ exports.listPeeps = function(req, res){
   },
   function(cb){
     // if the array has nothing in it, do an error
-    if (!follows.length || !followers.length){
+    if (!follows.length && !followers.length){
       cb({clientMsg: 'No followers and following no one '});
     }
     // combine array
