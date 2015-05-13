@@ -22,7 +22,7 @@ response:{
 ```
 
 ####Get list of peeps (followers and follows) for a specific user id (:uid) at a specific page#(:page)
-#####_Status: Developed, Partially Tested
+#####_Status: Developed, Tested
 GET '/v1/users/:uid/peeps/page/:page'
 
 Example Response
