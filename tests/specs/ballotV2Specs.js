@@ -311,6 +311,205 @@ exports.spec = function(domain, callback){
       });
     });
   });
+  describe("Top submissions:", function() {
+    it("should delete everything in the database", function(done) {
+      agent
+      .del(domain + "/server")
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
+    it("should create a user who is very popular", function(done) {
+      agent
+      .post(domain + '/register')
+      .type('form')
+      .attach('image', './tests/specs/images/defaultProfile.png')
+      .field('username', user1.username)
+      .field('password', user1.password)
+      .field('email', user1.email)
+      .end(function(err, res){
+        expect(res.status).toEqual(200);
+        expect(res.body).toBeDefined();
+        user1._id = res.body._id;
+        done();
+      });
+    });
+    it("should register nerdy", function(done){
+      agent
+      .post(domain + '/register')
+      .type('form')
+      .attach('image', './tests/specs/images/defaultProfile.png')
+      .field('username', user2.username)
+      .field('password', user2.password)
+      .field('email', user2.email)
+      .end(function(err, res){
+        expect(res.status).toEqual(200);
+        expect(res.body).toBeDefined();
+        user2._id = res.body._id;
+        done();
+      });
+    });
+    it("should register generic", function(done){
+      agent
+      .post(domain + '/register')
+      .type('form')
+      .attach('image', './tests/specs/images/defaultProfile.png')
+      .field('username', user3.username)
+      .field('password', user3.password)
+      .field('email', user3.email)
+      .end(function(err, res){
+        expect(res.status).toEqual(200);
+        expect(res.body).toBeDefined();
+        user3._id = res.body._id;
+        done();
+      });
+    });
+    it('should prepare a challenge', function(done){
+      // setup challenge
+      challenge1 = {
+        title: 'Challenge1 Title',
+        description: 'Challenge1 Description',
+        tags: ['tag1', 'tag2', 'tag3'],
+        owner: user1._id,
+        privacy: 'private',
+        expiration: (new Date()).setMonth(new Date().getMonth()+1),
+        invites: [user2._id, user3._id]
+      };
+      agent
+      .post(domainV2 + "/challenges")
+      .send(challenge1)
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        // save the challenge id for future use
+        challenge1._id = res.body._id;
+        done();
+      });
+    });
+    it("can be submitted by a User (Popular) into challenge 1", function(done){
+      agent
+      .post(domain + "/challenges/" + challenge1._id + "/submissions")
+      .type('form')
+      .attach("image", "./tests/specs/images/onepixel.png")
+      .field("owner", user1._id)
+      .end(function(err, res){
+        var submission = res.body;
+        //make sure something was returned in the response body
+        expect(submission).toBeDefined();
+        //make sure the id in the response body was returned
+        expect(submission._id).toBeDefined();
+        //expect 200 response
+        expect(res.status).toEqual(200);
+        submission2._id = submission._id;
+        //console.log("here is the returned superagent submission");
+        //console.log(submission);
+        done();
+      });
+    });
+    it('can allow nerdy to vote on popular\'s challenge', function(done){
+      agent
+      .post(domainV2 + '/challenges/' + challenge1._id + '/submissions/' + submission2._id + '/ballots/')
+      .send({
+        score: 5,
+        voter: user2._id
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        Submission
+        .findOne({ _id: submission2._id })
+        .select('ballots sum')
+        .exec(function(err, submission){
+          expect(res).toBeDefined();
+          done();
+        });
+      });
+    });
+    it('can allow generic to vote on popular\'s challenge', function(done){
+      agent
+      .post(domainV2 + '/challenges/' + challenge1._id + '/submissions/' + submission2._id + '/ballots/')
+      .send({
+        score: 5,
+        voter: user3._id
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        Submission
+        .findOne({ _id: submission2._id })
+        .select('ballots sum')
+        .exec(function(err, submission){
+          expect(res).toBeDefined();
+          done();
+        });
+      });
+    });
+    it('can make sure popular\'s submission shows up as top submission with correct score ', function(done){
+      agent
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/top')
+      .end(function(res){
+        var submission = res.body;
+        console.log(submission);
+        expect(res.status).toEqual(200);
+        expect(submission.rank).toEqual(1);
+        expect(submission.score).toEqual(5);
+        // we expect popular's submission to be in first
+        expect(submission.owner).toEqual(user1.username);
+        done();
+      });
+    });
+    it("can be submitted by a User (Nerdy) into challenge 1", function(done){
+      agent
+      .post(domain + "/challenges/" + challenge1._id + "/submissions")
+      .type('form')
+      .attach("image", "./tests/specs/images/onepixel.png")
+      .field("owner", user2._id)
+      .end(function(err, res){
+        var submission = res.body;
+        //make sure something was returned in the response body
+        expect(submission).toBeDefined();
+        //make sure the id in the response body was returned
+        expect(submission._id).toBeDefined();
+        //expect 200 response
+        expect(res.status).toEqual(200);
+        submission1._id = submission._id;
+        //console.log("here is the returned superagent submission");
+        //console.log(submission);
+        done();
+      });
+    });
+    it('can allow generic to vote on nerdy\'s challenge', function(done){
+      agent
+      .post(domainV2 + '/challenges/' + challenge1._id + '/submissions/' + submission1._id + '/ballots/')
+      .send({
+        score: 7,
+        voter: user3._id
+      })
+      .end(function(res){
+        expect(res.status).toEqual(200);
+        Submission
+        .findOne({ _id: submission2._id })
+        .select('ballots sum')
+        .exec(function(err, submission){
+          expect(res).toBeDefined();
+          done();
+        });
+      });
+    });
+    it("can make sure popular's submission is still top even if nerdy has a higher 'average score'", function(done){
+      // this is to address migration from score to sum although nerdy has a higher average score of 7, nerdy's sum of 7 is less than popular's sum of 10 gh#159
+      agent
+      .get(domain + '/challenges/' + challenge1._id + '/submissions/top')
+      .end(function(res){
+        var submission = res.body;
+        console.log(submission);
+        expect(res.status).toEqual(200);
+        expect(submission.rank).toEqual(1);
+        expect(submission.score).toEqual(5);
+        // we expect popular's submission to be in first
+        expect(submission.owner).toEqual(user1.username);
+        done();
+      });
+    });
+  });
   describe('it can move to the next test', function(){
     // we need this here so that it moves to the next test in the specRunner since
     // every test invoked requires a callback
