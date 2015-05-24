@@ -132,7 +132,12 @@ challengeSchema.methods.topSubmission = function(challenge, cb){
     return cb(err, null);
   }
   var submission = _.max(challenge.toJSON().submissions, function(submission){
-    return submission.score;
+    // because of migration we need to check if the sum exists first, if not return 0 as the sum, also changed due to gh #158
+    if (("sum" in submission) && (submission.sum !== undefined)) {
+      return submission.sum;
+    } else {
+      return 0;
+    }
   });
 
   return cb(err, submission);
