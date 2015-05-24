@@ -447,7 +447,6 @@ exports.spec = function(domain, callback){
       .get(domain + '/challenges/' + challenge1._id + '/submissions/top')
       .end(function(res){
         var submission = res.body;
-        console.log(submission);
         expect(res.status).toEqual(200);
         expect(submission.rank).toEqual(1);
         expect(submission.score).toEqual(5);
@@ -500,7 +499,6 @@ exports.spec = function(domain, callback){
       .get(domain + '/challenges/' + challenge1._id + '/submissions/top')
       .end(function(res){
         var submission = res.body;
-        console.log(submission);
         expect(res.status).toEqual(200);
         expect(submission.rank).toEqual(1);
         expect(submission.score).toEqual(5);
