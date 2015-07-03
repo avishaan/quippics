@@ -857,6 +857,7 @@ exports.listUsers = function(req, res){
   //if the page number was not passed, go ahead and default to page one for backward compatibility
   req.params.page = req.params.page || 1;
   var friends; //keep this outside so we can access easily
+  var follows; //keep this outside so we can access easily
   // istanbul ignore if: bad request
   if (!validator.isNumeric(req.params.page) ||
       !isObjectId(req.params.uid)
@@ -867,11 +868,12 @@ exports.listUsers = function(req, res){
     function(cb){
       User.findOne({_id: req.params.uid})
       .lean()
-      .select('friends')
+      .select('friends follows')
       .exec(function(err, user){
         if (!err && user){
           //set friends for next bit
           friends = user.friends;
+          follows = user.follows;
           cb(null, user);
         } else {
           cb(err);
@@ -890,12 +892,23 @@ exports.listUsers = function(req, res){
           friends.forEach(function(friend, index){
             friends[index] = friend.toString();
           });
+          follows.forEach(function(follow, index){
+            follows[index] = follow.toString();
+          });
           //find out if some friends were returned
           users.forEach(function(user, index){
             if (_.contains(friends, user._id.toString())){
               users[index].friendStatus = true;
             } else {
               users[index].friendStatus = false;
+            }
+          });
+          //find out if some follows were returned
+          users.forEach(function(user, index){
+            if (_.contains(follows, user._id.toString())){
+              users[index].followStatus = true;
+            } else {
+              users[index].followStatus = false;
             }
           });
           cb(null, users);
