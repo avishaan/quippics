@@ -25,3 +25,8 @@ process.on('SIGINT', function(){
     process.exit(0);
   });
 });
+
+// debug mode for mongoose
+if (config.env !== 'prod') {
+  mongoose.set('debug', true);
+}
