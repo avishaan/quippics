@@ -94,6 +94,25 @@ exports.spec = function(domain, callback){
         done();
       });
     });
+    // check that the followsUser flag is set
+    it('should show user2 is following user1', function(done){
+      superagent
+      .get(domain + "/users/" + user2.id + '/users/page/1')
+      .end(function(res){
+        var users = res.body;
+        console.log(users);
+        users.forEach(function(user){
+          if (user._id == user1.id){
+            // user2 just followed this user
+            expect(user.followStatus).toEqual(true);
+          } else {
+            expect(user.followStatus).toEqual(false);
+          }
+        });
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
     // check that the user shows up in the follows list of user2
     it('should allow you to see that user2 is following user1', function(done){
       superagent
