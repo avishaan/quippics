@@ -4,10 +4,6 @@ var User = require('../models/user.js');
 var logger = require('../logger/logger.js');
 var config = require('../conf/config.js');
 
-if (config.env !== 'prod') {
-  mongoose.set('debug', true);
-}
-
 var challengeSchema = new mongoose.Schema({
   title: { type: String },
   description: { type: String },
