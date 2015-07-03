@@ -180,7 +180,7 @@ response: [{
 {
   username: 'jack1985',
   friendStatus: false,
-  followStatus: true,
+  followStatus: false,
   _id:52f548514f8c88b137000113,
   thumbnail: {data: 0ad0fdsaf0dadfdffea0}
 }]
