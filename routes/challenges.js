@@ -220,7 +220,7 @@ exports.archivedChallenges = function(req, res){
     .where('expiration').lt(Date.now())
     //only return participant status of user performing this query
     //.elemMatch('participants', { user: req.params.uid })
-    .sort({expiration: 'ascending'})
+    .sort({expiration: 'descending'})
     .lean()
     .exec(function(err, challenges){
       // istanbul ignore else: db error
