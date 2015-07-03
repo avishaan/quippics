@@ -212,8 +212,7 @@ exports.archivedChallenges = function(req, res){
     .populate({
       path: 'submissions',
       select: 'thumbnail score rank',
-      match: {owner: req.params.uid},
-      options: {limit: 1} //we should only get one back as the user should only have one
+      match: {owner: req.params.uid}
     })
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
@@ -228,13 +227,20 @@ exports.archivedChallenges = function(req, res){
         if (challenges && challenges.length){
           //temp field for number of users invited
           //TODO, this can easily be calculated when a challenge is created instead
-          challenges.forEach(function(values, index){
+          challenges.forEach(function(challenge, index){
             challenges[index].numParticipants = challenges[index].invites.length;
             //if (challenges[index].participants){
             //  challenges[index].inviteStatus = challenges[index].participants[0].inviteStatus;
             //} else {
             //  challenges[index].inviteStatus = 'owner';
             //}
+
+            //make sure only one submission is returned if there are multiple
+            if (challenge.submissions && challenge.submissions.length && (challenge.submissions.length > 1) ){
+              var submission = challenge.submissions[0];
+              challenges[index].submissions = [];
+              challenges[index].submissions.push(submission);
+            }
           });
           return res.send(200, challenges);
         } else {
