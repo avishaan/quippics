@@ -186,6 +186,7 @@ Example Response
   },
   "rank": 1,
   "score": 9,
+  "sum": 25,
   "thumbnail": {
       "data": "iVBORw0KGg",
       "contentType": "image/png"
