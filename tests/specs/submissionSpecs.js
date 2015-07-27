@@ -364,6 +364,7 @@ exports.spec = function(domain, callback){
         expect(submissions[0].owner.password).not.toBeDefined();
         expect(submissions[0].owner).toBeDefined();
         expect(submissions[0].challenge).toBeDefined();
+        expect(submissions[0].sum).toBeDefined(); //gh #162
         expect(submissions[0].comments).toBeDefined();
         expect(submissions[0].comments.length).toEqual(1);
         expect(submissions[0].comments[0].id).toBeDefined();
