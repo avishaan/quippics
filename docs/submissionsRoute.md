@@ -257,6 +257,7 @@ response:
     "__v": 4,
     "_id": "535071535897f4b97500000f",
     "challenge": "535071535897f4b97500000b",
+    "sum": 10,
     owner: {
       username: 'jack1234',
       _id: '53c9978c8c5808246f6c0453'
