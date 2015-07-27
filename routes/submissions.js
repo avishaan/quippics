@@ -371,7 +371,7 @@ exports.readAllV2 = function(req, res){
     .select('submissions title tags')
     .populate({
       path: 'submissions',
-      select: '_id id challenge owner comments.id comments._id image.url'
+      select: 'sum _id id challenge owner comments.id comments._id image.url'
     })
     .exec(function(err, challenge){
       // istanbul ignore else: db error
