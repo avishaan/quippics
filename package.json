@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node app.js",
+    "start": "supervisor --exec /usr/local/n/versions/0.10.26/bin/node --ignore tests,docs,README.md app.js",
     "debugstart": "supervisor --exec /usr/local/n/versions/0.10.26/bin/node --ignore tests,docs,README.md  --debug app.js",
     "debugbrkstart": "supervisor --exec /usr/local/n/versions/0.10.26/bin/node --ignore tests,docs,README.md  --debug-brk app.js",
     "cover": "./node_modules/istanbul/lib/cli.js cover --report none app.js",
