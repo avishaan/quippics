@@ -45,12 +45,12 @@ async.series([
 //     cb(null);
 //   });
 // },
-// function(cb){
-//   console.log("Calling Follow Specs");
-//   followSpec.spec(domain, function(){
-//     cb(null);
-//   });
-// },
+ function(cb){
+   console.log("Calling Follow Specs");
+   followSpec.spec(domain, function(){
+     cb(null);
+   });
+ },
 //  function(cb){
 //    console.log("Calling Interaction/Public Challenge Specs");
 //    interactionSpec.spec(domain, function(){
@@ -111,12 +111,12 @@ async.series([
 //     cb(null);
 //   });
 // },
-  function(cb){
-    console.log("Calling Persisted Challenge V2 Specs");
-    challengePersistV2Spec.spec(domain, function(){
-      cb(null);
-    });
-  },
+// function(cb){
+//   console.log("Calling Persisted Challenge V2 Specs");
+//   challengePersistV2Spec.spec(domain, function(){
+//     cb(null);
+//   });
+// },
 // function(cb){
 //   console.log("Calling Notification Specs");
 //   notificationSpec.spec(domain, function(){
