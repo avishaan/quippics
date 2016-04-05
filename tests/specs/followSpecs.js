@@ -186,6 +186,21 @@ exports.spec = function(domain, callback){
         done();
       });
     });
+    it('should not crash when the user id is incorrect', function(done){
+      // gh #163
+      superagent
+      .get(domain + "/users/" + '1234' + '/followers/page/1')
+      .end(function(res){
+        throw new Error()
+        var followers = res.body;
+        expect(followers.length).toEqual(1);
+        expect(followers[0]._id).toEqual(user2.id);
+        expect(followers[0].username).toEqual(user2.username);
+        expect(followers[0].thumbnail).toBeDefined();
+        expect(res.status).toEqual(200);
+        done();
+      });
+    });
     it('should allow user1 to block user2', function(done){
       superagent
       .del(domain + "/users/" + user1.id + '/followers')
